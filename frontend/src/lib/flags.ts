@@ -9,6 +9,10 @@ type FeatureFlag =
   | 'BILLING'
   | 'SALLA_INTEGRATION'
   | 'ZID_INTEGRATION'
+  | 'PLUGIN_EMBED'
+  | 'UI_REDESIGN'
+  | 'INBOX'
+  | 'PIPELINE'
 
 /**
  * Returns true if the named feature flag is enabled.

@@ -78,14 +78,3 @@ All features are off by default. Enable via env vars:
 | Salla Integration | `FLAG_SALLA_INTEGRATION=true` | Phase 5 |
 | Zid Integration | `FLAG_ZID_INTEGRATION=true` | Phase 5 |
 
----
-
-## Phases
-
-| Phase | Focus | Status |
-|---|---|---|
-| 1 | Foundation — both services on Railway | ✅ In progress |
-| 2 | AI generation engine | ⏳ Planned |
-| 3 | Plugin UI + embed.js | ⏳ Planned |
-| 4 | SaaS billing + org management | ⏳ Planned |
-| 5 | Salla/Zid integrations + launch | ⏳ Planned |

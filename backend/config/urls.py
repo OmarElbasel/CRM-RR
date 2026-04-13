@@ -10,6 +10,13 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('apps.core.urls')),
     path('api/', include('apps.orgs.urls')),
+    path('api/generate/', include('apps.generate.urls')),
+    path('api/auth/', include('apps.embed_auth.urls')),
+    path('api/billing/', include('apps.billing.urls')),
+    path('api/inbox/', include('apps.inbox.urls')),
+    path('api/channels/', include('apps.inbox.channel_urls')),
+    path('api/webhooks/', include('apps.inbox.webhook_urls')),
+    path('api/', include('apps.pipeline.urls')),
     # OpenAPI schema + docs — publicly accessible (Constitution Principle V)
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
