@@ -115,3 +115,50 @@ class ClerkJWTAuthentication(BaseAuthentication):
 
     def authenticate_header(self, request) -> str:
         return 'Bearer realm="Rawaj API"'
+
+
+class PublicKeyAuthenticationScheme(OpenApiAuthenticationExtension):
+    """
+    Registers PublicKeyAuthentication with drf-spectacular so that
+    widget endpoints show the API Key lock icon in Swagger UI.
+    """
+    target_class = 'apps.core.authentication.PublicKeyAuthentication'
+    name = 'PublicAPIKey'
+
+    def get_security_definition(self, auto_schema):
+        return {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'X-API-Key',
+            'description': 'Public API key for widget embed (pk_live_xxx or pk_test_xxx).',
+        }
+
+
+class PublicKeyAuthentication(BaseAuthentication):
+    """
+    DRF authentication class that validates public API keys (pk_xxx).
+    Used by the embedded widget which cannot use Clerk JWT.
+    Sets request.org on successful authentication.
+    """
+
+    def authenticate(self, request):
+        api_key = request.headers.get('X-API-Key', '')
+
+        if not api_key or not api_key.startswith('pk_'):
+            return None  # No API key — let other authenticators try
+
+        from apps.orgs.models import Organization
+        try:
+            org = Organization.objects.get(api_key_public=api_key, is_active=True)
+        except Organization.DoesNotExist:
+            raise AuthenticationFailed({
+                'error': 'Invalid API key',
+                'error_ar': 'مفتاح API غير صالح',
+            })
+
+        request.org = org
+
+        return ({'api_key': api_key, 'org_id': org.clerk_org_id}, api_key)
+
+    def authenticate_header(self, request) -> str:
+        return 'X-API-Key realm="Rawaj Widget"'
