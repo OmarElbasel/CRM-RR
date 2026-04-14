@@ -204,6 +204,19 @@ class StripeWebhookView(APIView):
             stripe_subscription_id=subscription_id or '',
         )
 
+        org = Organization.objects.filter(stripe_customer_id=customer_id).first()
+        if org:
+            try:
+                from apps.core.analytics import capture
+                capture('plan_upgraded', org, {'new_plan': target_plan})
+            except Exception:
+                pass
+            try:
+                from apps.billing.tasks import send_plan_upgrade_confirmation
+                send_plan_upgrade_confirmation.delay(org.pk, target_plan)
+            except Exception:
+                pass
+
     def _handle_subscription_updated(self, subscription):
         """Sync plan on renewal or manual upgrade/downgrade via Stripe Dashboard."""
         from apps.orgs.models import Organization

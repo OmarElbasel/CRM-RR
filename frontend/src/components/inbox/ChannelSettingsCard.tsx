@@ -2,11 +2,11 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { MessageSquare, Camera, MessagesSquare } from 'lucide-react'
+import { MessageSquare, Camera, MessagesSquare, Music2 } from 'lucide-react'
 
 export interface Channel {
   id: number
-  platform: 'INSTAGRAM' | 'WHATSAPP' | 'FACEBOOK'
+  platform: 'INSTAGRAM' | 'WHATSAPP' | 'FACEBOOK' | 'TIKTOK'
   is_active: boolean
   connected_at: string | null
   token_expires_at: string | null
@@ -15,7 +15,7 @@ export interface Channel {
 }
 
 interface ChannelSettingsCardProps {
-  platform: 'INSTAGRAM' | 'WHATSAPP' | 'FACEBOOK'
+  platform: 'INSTAGRAM' | 'WHATSAPP' | 'FACEBOOK' | 'TIKTOK'
   channel?: Channel
   apiUrl: string
   onDisconnect?: (platform: string) => void
@@ -25,6 +25,7 @@ const PLATFORM_CONFIG: Record<string, { label: string; icon: React.ElementType; 
   INSTAGRAM: { label: 'Instagram', icon: Camera, connectSlug: 'instagram' },
   WHATSAPP: { label: 'WhatsApp Business', icon: MessageSquare, connectSlug: 'whatsapp' },
   FACEBOOK: { label: 'Facebook Messenger', icon: MessagesSquare, connectSlug: 'facebook' },
+  TIKTOK: { label: 'TikTok', icon: Music2, connectSlug: 'tiktok' },
 }
 
 export function ChannelSettingsCard({ platform, channel, apiUrl, onDisconnect }: ChannelSettingsCardProps) {

@@ -13,8 +13,10 @@ from pydantic import ValidationError as PydanticValidationError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from apps.core.flags import require_flag
+from apps.core.flags import require_flag, is_enabled
+from apps.core.ratelimit import org_key, rate_limited_response
 from apps.orgs.models import Organization
+from django_ratelimit.decorators import ratelimit
 from .ai_client import get_ai_client
 from .ai_client.exceptions import AIProviderUnavailableError
 from .models import AIUsage
@@ -28,6 +30,7 @@ from .serializers import (
 
 
 @method_decorator(require_flag('AI_GENERATION'), name='dispatch')
+@method_decorator(ratelimit(key=org_key, rate='10/m', method='POST', block=False), name='dispatch')
 class GenerateProductContentView(APIView):
 
     @extend_schema(
@@ -38,6 +41,10 @@ class GenerateProductContentView(APIView):
         description='Accepts product details and returns structured marketing copy in Arabic, English, or bilingual.',
     )
     def post(self, request):
+        # Rate limiting check (Phase 10 — Constitution Principle IV)
+        if is_enabled('RATE_LIMITING') and getattr(request, 'limited', False):
+            return rate_limited_response()
+
         # 1. Deserialize & validate input
         serializer = ProductGenerationInputSerializer(data=request.data)
         if not serializer.is_valid():
@@ -192,9 +199,10 @@ class GenerateProductContentView(APIView):
             success=True,
         )
 
-        # 8. Increment counter atomically
+        # 8. Increment counter and cost atomically
         Organization.objects.filter(pk=request.org.pk).update(
-            generations_used_this_month=F('generations_used_this_month') + 1
+            generations_used_this_month=F('generations_used_this_month') + 1,
+            monthly_cost_usd=F('monthly_cost_usd') + total_cost,
         )
 
         # 9. Return response
@@ -302,7 +310,8 @@ class StreamGenerateView(APIView):
                     success=True,
                 )
                 Organization.objects.filter(pk=org.pk).update(
-                    generations_used_this_month=F('generations_used_this_month') + 1
+                    generations_used_this_month=F('generations_used_this_month') + 1,
+                    monthly_cost_usd=F('monthly_cost_usd') + ai_response.cost_usd,
                 )
 
         # 6. Return StreamingHttpResponse

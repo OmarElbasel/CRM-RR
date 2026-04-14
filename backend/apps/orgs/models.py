@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db import models
 
 
@@ -65,6 +67,29 @@ class Organization(models.Model):
         help_text='Counter incremented atomically via F() after each successful generation.',
     )
 
+    # Phase 10 — USD cost cap (Constitution Principle VI)
+    monthly_cost_cap_usd = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        default=Decimal('10.00'),
+        help_text='Monthly AI spend hard cap in USD. Enterprise default = 500.',
+    )
+    monthly_cost_usd = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        default=Decimal('0.00'),
+        help_text='Accumulated AI cost in USD this month. Incremented atomically after each generation.',
+    )
+    ai_suspended = models.BooleanField(
+        default=False,
+        help_text='Set to True when monthly_cost_usd >= monthly_cost_cap_usd. Cleared on month reset.',
+    )
+    owner_email = models.EmailField(
+        null=True,
+        blank=True,
+        help_text='Primary owner email. Populated from Clerk JWT on first authentication.',
+    )
+
     class Meta:
         verbose_name = 'Organization'
         verbose_name_plural = 'Organizations'
@@ -72,3 +97,40 @@ class Organization(models.Model):
 
     def __str__(self) -> str:
         return f'{self.name} ({self.plan})'
+
+
+class FlaggedOrg(models.Model):
+    """
+    Organizations flagged for manual review due to anomalous message volume.
+    Constitution Principle I — all queries on this model must be scoped via org.
+    """
+
+    STATUS_CHOICES = [
+        ('pending', 'Pending Review'),
+        ('cleared', 'Cleared'),
+        ('suspended', 'Suspended'),
+    ]
+
+    org = models.OneToOneField(
+        Organization,
+        on_delete=models.CASCADE,
+        related_name='abuse_flag',
+    )
+    flagged_at = models.DateTimeField(auto_now_add=True)
+    message_volume_24h = models.IntegerField(
+        help_text='24-hour inbound message count at time of flagging.',
+    )
+    trailing_30d_avg = models.FloatField(
+        help_text='Trailing 30-day daily average at time of flagging.',
+    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    cleared_at = models.DateTimeField(null=True, blank=True)
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = 'Flagged Organization'
+        verbose_name_plural = 'Flagged Organizations'
+        ordering = ['-flagged_at']
+
+    def __str__(self) -> str:
+        return f'{self.org.name} — {self.status}'

@@ -11,14 +11,26 @@ class ProductContentOutput(BaseModel):
 
 
 class ProductGenerationInputSerializer(serializers.Serializer):
-    CATEGORY_CHOICES = ['fashion', 'food', 'electronics', 'beauty', 'home', 'other']
-    TONE_CHOICES = ['professional', 'casual', 'luxury']
-    LANGUAGE_CHOICES = ['ar', 'en', 'bilingual']
+    CATEGORY_CHOICES = [
+        "fashion",
+        "food",
+        "electronics",
+        "beauty",
+        "home",
+        "content",
+        "other",
+    ]
+    TONE_CHOICES = ["professional", "casual", "luxury", "exciting", "informative"]
+    LANGUAGE_CHOICES = ["ar", "en", "bilingual"]
 
     product_name = serializers.CharField(max_length=500)
     category = serializers.ChoiceField(choices=CATEGORY_CHOICES)
-    price = serializers.DecimalField(max_digits=10, decimal_places=2, required=False, allow_null=True)
-    target_audience = serializers.CharField(max_length=255, required=False, allow_blank=True, default='')
+    price = serializers.DecimalField(
+        max_digits=10, decimal_places=2, required=False, allow_null=True
+    )
+    target_audience = serializers.CharField(
+        max_length=255, required=False, allow_blank=True, default=""
+    )
     tone = serializers.ChoiceField(choices=TONE_CHOICES)
     language = serializers.ChoiceField(choices=LANGUAGE_CHOICES)
 

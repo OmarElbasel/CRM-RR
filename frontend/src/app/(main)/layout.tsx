@@ -4,6 +4,7 @@ import '../globals.css'
 import { isEnabled } from '@/lib/flags'
 import { AppShell } from '@/components/layout/AppShell'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { PostHogProvider } from '@/components/providers/PostHogProvider'
 
 export const metadata: Metadata = {
   title: 'Rawaj — AI Product Description Generator',
@@ -37,11 +38,13 @@ export default function RootLayout({
         </head>
         <body className="antialiased">
           <TooltipProvider>
-            {showRedesign ? (
-              <AppShell>{children}</AppShell>
-            ) : (
-              children
-            )}
+            <PostHogProvider>
+              {showRedesign ? (
+                <AppShell>{children}</AppShell>
+              ) : (
+                children
+              )}
+            </PostHogProvider>
           </TooltipProvider>
         </body>
       </html>

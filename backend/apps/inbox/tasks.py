@@ -27,13 +27,13 @@ Keep replies concise (1-3 sentences). Be polite and action-oriented."""
 
 def _publish_redis_event(org_id: int, event_type: str, payload: dict):
     """Publish an event to the org's inbox Redis pub/sub channel."""
-    redis_url = getattr(settings, 'CELERY_BROKER_URL', 'redis://localhost:6379/0')
+    redis_url = getattr(settings, "CELERY_BROKER_URL", "redis://localhost:6379/0")
     r = redis_lib.from_url(redis_url)
-    event = {'event': event_type, **payload}
-    r.publish(f'inbox:{org_id}', json.dumps(event, default=str))
+    event = {"event": event_type, **payload}
+    r.publish(f"inbox:{org_id}", json.dumps(event, default=str))
 
 
-@shared_task(name='apps.inbox.tasks.process_inbox_message', bind=True, max_retries=2)
+@shared_task(name="apps.inbox.tasks.process_inbox_message", bind=True, max_retries=2)
 def process_inbox_message(self, message_id: int):
     """
     Process a new inbound message through the AI pipeline.
@@ -47,16 +47,22 @@ def process_inbox_message(self, message_id: int):
     from apps.generate.models import AIUsage
     from apps.inbox.models import Message, Contact
     from apps.pipeline.services.deals import sync_deal_from_message
-    from apps.pipeline.services.scoring import build_score_prompt, sync_scores, SCORE_SYSTEM_PROMPT
+    from apps.pipeline.services.scoring import (
+        build_score_prompt,
+        sync_scores,
+        SCORE_SYSTEM_PROMPT,
+    )
 
     try:
-        msg = Message.objects.select_related('contact', 'channel').get(pk=message_id)
+        msg = Message.objects.select_related("contact", "channel").get(pk=message_id)
     except Message.DoesNotExist:
-        logger.warning('process_inbox_message: message_id=%s not found', message_id)
+        logger.warning("process_inbox_message: message_id=%s not found", message_id)
         return
 
     if msg.intent is not None:
-        logger.info('process_inbox_message: message_id=%s already processed', message_id)
+        logger.info(
+            "process_inbox_message: message_id=%s already processed", message_id
+        )
         return
 
     org = msg.org
@@ -67,7 +73,9 @@ def process_inbox_message(self, message_id: int):
     score_delta = 0
     try:
         intent_prompt = f'Customer message: "{msg.content}"'
-        intent_response: AIResponse = client.generate(intent_prompt, INTENT_SYSTEM_PROMPT, max_tokens=256)
+        intent_response: AIResponse = client.generate(
+            intent_prompt, INTENT_SYSTEM_PROMPT, max_tokens=256
+        )
 
         # Record AI usage
         AIUsage.objects.create(
@@ -76,49 +84,61 @@ def process_inbox_message(self, message_id: int):
             tokens_in=intent_response.tokens_in,
             tokens_out=intent_response.tokens_out,
             cost_usd=intent_response.cost_usd,
-            language='en',
-            category='other',
-            tone='professional',
+            language="en",
+            category="other",
+            tone="professional",
             cache_hit=False,
             success=True,
         )
 
         # Parse response — retry once on malformed JSON
         raw = intent_response.content.strip()
-        if raw.startswith('```'):
-            lines = raw.split('\n')
-            json_lines = [l for l in lines[1:] if not l.startswith('```')]
-            raw = '\n'.join(json_lines)
+        if raw.startswith("```"):
+            lines = raw.split("\n")
+            json_lines = [l for l in lines[1:] if not l.startswith("```")]
+            raw = "\n".join(json_lines)
 
         try:
             parsed = json.loads(raw)
         except json.JSONDecodeError:
             # Retry once
-            intent_response2 = client.generate(intent_prompt, INTENT_SYSTEM_PROMPT, max_tokens=256)
+            intent_response2 = client.generate(
+                intent_prompt, INTENT_SYSTEM_PROMPT, max_tokens=256
+            )
             raw2 = intent_response2.content.strip()
-            if raw2.startswith('```'):
-                lines2 = raw2.split('\n')
-                json_lines2 = [l for l in lines2[1:] if not l.startswith('```')]
-                raw2 = '\n'.join(json_lines2)
+            if raw2.startswith("```"):
+                lines2 = raw2.split("\n")
+                json_lines2 = [l for l in lines2[1:] if not l.startswith("```")]
+                raw2 = "\n".join(json_lines2)
             parsed = json.loads(raw2)
 
-        valid_intents = {'READY_TO_BUY', 'PRICE_INQUIRY', 'INFO_REQUEST', 'COMPLAINT', 'BROWSING'}
-        intent = parsed.get('intent', 'BROWSING')
+        valid_intents = {
+            "READY_TO_BUY",
+            "PRICE_INQUIRY",
+            "INFO_REQUEST",
+            "COMPLAINT",
+            "BROWSING",
+        }
+        intent = parsed.get("intent", "BROWSING")
         if intent not in valid_intents:
-            intent = 'BROWSING'
-        score_delta = int(parsed.get('score_delta', 0))
+            intent = "BROWSING"
+        score_delta = int(parsed.get("score_delta", 0))
 
     except Exception as exc:
-        logger.error('Intent classification failed for message_id=%s: %s', message_id, exc)
-        intent = 'BROWSING'
+        logger.error(
+            "Intent classification failed for message_id=%s: %s", message_id, exc
+        )
+        intent = "BROWSING"
         score_delta = 0
 
     # Step 2: Bilingual draft generation
-    draft_en = ''
-    draft_ar = ''
+    draft_en = ""
+    draft_ar = ""
     try:
         draft_prompt = f'Customer message: "{msg.content}"\nDetected intent: {intent}'
-        draft_response: AIResponse = client.generate(draft_prompt, DRAFT_SYSTEM_PROMPT, max_tokens=512)
+        draft_response: AIResponse = client.generate(
+            draft_prompt, DRAFT_SYSTEM_PROMPT, max_tokens=512
+        )
 
         AIUsage.objects.create(
             org=org,
@@ -126,31 +146,41 @@ def process_inbox_message(self, message_id: int):
             tokens_in=draft_response.tokens_in,
             tokens_out=draft_response.tokens_out,
             cost_usd=draft_response.cost_usd,
-            language='bilingual',
-            category='other',
-            tone='professional',
+            language="bilingual",
+            category="other",
+            tone="professional",
             cache_hit=False,
             success=True,
         )
 
         raw_draft = draft_response.content.strip()
-        if raw_draft.startswith('```'):
-            lines = raw_draft.split('\n')
-            json_lines = [l for l in lines[1:] if not l.startswith('```')]
-            raw_draft = '\n'.join(json_lines)
+        if raw_draft.startswith("```"):
+            lines = raw_draft.split("\n")
+            json_lines = [l for l in lines[1:] if not l.startswith("```")]
+            raw_draft = "\n".join(json_lines)
 
         draft_data = json.loads(raw_draft)
-        draft_ar = draft_data.get('draft_ar', '')
-        draft_en = draft_data.get('draft_en', '')
+        draft_ar = draft_data.get("draft_ar", "")
+        draft_en = draft_data.get("draft_en", "")
 
     except Exception as exc:
-        logger.error('Draft generation failed for message_id=%s: %s', message_id, exc)
+        logger.error("Draft generation failed for message_id=%s: %s", message_id, exc)
 
     # Step 3: Update message
     msg.intent = intent
     msg.ai_draft = draft_en
     msg.ai_draft_ar = draft_ar
-    msg.save(update_fields=['intent', 'ai_draft', 'ai_draft_ar'])
+    msg.save(update_fields=["intent", "ai_draft", "ai_draft_ar"])
+
+    # Phase 10 — Fire message_received PostHog event
+    try:
+        from apps.core.analytics import capture
+        capture('message_received', org, {
+            'intent': intent,
+            'platform': msg.channel.platform if msg.channel else None,
+        })
+    except Exception:
+        pass
 
     # Step 4: Auto-create or update pipeline deal
     contact = msg.contact
@@ -158,22 +188,33 @@ def process_inbox_message(self, message_id: int):
     try:
         deal = sync_deal_from_message(org, contact, msg)
     except Exception as exc:
-        logger.error('Deal sync failed for message_id=%s: %s', message_id, exc)
+        logger.error("Deal sync failed for message_id=%s: %s", message_id, exc)
 
     # Step 5: Absolute AI lead scoring (Phase 6 upgrade — replaces score delta)
     new_score = contact.ai_score  # preserve existing on failure
     try:
         engagement_count = Message.objects.filter(contact=contact, org=org).count()
-        last_merchant_msg = Message.objects.filter(
-            contact=contact, org=org, direction='OUTBOUND',
-        ).order_by('-sent_at').first()
+        last_merchant_msg = (
+            Message.objects.filter(
+                contact=contact,
+                org=org,
+                direction="OUTBOUND",
+            )
+            .order_by("-sent_at")
+            .first()
+        )
         lag_hours = 0
         if last_merchant_msg and last_merchant_msg.sent_at:
             from django.utils import timezone
-            lag_hours = int((timezone.now() - last_merchant_msg.sent_at).total_seconds() / 3600)
+
+            lag_hours = int(
+                (timezone.now() - last_merchant_msg.sent_at).total_seconds() / 3600
+            )
 
         score_prompt = build_score_prompt(contact, msg, engagement_count, lag_hours)
-        score_response: AIResponse = client.generate(score_prompt, SCORE_SYSTEM_PROMPT, max_tokens=256)
+        score_response: AIResponse = client.generate(
+            score_prompt, SCORE_SYSTEM_PROMPT, max_tokens=256
+        )
 
         AIUsage.objects.create(
             org=org,
@@ -181,40 +222,49 @@ def process_inbox_message(self, message_id: int):
             tokens_in=score_response.tokens_in,
             tokens_out=score_response.tokens_out,
             cost_usd=score_response.cost_usd,
-            language='en',
-            category='other',
-            tone='professional',
+            language="en",
+            category="other",
+            tone="professional",
             cache_hit=False,
             success=True,
         )
 
         raw_score = score_response.content.strip()
-        if raw_score.startswith('```'):
-            lines_s = raw_score.split('\n')
-            json_lines_s = [l for l in lines_s[1:] if not l.startswith('```')]
-            raw_score = '\n'.join(json_lines_s)
+        if raw_score.startswith("```"):
+            lines_s = raw_score.split("\n")
+            json_lines_s = [l for l in lines_s[1:] if not l.startswith("```")]
+            raw_score = "\n".join(json_lines_s)
         score_data = json.loads(raw_score)
-        new_score = int(score_data.get('score', contact.ai_score))
+        new_score = int(score_data.get("score", contact.ai_score))
         new_score = sync_scores(contact, deal, new_score)
     except Exception as exc:
-        logger.error('AI scoring failed for message_id=%s: %s', message_id, exc)
+        logger.error("AI scoring failed for message_id=%s: %s", message_id, exc)
         # Preserve existing score on failure — no provider call
         if score_delta:
             new_score = max(0, min(100, contact.ai_score + score_delta))
             Contact.objects.filter(pk=contact.pk).update(ai_score=new_score)
 
     # Step 6: Publish message_updated event
-    _publish_redis_event(org.pk, 'message_updated', {
-        'message_id': msg.pk,
-        'contact_id': msg.contact_id,
-        'intent': intent,
-        'ai_score': new_score,
-    })
+    _publish_redis_event(
+        org.pk,
+        "message_updated",
+        {
+            "message_id": msg.pk,
+            "contact_id": msg.contact_id,
+            "intent": intent,
+            "ai_score": new_score,
+        },
+    )
 
-    logger.info('process_inbox_message completed: message_id=%s intent=%s score=%d', message_id, intent, new_score)
+    logger.info(
+        "process_inbox_message completed: message_id=%s intent=%s score=%d",
+        message_id,
+        intent,
+        new_score,
+    )
 
 
-@shared_task(name='apps.inbox.tasks.refresh_meta_tokens', bind=True, max_retries=3)
+@shared_task(name="apps.inbox.tasks.refresh_meta_tokens", bind=True, max_retries=3)
 def refresh_meta_tokens(self):
     """
     Refresh expiring Meta access tokens for active channels.
@@ -233,7 +283,7 @@ def refresh_meta_tokens(self):
     )
 
     if not channels.exists():
-        logger.info('refresh_meta_tokens: no tokens expiring soon')
+        logger.info("refresh_meta_tokens: no tokens expiring soon")
         return
 
     meta = MetaClient()
@@ -251,14 +301,62 @@ def refresh_meta_tokens(self):
             )
             channel.access_token = fernet.encrypt(new_token.encode())
             # 3-day buffer per research.md Decision 4
-            channel.token_expires_at = timezone.now() + timedelta(seconds=expires_in) - timedelta(days=3)
-            channel.save(update_fields=['access_token', 'token_expires_at'])
+            channel.token_expires_at = (
+                timezone.now() + timedelta(seconds=expires_in) - timedelta(days=3)
+            )
+            channel.save(update_fields=["access_token", "token_expires_at"])
             refreshed += 1
         except MetaClientError as exc:
-            logger.error('Token refresh failed for channel=%s: %s', channel.pk, exc)
+            logger.error("Token refresh failed for channel=%s: %s", channel.pk, exc)
             failed += 1
         except Exception as exc:
-            logger.error('Unexpected error refreshing channel=%s: %s', channel.pk, exc)
+            logger.error("Unexpected error refreshing channel=%s: %s", channel.pk, exc)
             failed += 1
 
-    logger.info('refresh_meta_tokens completed: refreshed=%d failed=%d', refreshed, failed)
+    logger.info(
+        "refresh_meta_tokens completed: refreshed=%d failed=%d", refreshed, failed
+    )
+
+
+@shared_task(name="apps.inbox.tasks.sync_tiktok_comments", bind=True, max_retries=3)
+def sync_tiktok_comments(self):
+    from apps.inbox.models import SocialChannel, Contact, Message
+    from apps.inbox.services.tiktok import TikTokClient, TikTokClientError
+
+    channels = SocialChannel.objects.filter(platform="TIKTOK", is_active=True)
+    for channel in channels:
+        try:
+            comments = TikTokClient().list_recent_comments(channel)
+        except TikTokClientError as exc:
+            logger.error("TikTok sync failed channel=%s: %s", channel.pk, exc)
+            try:
+                TikTokClient().refresh_access_token(channel)
+            except TikTokClientError:
+                pass
+            continue
+
+        new_count = 0
+        for c in comments:
+            contact, _ = Contact.objects.get_or_create(
+                org=channel.org,
+                platform="TIKTOK",
+                platform_id=c["author_open_id"],
+                defaults={"name": c.get("author_name", "")},
+            )
+            msg, created = Message.objects.get_or_create(
+                platform="TIKTOK",
+                platform_msg_id=f"{c['video_id']}:{c['comment_id']}",
+                defaults=dict(
+                    org=channel.org,
+                    contact=contact,
+                    channel=channel,
+                    direction="INBOUND",
+                    content=c["text"],
+                    sent_at=c["created_at"],
+                ),
+            )
+            if created:
+                new_count += 1
+                process_inbox_message.delay(msg.id)
+
+        logger.info("sync_tiktok_comments channel=%s new=%d", channel.pk, new_count)

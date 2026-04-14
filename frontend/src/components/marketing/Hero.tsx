@@ -1,79 +1,73 @@
-'use client'
-// Hero section — premium dark design
-// Background: dark mesh gradient (from-slate-900 via-indigo-950 to-slate-900)
-// Two large blurred orbs for depth
-// Eyebrow badge with Sparkles icon
-// Large display headline with gradient text on "Gulf Commerce"
-// Sub-headline in gray-300
-// Two CTA buttons: primary white + ghost outline
-// Social proof stat row (3 stats) below CTAs
-
-import Link from 'next/link'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import Link from 'next/link';
+import { ArrowRight, TrendingUp } from 'lucide-react';
+import Image from 'next/image';
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900">
-      {/* Orb 1 */}
-      <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
-      {/* Orb 2 */}
-      <div className="absolute -bottom-20 -left-40 w-[500px] h-[500px] bg-purple-500/15 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="relative z-10 max-w-5xl mx-auto px-6 py-24 lg:py-36 text-center">
-        {/* Eyebrow badge */}
-        <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-4 py-1.5 text-indigo-300 text-sm font-medium mb-6">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>AI-Powered for Gulf Commerce</span>
-        </div>
-
-        {/* Headline */}
-        <h1 className="font-display font-bold text-5xl lg:text-7xl text-white leading-tight tracking-tight mb-6">
-          AI Product Descriptions
-          <br />
-          <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-            for Gulf Commerce
+    <section className="relative pt-20 pb-32 overflow-hidden bg-[#faf8ff]">
+      <div className="max-w-7xl mx-auto px-8 grid lg:grid-cols-2 gap-16 items-center">
+        <div className="z-10 animate-slide-up">
+          <span className="inline-block bg-[#bfb9ff] text-[#35279b] px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase mb-6">
+            Built for the Gulf Region
           </span>
-        </h1>
-
-        {/* Sub-headline */}
-        <p className="text-gray-300 text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed mb-10">
-          Generate compelling product titles and descriptions in Arabic and English.
-          Built for Shopify, Salla, and Zid merchants across the Gulf region.
-        </p>
-
-        {/* CTA group */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link
-            href="/sign-up"
-            className="inline-flex items-center gap-2 bg-white text-indigo-700 hover:bg-indigo-50 transition-colors duration-150 rounded-xl px-8 py-4 text-base font-semibold cursor-pointer"
-          >
-            Start for free
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-          <Link
-            href="#pricing"
-            className="inline-flex items-center gap-2 border border-white/20 text-white hover:bg-white/10 transition-colors duration-150 rounded-xl px-8 py-4 text-base font-medium cursor-pointer"
-          >
-            View pricing
-          </Link>
+          <h1 className="text-6xl md:text-7xl font-extrabold tracking-tight text-[#213156] mb-8 leading-[1.1]">
+            Supercharge Your <span className="text-[#594fbf]">Gulf E-Commerce</span> Store with AI
+          </h1>
+          <p className="text-xl text-[#4f5e86] font-medium leading-relaxed mb-10 max-w-xl">
+            The Digital Majlis for growth. Automate Gulf Arabic descriptions, manage unified messages, and recover abandoned carts with intelligence built for Salla, Zid, and Shopify.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Link
+              href="/sign-up"
+              className="bg-[#594fbf] text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:opacity-90 transition-all flex items-center justify-center gap-2 group"
+            >
+              Start for Free
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="/#how-it-works"
+              className="bg-[#d9e2ff] text-[#213156] px-8 py-4 rounded-xl font-bold text-lg hover:bg-[#e2e7ff] transition-all flex items-center justify-center gap-2"
+            >
+              See How It Works
+            </Link>
+          </div>
+          <div className="mt-12 flex items-center gap-6 opacity-60 grayscale hover:grayscale-0 transition-all">
+            <img
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7osIKbYdTz72ASLX9jUhDVGpsADurD36jXmFzpzX-eagMKhBfYhRUkTGgN9l61wP-1-XvPPuMRtQxsmLtxgGv_z3T6vPaxvUpp3moX87CIYDJXlqKTPD1Gtq6Tl_E_COmrVSsfysK38EC9Ixn6HYMRHFbsQ9M1cOrwNECChvcb71iasktKGEDTyEgsYfsokPZzeKkM1hdifIkjscZLMUD7l6R7pyuJMIzKeyKG2KY6eVz5EX4JBwQOtO7ub4rypo6UUJqw4zGTxoa"
+              alt="Shopify"
+              className="h-6 w-auto"
+            />
+            <img
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4NylBlBrReW31O75ZQmsEwTnDy-k5uWzDoVRXVYzZnjm25jDYfXoq0TBaHgoIKP0cuogHHUMB2ynm3y5AQ2o08lvsRlTD8W87iRO8yt4eHI8M5FxRO0v1_nDwJ0zy9c_aNGgyDlR4Pyjb9xK1i1wAeSHMGawvDtgiNPR6v9TB-A5IKxnTYWq4lPyApNs-1ySPIQXnLgfBpFDwnWUmDPdTWhbQqqH_yZvVZW4abyTGDq0qElBV6F2gm__Cv3ViWmZsfsYHJLCj6Y_e"
+              alt="WhatsApp"
+              className="h-6 w-auto"
+            />
+            <span className="text-xl font-black text-[#213156]">Salla</span>
+            <span className="text-xl font-black text-[#213156]">Zid</span>
+          </div>
         </div>
-
-        {/* Stat row */}
-        <div className="mt-16 grid grid-cols-3 gap-8 border-t border-white/10 pt-10 max-w-2xl mx-auto">
-          <div>
-            <p className="text-3xl font-display font-bold text-white">500+</p>
-            <p className="text-gray-400 text-sm mt-1">Merchants</p>
-          </div>
-          <div>
-            <p className="text-3xl font-display font-bold text-white">3</p>
-            <p className="text-gray-400 text-sm mt-1">Languages</p>
-          </div>
-          <div>
-            <p className="text-3xl font-display font-bold text-white">1-Line</p>
-            <p className="text-gray-400 text-sm mt-1">Install</p>
+        <div className="relative animate-fade-in">
+          <div className="absolute -top-24 -right-24 w-96 h-96 bg-[#594fbf]/10 rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#26fedc]/20 rounded-full blur-3xl"></div>
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-white p-4 border border-[#a2b1dd]/10">
+            <img
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrBc5HX5svp7qC7XUyK25q4h4HinZK-sagvIOzjh1D57EQtv6kLq-x1WOlR-lL-cNYnqaRMqVBXyWqRNo695Hm0fDMSxEKWT4DSCr4-lHEA5PD_i3WB1MynSZsHPrVv-Q90NWmlazGvJC3VP-97gU_nlNV_5eF_0Ty_8VFF0aFaPC536rHw1qNbo_6V6dn2lxsvlE7MIh6oipO8YBKvqD682nDLmOEHXCgOer_QqyPwQg5Qoim_b_I1gC2Tn-SRFEszIY0PcCkFLxz"
+              alt="Dashboard Preview"
+              className="w-full h-auto rounded-2xl"
+            />
+            <div className="absolute bottom-12 -left-8 bg-white p-6 rounded-2xl shadow-xl border border-[#a2b1dd]/20 max-w-[240px] animate-slide-up">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-full bg-[#26fedc] flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-[#00483d]" />
+                </div>
+                <span className="font-bold text-sm">Revenue Engine</span>
+              </div>
+              <div className="text-2xl font-black text-[#594fbf]">+127%</div>
+              <div className="text-[10px] text-[#4f5e86] font-bold uppercase tracking-widest">Growth this month</div>
+            </div>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
