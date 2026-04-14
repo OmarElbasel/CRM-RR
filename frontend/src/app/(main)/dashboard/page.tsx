@@ -22,7 +22,21 @@ interface UsageData {
   reset_date: string
 }
 
+const DUMMY_USAGE: UsageData = {
+  plan: 'pro',
+  generations_used: 847,
+  generations_limit: 2000,
+  tokens_in: 412300,
+  tokens_out: 198700,
+  cost_usd: 12.45,
+  cost_qar: 45.32,
+  cost_sar: 46.69,
+  api_key_public: 'pk_live_demo_xxxxxxxxxxxx',
+  reset_date: 'May 1, 2026',
+}
+
 async function fetchUsage(token: string): Promise<UsageData | null> {
+  if (process.env.NEXT_PUBLIC_USE_DUMMY_DATA === 'true') return DUMMY_USAGE
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/org/usage/`, {
       headers: { Authorization: `Bearer ${token}` },

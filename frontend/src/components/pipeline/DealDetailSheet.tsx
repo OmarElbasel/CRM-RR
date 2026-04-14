@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/sheet'
 import { DealTaskList } from './DealTaskList'
 import { Badge } from '@/components/ui/badge'
+import { DUMMY_DEAL_DETAILS } from '@/lib/dummy/pipeline'
 
 interface DealDetail {
   id: number
@@ -75,6 +76,10 @@ export function DealDetailSheet({ dealId, open, onOpenChange, apiUrl, onUpdate }
     if (!dealId) return
     setLoading(true)
     try {
+      if (process.env.NEXT_PUBLIC_USE_DUMMY_DATA === 'true') {
+        setDeal((DUMMY_DEAL_DETAILS[dealId] as DealDetail) ?? null)
+        return
+      }
       const res = await fetch(`${apiUrl}/api/deals/${dealId}/`, {
         credentials: 'include',
       })

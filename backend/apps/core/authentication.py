@@ -94,16 +94,33 @@ class ClerkJWTAuthentication(BaseAuthentication):
 
         # Look up the Organization (Constitution Principle I)
         from apps.orgs.models import Organization  # import here to avoid circular import
-        try:
-            org = Organization.objects.get(clerk_org_id=clerk_org_id, is_active=True)
-        except Organization.DoesNotExist:
-            raise AuthenticationFailed({
-                'error': 'Organization not found or is inactive.',
-                'error_ar': 'المنظمة غير موجودة أو غير نشطة.',
-            })
+        org, created = Organization.objects.get_or_create(
+            clerk_org_id=clerk_org_id,
+            defaults={'name': claims.get('org', clerk_org_id), 'is_active': True}
+        )
+        
+        email_claim = claims.get('email', '')
+        if email_claim and email_claim != org.owner_email:
+            Organization.objects.filter(pk=org.pk).update(owner_email=email_claim)
+            org.owner_email = email_claim
+
+        if created:
+            try:
+                from apps.billing.tasks import send_welcome_email
+                send_welcome_email.delay(org.pk)
+            except Exception:
+                pass
 
         # Attach org to request — views use request.org to scope queries
         request.org = org
+
+        # Phase 10 — Tag Sentry scope with org plan for error grouping (FR-002)
+        try:
+            import sentry_sdk
+            sentry_sdk.set_tag('org.plan', org.plan)
+            sentry_sdk.set_tag('org.id', str(org.pk))
+        except Exception:
+            pass
 
         # Return (user representation, raw token)
         user_repr = {

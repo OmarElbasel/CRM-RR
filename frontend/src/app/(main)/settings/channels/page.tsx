@@ -5,9 +5,11 @@ import { useSearchParams } from 'next/navigation'
 import { useAuth } from '@clerk/nextjs'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { ChannelSettingsCard, type Channel } from '@/components/inbox/ChannelSettingsCard'
+import { isEnabled } from '@/lib/flags'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 const ALL_PLATFORMS = ['INSTAGRAM', 'WHATSAPP', 'FACEBOOK'] as const
+const TIKTOK_PLATFORM = 'TIKTOK' as const
 
 export default function ChannelsPage() {
   const { getToken } = useAuth()
@@ -100,6 +102,18 @@ export default function ChannelsPage() {
               />
             )
           })}
+          {isEnabled('TIKTOK_INBOX') && (() => {
+            const channel = channels.find((c) => c.platform === TIKTOK_PLATFORM)
+            return (
+              <ChannelSettingsCard
+                key={TIKTOK_PLATFORM}
+                platform={TIKTOK_PLATFORM}
+                channel={channel}
+                apiUrl={API_URL}
+                onDisconnect={handleDisconnect}
+              />
+            )
+          })()}
         </div>
       )}
     </>

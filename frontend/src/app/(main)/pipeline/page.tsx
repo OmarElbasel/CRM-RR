@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import posthog from 'posthog-js'
 import { GitBranch } from 'lucide-react'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { PlaceholderFeature } from '@/components/ui/PlaceholderFeature'
@@ -10,6 +11,7 @@ import { DealDetailSheet } from '@/components/pipeline/DealDetailSheet'
 import { PipelineFilters, EMPTY_FILTERS, type FilterValues } from '@/components/pipeline/PipelineFilters'
 import { isEnabled } from '@/lib/flags'
 import type { DealData } from '@/components/pipeline/DealCard'
+import { DUMMY_PIPELINE_DATA } from '@/lib/dummy/pipeline'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -21,9 +23,17 @@ export default function PipelinePage() {
   const [selectedDealId, setSelectedDealId] = useState<number | null>(null)
   const [detailOpen, setDetailOpen] = useState(false)
 
+  useEffect(() => {
+    posthog.capture('pipeline_viewed')
+  }, [])
+
   const fetchPipeline = useCallback(async () => {
     setLoading(true)
     try {
+      if (process.env.NEXT_PUBLIC_USE_DUMMY_DATA === 'true') {
+        setData(DUMMY_PIPELINE_DATA)
+        return
+      }
       const params = new URLSearchParams()
       if (filters.platform) params.set('platform', filters.platform)
       if (filters.assignee) params.set('assignee', filters.assignee)

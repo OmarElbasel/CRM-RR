@@ -22,6 +22,36 @@ class TokenBudgetMiddleware:
         if org.plan == 'enterprise':
             return self.get_response(request)
 
+        # Phase 10 — Enforce monthly USD cost cap (Constitution Principle VI)
+        if is_enabled('COST_CAP_USD'):
+            if org.ai_suspended:
+                return JsonResponse(
+                    {
+                        'error': 'Monthly AI cost cap reached. AI access suspended until next month.',
+                        'error_ar': 'تم تجاوز حد التكلفة الشهري للذكاء الاصطناعي. تم تعليق الوصول حتى الشهر القادم.',
+                        'code': 'COST_CAP_EXCEEDED',
+                        'upgrade_url': '/dashboard',
+                    },
+                    status=429,
+                )
+            if org.monthly_cost_usd >= org.monthly_cost_cap_usd:
+                # Mark org as suspended and trigger alert email asynchronously
+                Organization.objects.filter(pk=org.pk).update(ai_suspended=True)
+                try:
+                    from apps.billing.tasks import send_cost_cap_alert
+                    send_cost_cap_alert.delay(org.pk)
+                except Exception:
+                    pass
+                return JsonResponse(
+                    {
+                        'error': 'Monthly AI cost cap reached. AI access suspended until next month.',
+                        'error_ar': 'تم تجاوز حد التكلفة الشهري للذكاء الاصطناعي. تم تعليق الوصول حتى الشهر القادم.',
+                        'code': 'COST_CAP_EXCEEDED',
+                        'upgrade_url': '/dashboard',
+                    },
+                    status=429,
+                )
+
         # Enforce monthly generation limit for all other plans
         if org.generations_used_this_month >= org.monthly_generation_limit:
             return JsonResponse(

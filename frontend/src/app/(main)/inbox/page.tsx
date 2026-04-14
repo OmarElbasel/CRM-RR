@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { redirect } from 'next/navigation'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { InboxList } from '@/components/inbox/InboxList'
 import { isEnabled } from '@/lib/flags'
+import posthog from 'posthog-js'
 
 export default function InboxPage() {
   const [filters, setFilters] = useState<{
@@ -12,6 +13,10 @@ export default function InboxPage() {
     intent?: string
     unread?: boolean
   }>({})
+
+  useEffect(() => {
+    posthog.capture('inbox_opened')
+  }, [])
 
   if (!isEnabled('INBOX')) {
     redirect('/dashboard')
