@@ -5,6 +5,7 @@ import requests
 from cryptography.fernet import Fernet
 from django.conf import settings
 from django.utils import timezone
+from apps.core.platform_credentials import get_credential
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +30,7 @@ class TikTokClient:
 
         redirect_uri = f"{settings.BACKEND_BASE_URL}/api/channels/callback/tiktok/"
         params = {
-            "client_key": settings.TIKTOK_CLIENT_KEY,
+            "client_key": get_credential("TIKTOK", "app_id"),
             "redirect_uri": redirect_uri,
             "scope": "user.info.basic,video.list,video.comment.list,video.comment.reply.create,video.upload",
             "state": state,
@@ -46,8 +47,8 @@ class TikTokClient:
             resp = requests.post(
                 f"{self.BASE_URL}/oauth/token/",
                 json={
-                    "client_key": settings.TIKTOK_CLIENT_KEY,
-                    "client_secret": settings.TIKTOK_CLIENT_SECRET,
+                    "client_key": get_credential("TIKTOK", "app_id"),
+                    "client_secret": get_credential("TIKTOK", "app_secret"),
                     "code": code,
                     "grant_type": "authorization_code",
                     "redirect_uri": redirect_uri,
@@ -83,8 +84,8 @@ class TikTokClient:
             resp = requests.post(
                 f"{self.BASE_URL}/oauth/token/",
                 json={
-                    "client_key": settings.TIKTOK_CLIENT_KEY,
-                    "client_secret": settings.TIKTOK_CLIENT_SECRET,
+                    "client_key": get_credential("TIKTOK", "app_id"),
+                    "client_secret": get_credential("TIKTOK", "app_secret"),
                     "grant_type": "refresh_token",
                     "refresh_token": fernet.decrypt(
                         bytes(channel.access_token)

@@ -1,9 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Check, Plus, Circle } from 'lucide-react'
 
 interface DealTaskData {
   id: number
@@ -55,54 +53,66 @@ export function DealTaskList({ dealId, tasks, apiUrl, onUpdate }: DealTaskListPr
   }
 
   return (
-    <div>
-      <h4 className="text-sm font-semibold text-gray-700 mb-2">Tasks</h4>
+    <div className="space-y-6">
+      <div className="flex items-center gap-2 mb-2">
+        <span className="material-symbols-outlined text-secondary text-[20px]">assignment</span>
+        <h3 className="text-sm font-black font-headline uppercase tracking-widest text-on-surface">Precision Task List</h3>
+      </div>
 
-      <div className="space-y-1 mb-3">
+      <div className="space-y-2">
         {tasks.map((task) => {
           const isComplete = !!task.completed_at
           return (
             <div
               key={task.id}
-              className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 group"
+              className="flex items-center gap-4 p-4 rounded-2xl bg-surface-container-low border border-outline-variant/30 hover:border-primary/30 transition-all group"
             >
               <button
                 onClick={() => toggleTask(task.id, isComplete)}
-                className="flex-shrink-0"
+                className="flex-shrink-0 flex items-center justify-center"
               >
                 {isComplete ? (
-                  <Check className="w-4 h-4 text-green-500" />
+                  <span className="material-symbols-outlined text-primary text-[24px]">check_circle</span>
                 ) : (
-                  <Circle className="w-4 h-4 text-gray-300 group-hover:text-gray-400" />
+                  <span className="material-symbols-outlined text-outline-variant text-[24px] group-hover:text-primary transition-colors">radio_button_unchecked</span>
                 )}
               </button>
-              <span className={`text-sm flex-1 ${isComplete ? 'line-through text-gray-400' : 'text-gray-700'}`}>
-                {task.title}
-              </span>
-              {task.due_at && (
-                <span className="text-[10px] text-gray-400">
-                  {new Date(task.due_at).toLocaleDateString()}
-                </span>
-              )}
+              <div className="flex-1 min-w-0">
+                <p className={`text-sm font-bold truncate ${isComplete ? 'line-through text-on-surface-variant' : 'text-on-surface'}`}>
+                  {task.title}
+                </p>
+                {task.due_at && (
+                  <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mt-0.5">
+                    Due {new Date(task.due_at).toLocaleDateString()}
+                  </p>
+                )}
+              </div>
             </div>
           )
         })}
         {tasks.length === 0 && (
-          <p className="text-xs text-gray-400 py-2">No tasks yet</p>
+          <div className="text-center py-6 border-2 border-dashed border-outline-variant rounded-3xl">
+            <p className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest">No Active Tasks</p>
+          </div>
         )}
       </div>
 
-      <div className="flex gap-2">
-        <Input
-          placeholder="Add a task..."
+      <div className="flex items-center gap-3 bg-surface-container rounded-2xl p-3 border border-outline-variant/30">
+        <span className="material-symbols-outlined text-on-secondary-container/50 ml-2">add_task</span>
+        <input
+          placeholder="Provision a new task..."
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && addTask()}
-          className="text-sm"
+          className="flex-1 bg-transparent border-none outline-none text-sm font-bold text-on-surface placeholder:text-on-surface-variant/50 h-10"
         />
-        <Button size="sm" variant="outline" onClick={addTask} disabled={loading}>
-          <Plus className="w-4 h-4" />
-        </Button>
+        <button 
+          onClick={addTask} 
+          disabled={loading || !newTitle.trim()}
+          className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/20 hover:bg-primary-dim disabled:opacity-50 disabled:shadow-none transition-all"
+        >
+          <span className="material-symbols-outlined text-[20px]">send</span>
+        </button>
       </div>
     </div>
   )

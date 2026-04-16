@@ -22,6 +22,7 @@ urlpatterns = [
     path("api/webhooks/", include("apps.shopify.webhook_urls")),
     path("api/content/", include("apps.content.urls")),
     path("api/scheduler/", include("apps.scheduler.urls")),
+    path("api/admin/", include("apps.admin_panel.urls")),
     # OpenAPI schema + docs — publicly accessible (Constitution Principle V)
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(

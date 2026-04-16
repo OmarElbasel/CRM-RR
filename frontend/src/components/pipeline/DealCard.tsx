@@ -33,67 +33,72 @@ interface DealCardProps {
   deal: DealData
   onClick?: (deal: DealData) => void
   isDragOverlay?: boolean
+  stage?: string
 }
 
-export function DealCard({ deal, onClick, isDragOverlay }: DealCardProps) {
+const PLATFORM_ICONS: Record<string, string> = {
+  INSTAGRAM: 'retweet',
+  TIKTOK: 'youtube_trending',
+  SNAPCHAT: 'swipe',
+  WHATSAPP: 'forum',
+  FACEBOOK: 'send',
+}
+
+const PRIORITY_STYLES: Record<string, { label: string; className: string }> = {
+  HIGH: { label: 'High Priority', className: 'bg-secondary-container text-on-secondary-container' },
+  MEDIUM: { label: 'Med Priority', className: 'bg-surface-container text-on-surface-variant' },
+  LOW: { label: 'Low Priority', className: 'bg-error-container text-on-error-container' },
+  URGENT: { label: 'Urgent', className: 'bg-error text-white' },
+}
+
+export function DealCard({ deal, onClick, isDragOverlay, stage }: DealCardProps) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: deal.id,
   })
+
+  const isPaid = stage === 'PAID'
+  const isLost = stage === 'LOST'
+
+  const cardBaseStyles = isPaid 
+    ? 'bg-emerald-50/20 border-emerald-200/30' 
+    : isLost 
+    ? 'bg-slate-50 border-slate-200 opacity-60 grayscale cursor-not-allowed' 
+    : 'bg-white border-slate-100 hover:shadow-md cursor-grab active:cursor-grabbing group transition-all shadow-sm'
+
+  const priority = PRIORITY_STYLES[deal.priority] || PRIORITY_STYLES.MEDIUM
 
   return (
     <div
       ref={!isDragOverlay ? setNodeRef : undefined}
       {...(!isDragOverlay ? { ...listeners, ...attributes } : {})}
-      className={isDragging ? 'opacity-40' : ''}
+      className={`${isDragging ? 'opacity-40' : ''}`}
+      onClick={() => !isLost && onClick?.(deal)}
     >
-    <Card
-      className="rounded-xl shadow-sm cursor-pointer hover:shadow-md transition-shadow mb-2"
-      onClick={() => onClick?.(deal)}
-    >
-      <CardContent className="p-3">
-        <div className="flex items-start justify-between gap-2 mb-1.5">
-          <h3 className="text-sm font-medium text-gray-900 truncate flex-1">{deal.title}</h3>
-          {deal.has_unread_alert && (
-            <span className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0 mt-1" />
-          )}
+      <div className={`p-4 rounded-lg border ${cardBaseStyles}`}>
+        <div className="flex justify-between items-start mb-3">
+          <span className={`text-[10px] font-bold py-0.5 px-2 rounded ${isPaid ? 'bg-indigo-50 text-indigo-600' : isLost ? 'bg-slate-100 text-slate-400' : 'bg-indigo-50 text-indigo-600'}`}>
+            #{deal.id}
+          </span>
+          <span 
+            className={`material-symbols-outlined text-sm ${isPaid ? 'text-secondary-dim' : isLost ? 'text-error' : PLATFORM_COLORS[deal.contact?.platform || '']?.includes('green') ? 'text-green-600' : 'text-emerald-600'}`}
+          >
+            {isPaid ? 'check_circle' : isLost ? 'cancel' : (PLATFORM_ICONS[deal.contact?.platform || ''] === 'forum' ? 'chat' : 'shopping_bag')}
+          </span>
         </div>
 
-        {deal.contact && (
-          <div className="flex items-center gap-1.5 mb-1.5">
-            <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${PLATFORM_COLORS[deal.contact.platform] || 'bg-gray-100 text-gray-600'}`}>
-              {deal.contact.platform}
-            </span>
-            <span className="text-xs text-gray-500 truncate">{deal.contact.name}</span>
-          </div>
-        )}
+        <p className={`text-sm font-bold mb-1 ${isLost ? 'text-slate-500' : 'text-slate-900'}`}>
+          {deal.contact?.name || 'Anonymous'}
+        </p>
 
-        {deal.latest_message_preview && (
-          <p className="text-xs text-gray-400 truncate mb-2">{deal.latest_message_preview}</p>
-        )}
-
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium ${PRIORITY_COLORS[deal.priority] || 'bg-gray-100 text-gray-600'}`}>
-              {deal.priority}
-            </span>
-            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-indigo-50 text-indigo-600">
-              Score: {deal.ai_score}
-            </span>
-          </div>
-          {deal.value && (
-            <span className="text-xs font-medium text-gray-700">
-              {deal.value} QAR
-            </span>
-          )}
+        <div className="flex justify-between items-center mt-4">
+          <span className="text-xs text-slate-500">
+            {deal.title.length > 20 ? deal.title.substring(0, 17) + '...' : deal.title}
+          </span>
+          <span className={`font-bold ${isLost ? 'text-slate-400' : 'text-slate-900'}`}>
+            SAR {deal.value || '0.00'}
+          </span>
         </div>
-
-        {deal.assigned_to?.name && (
-          <div className="mt-1.5 text-[10px] text-gray-400">
-            Assigned to {deal.assigned_to.name}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      </div>
     </div>
   )
 }

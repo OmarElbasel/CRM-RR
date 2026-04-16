@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import '../globals.css';
+import { SmoothScrollProvider } from '@/components/providers/SmoothScrollProvider';
 
 export const metadata: Metadata = {
   title: 'Rawaj AI — Supercharge Your Gulf E-Commerce',
@@ -23,7 +24,9 @@ export default function MarketingLayout({
         />
       </head>
       <body className="antialiased font-body bg-[#faf8ff] text-[#213156]">
-        {children}
+        <SmoothScrollProvider>
+          {children}
+        </SmoothScrollProvider>
       </body>
     </html>
   );

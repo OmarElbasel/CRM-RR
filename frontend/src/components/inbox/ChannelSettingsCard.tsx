@@ -1,5 +1,6 @@
 'use client'
 
+import { useAuth } from '@clerk/nextjs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { MessageSquare, Camera, MessagesSquare, Music2 } from 'lucide-react'
@@ -32,9 +33,21 @@ export function ChannelSettingsCard({ platform, channel, apiUrl, onDisconnect }:
   const config = PLATFORM_CONFIG[platform]
   const Icon = config.icon
   const isConnected = channel?.is_active ?? false
+  const { getToken } = useAuth()
 
-  const handleConnect = () => {
-    window.location.href = `${apiUrl}/api/channels/connect/${config.connectSlug}/`
+  const handleConnect = async () => {
+    try {
+      const token = await getToken()
+      const res = await fetch(`${apiUrl}/api/channels/connect/${config.connectSlug}/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (res.ok) {
+        const data = await res.json()
+        window.location.href = data.url
+      }
+    } catch {
+      // silently fail
+    }
   }
 
   return (

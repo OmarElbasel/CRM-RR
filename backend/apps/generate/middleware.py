@@ -23,14 +23,15 @@ class TokenBudgetMiddleware:
             return self.get_response(request)
 
         # Phase 10 — Enforce monthly USD cost cap (Constitution Principle VI)
-        if is_enabled('COST_CAP_USD'):
+        if is_enabled("COST_CAP_USD"):
             if org.ai_suspended:
+                self._log_rate_limit(org, "COST_CAP_EXCEEDED")
                 return JsonResponse(
                     {
-                        'error': 'Monthly AI cost cap reached. AI access suspended until next month.',
-                        'error_ar': 'تم تجاوز حد التكلفة الشهري للذكاء الاصطناعي. تم تعليق الوصول حتى الشهر القادم.',
-                        'code': 'COST_CAP_EXCEEDED',
-                        'upgrade_url': '/dashboard',
+                        "error": "Monthly AI cost cap reached. AI access suspended until next month.",
+                        "error_ar": "تم تجاوز حد التكلفة الشهري للذكاء الاصطناعي. تم تعليق الوصول حتى الشهر القادم.",
+                        "code": "COST_CAP_EXCEEDED",
+                        "upgrade_url": "/dashboard",
                     },
                     status=429,
                 )
@@ -39,32 +40,45 @@ class TokenBudgetMiddleware:
                 Organization.objects.filter(pk=org.pk).update(ai_suspended=True)
                 try:
                     from apps.billing.tasks import send_cost_cap_alert
+
                     send_cost_cap_alert.delay(org.pk)
                 except Exception:
                     pass
+                self._log_rate_limit(org, "COST_CAP_EXCEEDED")
                 return JsonResponse(
                     {
-                        'error': 'Monthly AI cost cap reached. AI access suspended until next month.',
-                        'error_ar': 'تم تجاوز حد التكلفة الشهري للذكاء الاصطناعي. تم تعليق الوصول حتى الشهر القادم.',
-                        'code': 'COST_CAP_EXCEEDED',
-                        'upgrade_url': '/dashboard',
+                        "error": "Monthly AI cost cap reached. AI access suspended until next month.",
+                        "error_ar": "تم تجاوز حد التكلفة الشهري للذكاء الاصطناعي. تم تعليق الوصول حتى الشهر القادم.",
+                        "code": "COST_CAP_EXCEEDED",
+                        "upgrade_url": "/dashboard",
                     },
                     status=429,
                 )
 
         # Enforce monthly generation limit for all other plans
         if org.generations_used_this_month >= org.monthly_generation_limit:
+            self._log_rate_limit(org, "BUDGET_EXCEEDED")
             return JsonResponse(
                 {
-                    'error': 'Monthly generation limit reached. Please upgrade your plan.',
-                    'error_ar': 'لقد استنفدت حصتك الشهرية. يرجى ترقية خطتك.',
-                    'code': 'BUDGET_EXCEEDED',
-                    'upgrade_url': '/dashboard',
+                    "error": "Monthly generation limit reached. Please upgrade your plan.",
+                    "error_ar": "لقد استنفدت حصتك الشهرية. يرجى ترقية خطتك.",
+                    "code": "BUDGET_EXCEEDED",
+                    "upgrade_url": "/dashboard",
                 },
                 status=429,
             )
 
         return self.get_response(request)
+
+    def _log_rate_limit(self, org, reason):
+        """Log a rate limit event to the database. Non-blocking."""
+        try:
+            from apps.admin_panel.models import RateLimitEvent
+
+            RateLimitEvent.objects.create(org=org, reason=reason)
+        except Exception:
+            # Never let admin logging break a generation request
+            pass
 
     @classmethod
     def _get_jwks_client(cls):

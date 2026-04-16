@@ -7,6 +7,7 @@ class SocialChannel(models.Model):
         ("WHATSAPP", "WhatsApp Business"),
         ("FACEBOOK", "Facebook"),
         ("TIKTOK", "TikTok"),
+        ("SHOPIFY", "Shopify"),
     ]
 
     org = models.ForeignKey(
@@ -59,6 +60,7 @@ class Contact(models.Model):
         ("WHATSAPP", "WhatsApp Business"),
         ("FACEBOOK", "Facebook"),
         ("TIKTOK", "TikTok"),
+        ("SHOPIFY", "Shopify"),
     ]
 
     org = models.ForeignKey(

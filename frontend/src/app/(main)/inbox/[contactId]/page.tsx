@@ -87,36 +87,78 @@ export default function ThreadPage() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-6rem)]">
-      <div className="flex items-center gap-3 mb-4">
-        <button onClick={() => router.push('/inbox')} className="p-1.5 rounded-lg hover:bg-gray-100">
-          <ArrowLeft className="w-5 h-5 text-gray-500" />
-        </button>
-        <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-          <Icon className="w-5 h-5 text-gray-500" />
+    <div className="flex h-[calc(100vh-4rem)] -m-6 overflow-hidden bg-background">
+      {/* Main Chat Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Thread Header */}
+        <header className="flex justify-between items-center px-6 h-16 bg-white border-b border-outline-variant shrink-0 z-10">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => router.push('/inbox')}
+              className="p-2 hover:bg-surface-container-low rounded-full transition-colors text-on-surface-variant"
+            >
+              <span className="material-symbols-outlined">arrow_back</span>
+            </button>
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <img 
+                  alt={contact?.name} 
+                  className="w-10 h-10 rounded-full border-2 border-primary-container object-cover" 
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZcqh2pHEfMqH-Up-E1YvQEYZI7sUCXAVysr4ErqntObbj6-6xZnIIHMaAsZ-pOANMEOFAG1BG6ZVx_JUl_M2DetKMzLVdSzeyufYyXXNe2yNaDZCe8DlUpXTHmnFmg2mq7saokTkghV_WhC0nXNFYxP1sdGxIt_xJkK79sIQCABENNkiCzr-iaIUZlTLP8mCvO5MzpC3zolF_7KP1EoNQPgZ26Q-pZ6uqqPH_oKXG0fDUegcPpkNLD4b8-7RCqDf1WJ8Lwuyb4nNO"
+                />
+                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-md font-bold text-on-surface leading-tight">{contact?.name || 'Loading...'}</h2>
+                  {contact && contact.ai_score > 70 && (
+                    <span className="bg-secondary-container text-on-secondary-container text-[10px] px-2 py-0.5 rounded font-bold tracking-tight">READY_TO_BUY</span>
+                  )}
+                </div>
+                <p className="text-[10px] text-on-surface-variant flex items-center gap-1 font-medium">
+                  <span className="material-symbols-outlined text-[14px]">smartphone</span> 
+                  via {contact?.platform} Business
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 bg-primary-container/20 px-3 py-1.5 rounded-lg mr-2">
+              <span className="material-symbols-outlined text-primary text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+              <span className="text-[11px] font-bold text-primary">AI Copilot Active</span>
+            </div>
+            <button className="p-2 hover:bg-surface-container-low rounded-lg transition-colors text-on-surface-variant/70">
+              <span className="material-symbols-outlined">notifications</span>
+            </button>
+            <button className="p-2 hover:bg-surface-container-low rounded-lg transition-colors text-on-surface-variant/70">
+              <span className="material-symbols-outlined">help</span>
+            </button>
+          </div>
+        </header>
+
+        {/* Chat Thread */}
+        <div className="flex-1 overflow-y-auto p-8 custom-scrollbar bg-[#FDFDFF]">
+          <div className="max-w-4xl mx-auto">
+            <ConversationThread messages={messages} />
+          </div>
         </div>
-        <div>
-          <h2 className="text-sm font-semibold text-gray-900">
-            {contact?.name || 'Unknown'}
-          </h2>
-          <p className="text-xs text-gray-500">
-            {contact?.platform} · Score: {contact?.ai_score}
-          </p>
+
+        {/* Reply Area */}
+        <div className="shrink-0 z-10">
+          {lastInboundMsg && (
+            <ReplyComposer
+              messageId={lastInboundMsg.id}
+              aiDraft={lastInboundMsg.ai_draft}
+              aiDraftAr={lastInboundMsg.ai_draft_ar}
+              onReplySent={handleReplySent}
+            />
+          )}
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-2">
-        <ConversationThread messages={messages} />
-      </div>
-
-      {lastInboundMsg && (
-        <ReplyComposer
-          messageId={lastInboundMsg.id}
-          aiDraft={lastInboundMsg.ai_draft}
-          aiDraftAr={lastInboundMsg.ai_draft_ar}
-          onReplySent={handleReplySent}
-        />
-      )}
+      {/* Right Sidebar */}
+      <ContactSidebar contact={contact} />
     </div>
   )
 }

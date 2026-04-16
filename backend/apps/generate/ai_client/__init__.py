@@ -19,5 +19,14 @@ def get_ai_client() -> AIClient:
     elif provider == 'gemini':
         from .adapters.gemini import GeminiAdapter
         return GeminiAdapter()
+    elif provider == 'openrouter':
+        from .adapters.openrouter import OpenRouterAdapter
+        return OpenRouterAdapter()
+    elif provider == 'alibaba':
+        from .adapters.alibaba import AlibabaAdapter
+        return AlibabaAdapter()
+    elif provider == 'ollama':
+        from .adapters.ollama import OllamaAdapter
+        return OllamaAdapter()
     else:
-        raise ValueError(f"Unknown AI_PROVIDER: '{provider}'. Must be one of: claude, openai, gemini.")
+        raise ValueError(f"Unknown AI_PROVIDER: '{provider}'. Must be one of: claude, openai, gemini, openrouter, alibaba, ollama.")

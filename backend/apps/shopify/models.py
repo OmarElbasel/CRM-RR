@@ -9,7 +9,13 @@ class ShopifyIntegration(models.Model):
     )
     shop_domain = models.CharField(max_length=255, unique=True, db_index=True)
     shop_id = models.CharField(max_length=255, null=True, blank=True)
-    access_token = models.BinaryField()
+    # Encrypted short-lived access token (Fernet). Nullable because client-credentials
+    # integrations start without a token until first exchange.
+    access_token = models.BinaryField(null=True, blank=True)
+    # Client-credentials fields — stored for automatic 24-hour token refresh.
+    client_id = models.CharField(max_length=255, blank=True)
+    client_secret = models.BinaryField(null=True, blank=True)  # Fernet-encrypted
+    token_expires_at = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True, db_index=True)
     installed_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -56,6 +62,7 @@ class Order(models.Model):
         max_length=20, choices=STATUS_CHOICES, db_index=True, default='PENDING'
     )
     shopify_order_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
+    order_number = models.CharField(max_length=50, blank=True, help_text='Shopify order number e.g. #1001')
     shopify_customer_id = models.CharField(max_length=255, null=True, blank=True, db_index=True)
     customer_name = models.CharField(max_length=255, blank=True)
     customer_email = models.CharField(max_length=255, null=True, blank=True, db_index=True)
