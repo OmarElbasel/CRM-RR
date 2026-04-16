@@ -3,25 +3,32 @@ import uuid
 import time
 from decimal import Decimal
 
-from django.core.cache import cache
 from django.db.models import F
 from django.http import StreamingHttpResponse
 from django.utils.decorators import method_decorator
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 from pydantic import ValidationError as PydanticValidationError
+from rest_framework.renderers import BaseRenderer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+
+class ServerSentEventRenderer(BaseRenderer):
+    media_type = 'text/event-stream'
+    format = 'txt'
+
+    def render(self, data, accepted_media_type=None, renderer_context=None):
+        return data
+
 from apps.core.flags import require_flag, is_enabled
-from apps.core.ratelimit import org_key, rate_limited_response
+from apps.core.ratelimit import org_key, rate_limited_response, safe_ratelimit
 from apps.orgs.models import Organization
-from django_ratelimit.decorators import ratelimit
 from .ai_client import get_ai_client
 from .ai_client.exceptions import AIProviderUnavailableError
 from .models import AIUsage
 from .prompts import get_prompts
-from .cache import get_cached_result, set_cached_result
+from .cache import get_cached_result, set_cached_result, safe_cache_get, safe_cache_set
 from .serializers import (
     ProductContentOutput,
     ProductGenerationInputSerializer,
@@ -30,7 +37,7 @@ from .serializers import (
 
 
 @method_decorator(require_flag('AI_GENERATION'), name='dispatch')
-@method_decorator(ratelimit(key=org_key, rate='10/m', method='POST', block=False), name='dispatch')
+@method_decorator(safe_ratelimit(key=org_key, rate='10/m', method='POST', block=False), name='dispatch')
 class GenerateProductContentView(APIView):
 
     @extend_schema(
@@ -96,7 +103,7 @@ class GenerateProductContentView(APIView):
                 'inputs': cache_inputs,
                 'expires_at': time.time() + 300,
             })
-            cache.set(f'stream_session:{session_id}', session_data, timeout=300)
+            safe_cache_set(f'stream_session:{session_id}', session_data, timeout=300)
             return Response({
                 **cached,
                 'session_id': str(session_id),
@@ -183,7 +190,7 @@ class GenerateProductContentView(APIView):
             'inputs': cache_inputs,
             'expires_at': time.time() + 300,
         })
-        cache.set(f'stream_session:{session_id}', session_data, timeout=300)
+        safe_cache_set(f'stream_session:{session_id}', session_data, timeout=300)
 
         # 7. Record AIUsage (cumulative across retries)
         AIUsage.objects.create(
@@ -215,6 +222,7 @@ class GenerateProductContentView(APIView):
 
 @method_decorator(require_flag('AI_GENERATION'), name='dispatch')
 class StreamGenerateView(APIView):
+    renderer_classes = [ServerSentEventRenderer]
 
     @extend_schema(
         tags=['Generation'],
@@ -235,7 +243,7 @@ class StreamGenerateView(APIView):
 
         # 2. Fetch session from Redis
         session_key = f'stream_session:{session_id}'
-        session_raw = cache.get(session_key)
+        session_raw = safe_cache_get(session_key)
         if session_raw is None:
             return Response({
                 'error': 'Session not found',

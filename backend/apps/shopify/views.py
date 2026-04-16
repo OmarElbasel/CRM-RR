@@ -3,7 +3,7 @@ import hashlib
 import hmac as hmac_lib
 import logging
 import secrets
-from datetime import datetime
+from datetime import timedelta
 from urllib.parse import urlencode
 
 from cryptography.fernet import Fernet
@@ -21,6 +21,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.core.flags import require_flag
+from apps.core.platform_credentials import get_credential
 from .models import Order, ShopifyIntegration
 from .serializers import OrderSerializer, OrderUpdateSerializer, ManualOrderCreateSerializer
 
@@ -37,6 +38,27 @@ def _bilingual_error(status_code: int, detail_en: str, detail_ar: str, code: str
         {'detail': detail_en, 'detail_ar': detail_ar, 'code': code},
         status=status_code,
     )
+
+
+def _trigger_initial_sync(integration) -> None:
+    """
+    Queue the initial 30-day order sync via Celery.
+    Falls back to running the task inline (synchronously) if the Celery broker
+    is unavailable — which is common in local development without Redis.
+    """
+    from apps.shopify.tasks import sync_shopify_orders_initial
+    try:
+        sync_shopify_orders_initial.apply_async(args=[integration.pk])
+        logger.info('_trigger_initial_sync: queued via Celery for integration=%s', integration.pk)
+    except Exception as celery_exc:
+        logger.warning(
+            '_trigger_initial_sync: Celery unavailable (%s) — running inline for integration=%s',
+            celery_exc, integration.pk,
+        )
+        try:
+            sync_shopify_orders_initial.apply(args=[integration.pk])
+        except Exception as exc:
+            logger.error('_trigger_initial_sync: inline sync also failed for integration=%s: %s', integration.pk, exc)
 
 
 # ── OAuth views ───────────────────────────────────────────────────────────────
@@ -69,19 +91,26 @@ class ShopifyInstallView(APIView):
                 'المتجر مرتبط بحساب آخر', 'shop_already_connected',
             )
 
+        shopify_client_id = get_credential("SHOPIFY", "app_id")
+        if not shopify_client_id:
+            return _bilingual_error(
+                503, 'Shopify integration is not configured. Go to Admin → Integrations.',
+                'لم يتم إعداد تكامل Shopify. انتقل إلى لوحة الإدارة.', 'shopify_not_configured',
+            )
+
         nonce = secrets.token_urlsafe(32)
         cache.set(f'shopify_nonce:{request.org.pk}', nonce, timeout=600)
         # Store nonce → org_id mapping so callback can look up the org
         cache.set(f'shopify_nonce_state:{nonce}', request.org.pk, timeout=600)
 
         params = {
-            'client_id': settings.SHOPIFY_CLIENT_ID,
+            'client_id': shopify_client_id,
             'scope': SHOPIFY_SCOPES,
             'redirect_uri': f'{settings.BACKEND_BASE_URL}/api/shopify/callback/',
             'state': nonce,
         }
         oauth_url = f'https://{shop}/admin/oauth/authorize?{urlencode(params)}'
-        return redirect(oauth_url)
+        return Response({'url': oauth_url})
 
 
 class ShopifyCallbackView(APIView):
@@ -109,7 +138,7 @@ class ShopifyCallbackView(APIView):
             f'{k}={v}' for k, v in sorted(params.items()) if k != 'hmac'
         )
         computed = hmac_lib.new(
-            settings.SHOPIFY_CLIENT_SECRET.encode(),
+            get_credential("SHOPIFY", "app_secret").encode(),
             sorted_params.encode(),
             hashlib.sha256,
         ).hexdigest()
@@ -158,12 +187,140 @@ class ShopifyCallbackView(APIView):
         except Exception as exc:
             logger.warning('ShopifyCallbackView: webhook registration failed for shop=%s: %s', shop, exc)
 
-        # Enqueue initial 30-day sync
-        from apps.shopify.tasks import sync_shopify_orders_initial
-        sync_shopify_orders_initial.apply_async(args=[integration.pk])
+        # Kick off initial order sync — try Celery first, run inline as fallback
+        _trigger_initial_sync(integration)
 
         frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:3000')
-        return redirect(f'{frontend_url}/orders?connected=true')
+        return redirect(f'{frontend_url}/channels?connected=shopify')
+
+
+class ShopifyDirectConnectView(APIView):
+    """
+    POST /api/shopify/connect-direct/
+    Connect a Shopify store. Supports two modes:
+
+    Mode A — Client Credentials (Shopify dev-dashboard app):
+      { "shop": "mystore.myshopify.com", "client_id": "...", "client_secret": "..." }
+      Exchanges credentials for a short-lived token (~24h). Auto-refreshes on expiry.
+
+    Mode B — Static token (legacy private/custom app):
+      { "shop": "mystore.myshopify.com", "access_token": "shpat_..." }
+      Token is stored as-is; no auto-refresh.
+
+    Constitution I: scoped to request.org.
+    """
+
+    @extend_schema(
+        summary='Connect Shopify store (client credentials or static token)',
+        tags=['Shopify & Orders'],
+        request={'application/json': {'type': 'object', 'properties': {
+            'shop': {'type': 'string', 'example': 'mystore.myshopify.com'},
+            'client_id': {'type': 'string', 'example': 'abc123'},
+            'client_secret': {'type': 'string', 'example': 'shpss_xxx'},
+            'access_token': {'type': 'string', 'example': 'shpat_xxxx'},
+        }}},
+        responses={200: None, 400: None},
+    )
+    @require_flag('SHOPIFY_ORDER_HUB')
+    def post(self, request: Request):
+        from apps.shopify.services.shopify import ShopifyClient, ShopifyClientError
+
+        shop = request.data.get('shop', '').strip().lower()
+        client_id = request.data.get('client_id', '').strip()
+        client_secret = request.data.get('client_secret', '').strip()
+        access_token = request.data.get('access_token', '').strip()
+
+        if not shop or '.myshopify.com' not in shop:
+            return _bilingual_error(400, 'Invalid shop domain', 'نطاق المتجر غير صالح', 'invalid_shop')
+
+        fernet = Fernet(settings.FERNET_KEY)
+        token_expires_at = None
+
+        # ── Mode A: client_credentials ────────────────────────────────────────
+        if client_id and client_secret:
+            try:
+                result = ShopifyClient.exchange_client_credentials(shop, client_id, client_secret)
+            except ShopifyClientError:
+                return _bilingual_error(
+                    401,
+                    'Invalid client_id or client_secret.',
+                    'معرّف العميل أو السر غير صالح.',
+                    'credentials_invalid',
+                )
+            except Exception as exc:
+                logger.error('ShopifyDirectConnect: client_credentials exchange failed for shop=%s: %s', shop, exc)
+                return _bilingual_error(
+                    400,
+                    'Could not exchange credentials. Check shop domain and credentials.',
+                    'تعذّر تبادل البيانات. تحقق من النطاق والبيانات.',
+                    'exchange_failed',
+                )
+            access_token = result['access_token']
+            expires_in = result.get('expires_in', 86399)
+            token_expires_at = dj_tz.now() + timedelta(seconds=expires_in)
+
+        # ── Mode B: static token ──────────────────────────────────────────────
+        elif access_token:
+            try:
+                client = ShopifyClient(shop, access_token)
+                client._get('/shop.json')
+            except ShopifyClientError:
+                return _bilingual_error(
+                    401,
+                    'Token is invalid or does not have required permissions.',
+                    'الرمز غير صالح أو لا يملك الصلاحيات المطلوبة.',
+                    'token_invalid',
+                )
+            except Exception as exc:
+                logger.error('ShopifyDirectConnect: validation failed for shop=%s: %s', shop, exc)
+                return _bilingual_error(
+                    400,
+                    'Could not verify token. Check shop domain and token.',
+                    'تعذّر التحقق من الرمز. تحقق من النطاق والرمز.',
+                    'validation_failed',
+                )
+        else:
+            return _bilingual_error(
+                400,
+                'Provide either (client_id + client_secret) or access_token.',
+                'يرجى تقديم (client_id + client_secret) أو access_token.',
+                'missing_credentials',
+            )
+
+        # Check if shop is already connected to a different org
+        existing = ShopifyIntegration.objects.filter(shop_domain=shop).exclude(org=request.org).first()
+        if existing:
+            return _bilingual_error(409, 'Shop already connected to another account.',
+                                    'المتجر مرتبط بحساب آخر.', 'shop_already_connected')
+
+        encrypted_token = fernet.encrypt(access_token.encode())
+        defaults = {
+            'shop_domain': shop,
+            'access_token': encrypted_token,
+            'is_active': True,
+            'token_expires_at': token_expires_at,
+        }
+        if client_id:
+            defaults['client_id'] = client_id
+            defaults['client_secret'] = fernet.encrypt(client_secret.encode())
+
+        integration, _ = ShopifyIntegration.objects.update_or_create(
+            org=request.org,
+            defaults=defaults,
+        )
+
+        # Register webhooks (best-effort)
+        client = ShopifyClient(shop, access_token)
+        try:
+            client.register_webhooks(settings.BACKEND_BASE_URL)
+        except Exception as exc:
+            logger.warning('ShopifyDirectConnect: webhook registration failed for shop=%s: %s', shop, exc)
+
+        # Kick off initial order sync — try Celery first, run inline as fallback
+        _trigger_initial_sync(integration)
+
+        mode = 'client_credentials' if client_id else 'static_token'
+        return Response({'message': f'{shop} connected successfully.', 'shop_domain': shop, 'mode': mode})
 
 
 # ── Order CRUD views ──────────────────────────────────────────────────────────
@@ -410,6 +567,7 @@ class OrderRevenueSummaryView(APIView):
             created_at__month=mon,
         )
         total = qs.aggregate(total=Sum('total_amount'))['total'] or 0
+        currency = qs.values_list('currency', flat=True).first() or 'EGP'
         by_source = {}
         for source_val in ['SHOPIFY', 'WHATSAPP', 'MANUAL']:
             agg = qs.filter(source=source_val).aggregate(
@@ -422,7 +580,7 @@ class OrderRevenueSummaryView(APIView):
         return Response({
             'month': f'{year:04d}-{mon:02d}',
             'total_amount': str(total),
-            'currency': 'QAR',
+            'currency': currency,
             'by_source': by_source,
         })
 
@@ -477,3 +635,30 @@ class OrderCsvExportView(APIView):
         response = StreamingHttpResponse(row_gen(), content_type='text/csv; charset=utf-8')
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
         return response
+
+
+# ── Manual sync view ──────────────────────────────────────────────────────────
+
+class ShopifySyncView(APIView):
+    """
+    POST /api/shopify/sync/
+    Manually trigger a 30-day order + customer re-sync for the authenticated org.
+    Tries Celery first; runs inline if unavailable (safe for dev without Redis).
+    Constitution I: scoped to request.org.
+    Constitution IV: gated on FLAG_SHOPIFY_ORDER_HUB.
+    """
+
+    @extend_schema(summary='Trigger Shopify order sync', tags=['Shopify & Orders'])
+    @require_flag('SHOPIFY_ORDER_HUB')
+    def post(self, request: Request):
+        try:
+            integration = ShopifyIntegration.objects.get(org=request.org, is_active=True)
+        except ShopifyIntegration.DoesNotExist:
+            return _bilingual_error(
+                404,
+                'No active Shopify integration found. Connect your store first.',
+                'لا يوجد تكامل Shopify نشط. قم بتوصيل متجرك أولاً.',
+                'no_integration',
+            )
+        _trigger_initial_sync(integration)
+        return Response({'message': 'Sync started.', 'integration_id': integration.pk})

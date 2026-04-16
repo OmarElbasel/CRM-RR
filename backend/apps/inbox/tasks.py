@@ -4,6 +4,7 @@ import logging
 import redis as redis_lib
 from celery import shared_task
 from django.conf import settings
+from apps.core.platform_credentials import get_credential
 
 logger = logging.getLogger(__name__)
 
@@ -296,8 +297,8 @@ def refresh_meta_tokens(self):
             old_token = fernet.decrypt(bytes(channel.access_token)).decode()
             new_token, expires_in = meta.exchange_token(
                 short_lived_token=old_token,
-                app_id=settings.META_APP_ID,
-                app_secret=settings.META_APP_SECRET,
+                app_id=get_credential("META", "app_id"),
+                app_secret=get_credential("META", "app_secret"),
             )
             channel.access_token = fernet.encrypt(new_token.encode())
             # 3-day buffer per research.md Decision 4

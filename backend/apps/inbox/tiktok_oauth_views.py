@@ -30,7 +30,8 @@ class TikTokConnectView(APIView):
     )
     def get(self, request):
         url = TikTokClient().get_auth_url(request.org.pk)
-        return HttpResponseRedirect(url)
+        from rest_framework.response import Response
+        return Response({"url": url})
 
 
 class TikTokCallbackView(APIView):

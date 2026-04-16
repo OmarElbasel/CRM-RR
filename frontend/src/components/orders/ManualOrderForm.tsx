@@ -1,5 +1,8 @@
 'use client'
 import { useState } from 'react'
+import { useAuth } from '@clerk/nextjs'
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 import {
   Dialog,
   DialogContent,
@@ -17,9 +20,10 @@ interface LineItem {
 }
 
 export function ManualOrderForm({ onCreated }: { onCreated: () => void }) {
+  const { getToken } = useAuth()
   const [open, setOpen] = useState(false)
   const [totalAmount, setTotalAmount] = useState('')
-  const [currency, setCurrency] = useState('QAR')
+  const [currency, setCurrency] = useState('EGP')
   const [notes, setNotes] = useState('')
   const [items, setItems] = useState<LineItem[]>([{ title: '', quantity: 1, price: '' }])
   const [error, setError] = useState('')
@@ -45,10 +49,10 @@ export function ManualOrderForm({ onCreated }: { onCreated: () => void }) {
     setError('')
     setLoading(true)
     try {
-      const res = await fetch('/api/orders/manual/', {
+      const token = await getToken()
+      const res = await fetch(`${API_URL}/api/orders/manual/`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ line_items: items, total_amount: totalAmount, currency, notes }),
       })
       if (!res.ok) {
@@ -67,11 +71,9 @@ export function ManualOrderForm({ onCreated }: { onCreated: () => void }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size="sm" className="gap-1">
-          <Plus className="w-4 h-4" />
-          Manual Order
-        </Button>
+      <DialogTrigger render={<Button size="sm" className="gap-1" />}>
+        <Plus className="w-4 h-4" />
+        Manual Order
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
@@ -118,6 +120,7 @@ export function ManualOrderForm({ onCreated }: { onCreated: () => void }) {
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
               >
+                <option>EGP</option>
                 <option>QAR</option>
                 <option>SAR</option>
                 <option>USD</option>

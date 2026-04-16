@@ -147,44 +147,72 @@ class StripeWebhookView(APIView):
         tags=['Billing'],
     )
     def post(self, request):
+        from apps.billing.models import WebhookAttempt
+
         payload = request.body
-        sig_header = request.META.get('HTTP_STRIPE_SIGNATURE', '')
+        sig_header = request.META.get("HTTP_STRIPE_SIGNATURE", "")
 
         try:
             event = stripe.Webhook.construct_event(
                 payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
             )
-        except (ValueError, stripe.error.SignatureVerificationError):
+        except (ValueError, stripe.error.SignatureVerificationError) as e:
+            # We don't have an event_id here as verification failed
             return Response(
                 {
-                    'error': 'Invalid Stripe signature.',
-                    'error_ar': 'توقيع Stripe غير صالح.',
+                    "error": "Invalid Stripe signature.",
+                    "error_ar": "توقيع Stripe غير صالح.",
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        event_id = event["id"]
+        event_type = event["type"]
+
         # Idempotency check (Constitution — webhook idempotency requirement)
-        cache_key = STRIPE_EVENT_CACHE_KEY.format(event_id=event['id'])
+        cache_key = STRIPE_EVENT_CACHE_KEY.format(event_id=event_id)
         if cache.get(cache_key):
-            return Response({'status': 'already_handled'})
+            return Response({"status": "already_handled"})
 
         # Process supported event types
-        event_type = event['type']
-        if event_type == 'checkout.session.completed':
-            self._handle_checkout_completed(event['data']['object'])
-        elif event_type == 'customer.subscription.updated':
-            self._handle_subscription_updated(event['data']['object'])
-        elif event_type == 'customer.subscription.deleted':
-            self._handle_subscription_deleted(event['data']['object'])
-        else:
-            # Mark unsupported events as handled to prevent retry loops
-            logger.info('Ignoring unsupported Stripe event type: %s', event_type)
+        try:
+            if event_type == "checkout.session.completed":
+                self._handle_checkout_completed(event["data"]["object"])
+                status_str = "success"
+            elif event_type == "customer.subscription.updated":
+                self._handle_subscription_updated(event["data"]["object"])
+                status_str = "success"
+            elif event_type == "customer.subscription.deleted":
+                self._handle_subscription_deleted(event["data"]["object"])
+                status_str = "success"
+            else:
+                # Mark unsupported events as ignored
+                logger.info("Ignoring unsupported Stripe event type: %s", event_type)
+                status_str = "ignored"
+
+            WebhookAttempt.objects.get_or_create(
+                event_id=event_id,
+                defaults={"event_type": event_type, "status": status_str},
+            )
+
+        except Exception as e:
+            logger.error("Error processing Stripe webhook %s: %s", event_id, str(e))
+            WebhookAttempt.objects.get_or_create(
+                event_id=event_id,
+                defaults={
+                    "event_type": event_type,
+                    "status": "failed",
+                    "error_message": str(e),
+                },
+            )
+            # We still mark as handled in cache to prevent infinite retry loops on internal errors
+            # if we believe the error is not transient or we want to handle it via admin panel later.
             cache.set(cache_key, True, STRIPE_EVENT_CACHE_TTL)
-            return Response({'status': 'ignored'})
+            return Response({"status": "error", "error": str(e)}, status=500)
 
         # Mark as processed
         cache.set(cache_key, True, STRIPE_EVENT_CACHE_TTL)
-        return Response({'status': 'processed'})
+        return Response({"status": "processed"})
 
     def _handle_checkout_completed(self, session):
         from apps.orgs.models import Organization

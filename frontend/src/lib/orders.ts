@@ -1,5 +1,7 @@
 import { DUMMY_ORDER_LIST_RESPONSE, DUMMY_ORDER_SUMMARY } from '@/lib/dummy/orders'
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+
 export type OrderSource = 'SHOPIFY' | 'WHATSAPP' | 'MANUAL'
 export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'RETURNED'
 
@@ -8,6 +10,7 @@ export interface Order {
   source: OrderSource
   status: OrderStatus
   shopify_order_id: string | null
+  order_number: string
   customer_name: string
   customer_email: string | null
   total_amount: string
@@ -43,13 +46,19 @@ export interface OrderSummaryResponse {
   by_source: Record<OrderSource, { count: number; amount: string }>
 }
 
-export async function fetchOrders(filters: OrderFilters = {}): Promise<OrderListResponse> {
+function authHeaders(token: string) {
+  return { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+}
+
+export async function fetchOrders(filters: OrderFilters = {}, token = ''): Promise<OrderListResponse> {
   if (process.env.NEXT_PUBLIC_USE_DUMMY_DATA === 'true') return DUMMY_ORDER_LIST_RESPONSE
   const params = new URLSearchParams()
   Object.entries(filters).forEach(([k, v]) => {
     if (v !== undefined) params.set(k, String(v))
   })
-  const res = await fetch(`/api/orders/?${params}`, { credentials: 'include' })
+  const res = await fetch(`${API_URL}/api/orders/?${params}`, {
+    headers: token ? authHeaders(token) : {},
+  })
   if (!res.ok) throw new Error(`Failed to fetch orders: ${res.status}`)
   return res.json()
 }
@@ -57,21 +66,23 @@ export async function fetchOrders(filters: OrderFilters = {}): Promise<OrderList
 export async function patchOrder(
   id: number,
   data: { status?: OrderStatus; notes?: string },
+  token = '',
 ): Promise<Order> {
-  const res = await fetch(`/api/orders/${id}/`, {
+  const res = await fetch(`${API_URL}/api/orders/${id}/`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
+    headers: authHeaders(token),
     body: JSON.stringify(data),
   })
   if (!res.ok) throw new Error(`Failed to update order: ${res.status}`)
   return res.json()
 }
 
-export async function fetchOrderSummary(month?: string): Promise<OrderSummaryResponse> {
+export async function fetchOrderSummary(month?: string, token = ''): Promise<OrderSummaryResponse> {
   if (process.env.NEXT_PUBLIC_USE_DUMMY_DATA === 'true') return DUMMY_ORDER_SUMMARY
   const params = month ? `?month=${month}` : ''
-  const res = await fetch(`/api/orders/summary/${params}`, { credentials: 'include' })
+  const res = await fetch(`${API_URL}/api/orders/summary/${params}`, {
+    headers: token ? authHeaders(token) : {},
+  })
   if (!res.ok) throw new Error(`Failed to fetch summary: ${res.status}`)
   return res.json()
 }

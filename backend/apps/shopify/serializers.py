@@ -8,13 +8,13 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [
-            'id', 'source', 'status', 'shopify_order_id',
+            'id', 'source', 'status', 'shopify_order_id', 'order_number',
             'customer_name', 'customer_email', 'total_amount', 'currency',
             'line_items', 'contact_id', 'contact_name', 'notes',
             'created_at', 'updated_at',
         ]
         read_only_fields = [
-            'id', 'source', 'shopify_order_id', 'customer_name',
+            'id', 'source', 'shopify_order_id', 'order_number', 'customer_name',
             'customer_email', 'contact_id', 'contact_name', 'created_at', 'updated_at',
         ]
 

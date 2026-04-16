@@ -1,4 +1,7 @@
+"use client";
+
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { Hero } from '@/components/marketing/Hero';
 import { FeaturesGrid } from '@/components/marketing/FeaturesGrid';
 import { HowItWorks } from '@/components/marketing/HowItWorks';
@@ -38,7 +41,7 @@ export default function LandingPage() {
             </Link>
             <Button
               render={<Link href="/sign-up" />}
-              className="bg-[#594fbf] text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:opacity-90 transition-all"
+              className="bg-[#594fbf] text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:opacity-90 transition-all cursor-pointer"
             >
               Get Started
             </Button>
@@ -63,23 +66,31 @@ export default function LandingPage() {
         <Integrations />
 
         {/* Final CTA Section */}
-        <section className="py-24 px-8">
-          <div className="max-w-6xl mx-auto bg-gradient-to-br from-[#594fbf] to-[#35279b] rounded-[40px] p-12 md:p-24 text-center text-white relative overflow-hidden shadow-2xl animate-fade-in">
+        <section className="py-24 px-8 overflow-hidden">
+          <motion.div 
+            className="max-w-6xl mx-auto bg-gradient-to-br from-[#594fbf] to-[#35279b] rounded-[40px] p-12 md:p-24 text-center text-white relative shadow-2xl"
+            initial={{ opacity: 0, scale: 0.9, y: 50 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_white,_transparent)]"></div>
             <div className="relative z-10">
               <h2 className="text-4xl md:text-6xl font-black mb-8">Ready to Automate Your Store&apos;s Growth?</h2>
               <p className="text-xl opacity-90 max-w-2xl mx-auto mb-12">
                 Join hundreds of successful Gulf retailers using Rawaj AI to dominate their niche.
               </p>
-              <Link
-                href="/sign-up"
-                className="inline-block bg-[#26fedc] text-[#00483d] px-12 py-5 rounded-2xl font-black text-xl shadow-2xl hover:scale-105 active:scale-95 transition-all"
-              >
-                Start Your Free Trial Today
-              </Link>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="inline-block">
+                <Link
+                  href="/sign-up"
+                  className="inline-block bg-[#26fedc] text-[#00483d] px-12 py-5 rounded-2xl font-black text-xl shadow-2xl transition-all"
+                >
+                  Start Your Free Trial Today
+                </Link>
+              </motion.div>
               <p className="mt-6 text-sm opacity-70 font-medium">No credit card required • 14-day free trial</p>
             </div>
-          </div>
+          </motion.div>
         </section>
       </main>
 

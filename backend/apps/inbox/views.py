@@ -17,14 +17,14 @@ from django.shortcuts import redirect
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from drf_spectacular.utils import extend_schema, OpenApiParameter
-from django_ratelimit.decorators import ratelimit
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.core.flags import require_flag, is_enabled
-from apps.core.ratelimit import org_key, rate_limited_response
+from apps.core.platform_credentials import get_credential
+from apps.core.ratelimit import org_key, rate_limited_response, safe_ratelimit
 from .models import SocialChannel, Contact, Message
 from .serializers import (
     ChannelSerializer,
@@ -35,6 +35,7 @@ from .serializers import (
 from .services.meta import MetaClient, MetaClientError
 from .services.whatsapp import WhatsAppClient, WhatsAppClientError
 from .tasks import process_inbox_message
+from apps.shopify.models import ShopifyIntegration
 
 logger = logging.getLogger(__name__)
 
@@ -118,17 +119,28 @@ class ConnectView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        meta_app_id = get_credential("META", "app_id")
+        meta_app_secret = get_credential("META", "app_secret")
+        if not meta_app_id or not meta_app_secret:
+            return Response(
+                {
+                    "error": "Meta integration is not configured. Go to Admin → Integrations and enter your Meta App credentials.",
+                    "error_ar": "لم يتم إعداد تكامل Meta. انتقل إلى لوحة الإدارة وأدخل بيانات تطبيق Meta.",
+                },
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+
         state = _sign_state(request.org.pk, platform_lower)
-        redirect_uri = f"{settings.FRONTEND_URL}/api/channels/callback/meta/"
+        redirect_uri = f"{settings.BACKEND_BASE_URL}/api/channels/callback/meta/"
         scopes = PLATFORM_SCOPES[platform_lower]
 
         oauth_url = MetaClient.build_oauth_url(
-            app_id=settings.META_APP_ID,
+            app_id=meta_app_id,
             redirect_uri=redirect_uri,
             state=state,
             scopes=scopes,
         )
-        return redirect(oauth_url)
+        return Response({"url": oauth_url})
 
 
 class CallbackView(APIView):
@@ -172,31 +184,83 @@ class CallbackView(APIView):
 
         platform_lower = state_data["platform"]
         platform_upper = PLATFORM_MAP[platform_lower]
+        redirect_uri = f"{settings.BACKEND_BASE_URL}/api/channels/callback/meta/"
 
-        # Exchange code for long-lived token
         meta_client = MetaClient()
+
+        meta_app_id = get_credential("META", "app_id")
+        meta_app_secret = get_credential("META", "app_secret")
+
+        # Step 1: Exchange auth code for short-lived user access token
         try:
-            long_token, expires_in = meta_client.exchange_token(
-                short_lived_token=code,
-                app_id=settings.META_APP_ID,
-                app_secret=settings.META_APP_SECRET,
+            short_lived_token = meta_client.exchange_code_for_token(
+                code=code,
+                app_id=meta_app_id,
+                app_secret=meta_app_secret,
+                redirect_uri=redirect_uri,
             )
         except MetaClientError as exc:
             logger.error(
-                "Token exchange failed for org=%s platform=%s: %s",
-                request.org.pk,
+                "Code exchange failed for org=%s platform=%s: %s",
+                state_data.get("org_id"),
                 platform_lower,
                 exc,
             )
-            return Response(
-                {
-                    "error": "Failed to exchange token with Meta.",
-                    "error_ar": "فشل تبادل الرمز مع Meta.",
-                },
-                status=status.HTTP_502_BAD_GATEWAY,
+            return redirect(
+                f"{settings.FRONTEND_URL}/channels?error=token_exchange_failed&platform={platform_lower}"
             )
 
-        encrypted_token = _encrypt_token(long_token)
+        # Step 2: Exchange short-lived token for long-lived token (~60 days)
+        try:
+            long_token, expires_in = meta_client.exchange_token(
+                short_lived_token=short_lived_token,
+                app_id=meta_app_id,
+                app_secret=meta_app_secret,
+            )
+        except MetaClientError as exc:
+            logger.error(
+                "Long-lived token exchange failed for org=%s platform=%s: %s",
+                state_data.get("org_id"),
+                platform_lower,
+                exc,
+            )
+            return redirect(
+                f"{settings.FRONTEND_URL}/channels?error=token_exchange_failed&platform={platform_lower}"
+            )
+
+        # Step 3: Fetch pages/accounts to get page_id and page-scoped access token
+        page_id = None
+        stored_token = long_token  # default to user token; overridden by page token below
+        try:
+            pages = meta_client.get_user_pages(long_token)
+            if pages:
+                if platform_upper == "INSTAGRAM":
+                    # Find the Instagram Business Account linked to the first page
+                    for page in pages:
+                        ig_id = meta_client.get_instagram_account_id(
+                            page["id"], page["access_token"]
+                        )
+                        if ig_id:
+                            page_id = ig_id
+                            stored_token = page["access_token"]
+                            break
+                    if not page_id:
+                        # No IG business account found — fall back to page ID
+                        page_id = pages[0]["id"]
+                        stored_token = pages[0]["access_token"]
+                elif platform_upper == "FACEBOOK":
+                    page_id = pages[0]["id"]
+                    stored_token = pages[0]["access_token"]
+                # WhatsApp uses phone_number_id (set separately via Business API, not pages)
+        except MetaClientError as exc:
+            logger.warning(
+                "Failed to fetch pages for org=%s platform=%s: %s — storing without page_id",
+                state_data.get("org_id"),
+                platform_lower,
+                exc,
+            )
+
+        encrypted_token = _encrypt_token(stored_token)
         # 3-day buffer per research.md Decision 4
         token_expires_at = (
             timezone.now() + timedelta(seconds=expires_in) - timedelta(days=3)
@@ -208,12 +272,13 @@ class CallbackView(APIView):
             defaults={
                 "access_token": encrypted_token,
                 "token_expires_at": token_expires_at,
+                "page_id": page_id,
                 "is_active": True,
             },
         )
 
         return redirect(
-            f"{settings.FRONTEND_URL}/settings/channels?connected={platform_lower}"
+            f"{settings.FRONTEND_URL}/channels?connected={platform_lower}"
         )
 
 
@@ -229,7 +294,22 @@ class ChannelListView(APIView):
     def get(self, request):
         channels = SocialChannel.objects.filter(org=request.org)
         serializer = ChannelSerializer(channels, many=True)
-        return Response(serializer.data)
+        data = serializer.data
+
+        # Add Shopify status (US1: T013)
+        shopify = ShopifyIntegration.objects.filter(org=request.org, is_active=True).first()
+        if shopify:
+            data.append({
+                "id": shopify.pk,
+                "platform": "SHOPIFY",
+                "is_active": True,
+                "connected_at": shopify.installed_at,
+                "token_expires_at": None,
+                "page_id": shopify.shop_domain,
+                "phone_number_id": None,
+            })
+        
+        return Response(data)
 
 
 # --- Webhook Views (US1: T018) ---------------------------------------------
@@ -250,7 +330,7 @@ class WebhookView(APIView):
         token = request.query_params.get("hub.verify_token")
         challenge = request.query_params.get("hub.challenge")
 
-        verify_token = getattr(settings, "META_WEBHOOK_VERIFY_TOKEN", "")
+        verify_token = get_credential("META", "verify_token")
 
         if mode == "subscribe" and token == verify_token:
             return HttpResponse(challenge, content_type="text/plain")
@@ -285,7 +365,7 @@ class WebhookView(APIView):
 
     def _verify_signature(self, payload: bytes, signature: str) -> bool:
         """Verify X-Hub-Signature-256 HMAC."""
-        app_secret = getattr(settings, "META_APP_SECRET", "")
+        app_secret = get_credential("META", "app_secret")
         if not app_secret:
             return settings.DEBUG  # Allow in dev if no secret configured
 
@@ -409,7 +489,7 @@ class InboxPagination(PageNumberPagination):
     max_page_size = 100
 
 
-@method_decorator(ratelimit(key=org_key, rate="60/m", method="ALL", block=False), name="dispatch")
+@method_decorator(safe_ratelimit(key=org_key, rate="60/m", method="ALL", block=False), name="dispatch")
 @method_decorator(require_flag("INBOX_ENABLED"), name="dispatch")
 class InboxListView(APIView):
     """GET /api/inbox/ — Paginated contact list with unread counts."""
@@ -489,7 +569,7 @@ class InboxListView(APIView):
         return paginator.get_paginated_response(results)
 
 
-@method_decorator(ratelimit(key=org_key, rate="60/m", method="ALL", block=False), name="dispatch")
+@method_decorator(safe_ratelimit(key=org_key, rate="60/m", method="ALL", block=False), name="dispatch")
 @method_decorator(require_flag("INBOX_ENABLED"), name="dispatch")
 class ThreadView(APIView):
     """GET /api/inbox/<int:contact_id>/messages/ — Full thread."""
@@ -529,7 +609,7 @@ class ThreadView(APIView):
         )
 
 
-@method_decorator(ratelimit(key=org_key, rate="60/m", method="ALL", block=False), name="dispatch")
+@method_decorator(safe_ratelimit(key=org_key, rate="60/m", method="ALL", block=False), name="dispatch")
 @method_decorator(require_flag("INBOX_ENABLED"), name="dispatch")
 class ReplyView(APIView):
     """POST /api/messages/<int:message_id>/reply/ — Send a reply."""
@@ -743,13 +823,34 @@ class DisconnectView(APIView):
     @extend_schema(operation_id="channel_disconnect", tags=["Channels"])
     def post(self, request):
         platform = request.data.get("platform", "").upper()
-        if platform not in ("INSTAGRAM", "WHATSAPP", "FACEBOOK", "TIKTOK"):
+        if platform not in ("INSTAGRAM", "WHATSAPP", "FACEBOOK", "TIKTOK", "SHOPIFY"):
             return Response(
                 {
                     "error": "Invalid platform.",
                     "error_ar": "المنصة غير صالحة.",
                 },
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Handle Shopify separately — it lives in a different model
+        if platform == "SHOPIFY":
+            try:
+                integration = ShopifyIntegration.objects.get(org=request.org, is_active=True)
+            except ShopifyIntegration.DoesNotExist:
+                return Response(
+                    {
+                        "error": "Shopify is not connected.",
+                        "error_ar": "Shopify غير متصل.",
+                    },
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+            integration.is_active = False
+            integration.save(update_fields=["is_active"])
+            return Response(
+                {
+                    "message": "Shopify disconnected successfully.",
+                    "message_ar": "تم فصل Shopify بنجاح.",
+                }
             )
 
         try:
@@ -763,7 +864,7 @@ class DisconnectView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        # Revoke token
+        # Revoke token (best-effort — do not block disconnect on failure)
         try:
             access_token = _decrypt_token(channel.access_token)
             meta = MetaClient()

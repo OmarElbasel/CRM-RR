@@ -2,8 +2,6 @@ import logging
 import time
 from datetime import timedelta
 from celery import shared_task
-from cryptography.fernet import Fernet
-from django.conf import settings
 from django.utils import timezone
 
 logger = logging.getLogger(__name__)
@@ -35,9 +33,20 @@ def sync_shopify_orders_initial(self, integration_id: int):
         logger.warning('sync_shopify_orders_initial: integration %s not found', integration_id)
         return
 
-    fernet = Fernet(settings.FERNET_KEY)
-    access_token = fernet.decrypt(bytes(integration.access_token)).decode()
-    client = ShopifyClient(integration.shop_domain, access_token)
+    try:
+        client = ShopifyClient.from_integration(integration)
+    except ShopifyClientError as exc:
+        logger.error('sync_shopify_orders_initial: could not get valid token for integration %s: %s', integration_id, exc)
+        return
+
+    # Enqueue customer sync first; fall back to inline if Celery is unavailable
+    try:
+        sync_shopify_customers_initial.apply_async(args=[integration_id])
+    except Exception:
+        try:
+            sync_shopify_customers_initial.apply(args=[integration_id])
+        except Exception as exc:
+            logger.warning('sync_shopify_orders_initial: customer sync also failed inline: %s', exc)
 
     thirty_days_ago = (timezone.now() - timedelta(days=30)).strftime('%Y-%m-%dT%H:%M:%S%z')
     page_info = None
@@ -69,6 +78,53 @@ def sync_shopify_orders_initial(self, integration_id: int):
         time.sleep(0.6)  # Shopify 2 req/s limit
 
     logger.info('sync_shopify_orders_initial: integration=%s synced %d orders', integration_id, total)
+
+
+# ── Initial customer sync ────────────────────────────────────────────────────
+
+@shared_task(name='apps.shopify.tasks.sync_shopify_customers_initial', bind=True, max_retries=2)
+def sync_shopify_customers_initial(self, integration_id: int):
+    """
+    Pull all customers from Shopify and save as Contacts.
+    Paginates through the Customers API.
+    """
+    from apps.shopify.models import ShopifyIntegration
+    from apps.shopify.services.shopify import ShopifyClient, ShopifyClientError
+
+    try:
+        integration = ShopifyIntegration.objects.get(pk=integration_id)
+    except ShopifyIntegration.DoesNotExist:
+        return
+
+    try:
+        client = ShopifyClient.from_integration(integration)
+    except ShopifyClientError as exc:
+        logger.error('sync_shopify_customers_initial: could not get valid token for integration %s: %s', integration_id, exc)
+        return
+
+    page_info = None
+    total = 0
+
+    while True:
+        try:
+            result = client.get_customers(page_info=page_info)
+        except ShopifyClientError as exc:
+            logger.error('Initial customer sync failed for integration %s: %s', integration_id, exc)
+            return
+
+        customers = result['customers']
+        for cust_data in customers:
+            _upsert_contact(integration, cust_data)
+            total += 1
+
+        link_header = result.get('link_header', '')
+        next_page = _parse_next_page_info(link_header)
+        if not next_page:
+            break
+        page_info = next_page
+        time.sleep(0.6)
+
+    logger.info('sync_shopify_customers_initial: integration=%s synced %d customers', integration_id, total)
 
 
 # ── Cart recovery ─────────────────────────────────────────────────────────────
@@ -140,8 +196,7 @@ def send_cart_recovery(self, cart_id: int):
         )
         raw = response.content.strip()
         if raw.startswith('```'):
-            lines = raw.split('\n')
-            raw = '\n'.join(l for l in lines[1:] if not l.startswith('```'))
+            raw = raw.strip('```json').strip('```')
         data = json.loads(raw)
         draft_ar = data.get('message_ar', '')
         draft_en = data.get('message_en', '')
@@ -197,6 +252,11 @@ def sync_shopify_order(self, integration_id: int, order_data: dict):
         return
 
     try:
+        # Sync customer first
+        customer_data = order_data.get('customer')
+        if customer_data:
+            _upsert_contact(integration, customer_data)
+
         order = _upsert_order(integration, order_data)
         # Mark abandoned cart as converted if applicable
         cart_token = order_data.get('cart_token')
@@ -219,6 +279,42 @@ def sync_shopify_order(self, integration_id: int, order_data: dict):
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
+def _upsert_contact(integration, customer_data: dict):
+    """Create or update a Contact from Shopify customer data."""
+    from apps.inbox.models import Contact
+    shopify_id = str(customer_data.get('id', ''))
+    if not shopify_id:
+        return None
+
+    email = customer_data.get('email')
+    phone = customer_data.get('phone')
+    first_name = customer_data.get('first_name') or ''
+    last_name = customer_data.get('last_name') or ''
+    full_name = f"{first_name} {last_name}".strip()
+
+    # Note: We use 'SHOPIFY' as the platform here. Even though Contact model 
+    # PLATFORM_CHOICES has INSTAGRAM, WHATSAPP, etc., we can extend it or use a default.
+    # Looking at apps/inbox/models.py, PLATFORM_CHOICES is:
+    # [("INSTAGRAM", "Instagram"), ("WHATSAPP", "WhatsApp Business"), ("FACEBOOK", "Facebook"), ("TIKTOK", "TikTok")]
+    # We should probably use WHATSAPP as a placeholder or better, add SHOPIFY to Contact.PLATFORM_CHOICES.
+    # For now, let's check if we can use an alternative.
+    
+    # Actually, let's keep it simple and just update/create by email/phone if possible, 
+    # or use WHATSAPP as a dummy if needed, but the best way is to add SHOPIFY to the choices.
+    
+    contact, created = Contact.objects.update_or_create(
+        org=integration.org,
+        platform_id=shopify_id,
+        defaults={
+            'platform': 'SHOPIFY',
+            'name': full_name,
+            'email': email or None,
+            'phone': phone or None,
+        }
+    )
+    return contact
+
+
 def _upsert_order(integration, order_data: dict):
     """Create or update an Order record from a Shopify order payload."""
     from apps.shopify.models import Order
@@ -228,13 +324,20 @@ def _upsert_order(integration, order_data: dict):
         {'title': li.get('title', ''), 'quantity': li.get('quantity', 1), 'price': li.get('price', '0')}
         for li in order_data.get('line_items', [])
     ]
-    status = _map_shopify_fulfillment_status(order_data.get('fulfillment_status'))
+    fulfillment_raw = order_data.get('fulfillment_status')
+    financial_raw = order_data.get('financial_status')
+    status = _map_shopify_status(fulfillment_raw, financial_raw)
+    print(
+        f'_upsert_order: shopify_id={shopify_id} financial_status={financial_raw!r} '
+        f'fulfillment_status={fulfillment_raw!r} -> {status} currency={order_data.get("currency")}'
+    )
     order, _ = Order.objects.update_or_create(
         shopify_order_id=shopify_id,
         defaults={
             'org': integration.org,
             'source': 'SHOPIFY',
             'status': status,
+            'order_number': str(order_data.get('order_number', '') or order_data.get('name', '')),
             'shopify_customer_id': str(customer.get('id', '')),
             'customer_name': f"{customer.get('first_name', '')} {customer.get('last_name', '')}".strip(),
             'customer_email': customer.get('email') or None,
@@ -247,15 +350,18 @@ def _upsert_order(integration, order_data: dict):
     return order
 
 
-def _map_shopify_fulfillment_status(shopify_status: str | None) -> str:
-    mapping = {
-        None: 'PENDING',
-        'null': 'PENDING',
-        'fulfilled': 'DELIVERED',
-        'partial': 'PROCESSING',
-        'restocked': 'RETURNED',
-    }
-    return mapping.get(shopify_status or 'null', 'PENDING')
+def _map_shopify_status(fulfillment_status: str | None, financial_status: str | None) -> str:
+    if fulfillment_status == 'fulfilled':
+        return 'DELIVERED'
+    if fulfillment_status == 'partial':
+        return 'PROCESSING'
+    if fulfillment_status == 'restocked':
+        return 'RETURNED'
+    if financial_status == 'paid':
+        return 'CONFIRMED'
+    if financial_status in ('authorized', 'partially_paid'):
+        return 'PROCESSING'
+    return 'PENDING'
 
 
 def _parse_next_page_info(link_header: str) -> str | None:

@@ -1,3 +1,4 @@
+import os
 import environ
 from pathlib import Path
 
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     "apps.shopify",
     "apps.content",
     "apps.scheduler",
+    "apps.admin_panel",
 ]
 
 MIDDLEWARE = [
@@ -194,6 +196,9 @@ SPECTACULAR_SETTINGS = {
 # Production MUST override both in Railway env vars (see production.py).
 CLERK_JWKS_URL = env("CLERK_JWKS_URL", default="https://api.clerk.dev/v1/jwks")
 CLERK_ISSUER = env("CLERK_ISSUER", default="")
+ADMIN_CLERK_USER_IDS = set(
+    filter(None, os.environ.get("ADMIN_CLERK_USER_IDS", "").split(","))
+)
 
 # CORS — allow frontend to call backend
 CORS_ALLOWED_ORIGINS = env.list(
@@ -228,6 +233,7 @@ FEATURE_FLAGS = {
     "ABUSE_DETECTION": env.bool("FLAG_ABUSE_DETECTION", default=False),
     "TRANSACTIONAL_EMAIL": env.bool("FLAG_TRANSACTIONAL_EMAIL", default=False),
     "COST_CAP_USD": env.bool("FLAG_COST_CAP_USD", default=False),
+    "ADMIN_PANEL": env.bool("FLAG_ADMIN_PANEL", default=True),
 }
 
 # AI Provider configuration (Constitution Principle II — provider-agnostic)
@@ -235,6 +241,18 @@ AI_PROVIDER = env("AI_PROVIDER", default="claude")
 ANTHROPIC_API_KEY = env("ANTHROPIC_API_KEY", default="")
 OPENAI_API_KEY = env("OPENAI_API_KEY", default="")
 GOOGLE_AI_API_KEY = env("GOOGLE_AI_API_KEY", default="")
+OPENROUTER_API_KEY = env("OPENROUTER_API_KEY", default="")
+OPENROUTER_MODEL = env("OPENROUTER_MODEL", default="google/gemma-3-27b-it")
+ALIBABA_API_KEY = env("ALIBABA_API_KEY", default="")
+ALIBABA_MODEL = env("ALIBABA_MODEL", default="qwen-plus")
+ALIBABA_BASE_URL = env(
+    "ALIBABA_BASE_URL", default="https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+)
+
+# Ollama local model
+OLLAMA_BASE_URL = env("OLLAMA_BASE_URL", default="http://localhost:11434/v1")
+OLLAMA_MODEL = env("OLLAMA_MODEL", default="llama3.2")
+SITE_URL = env("SITE_URL", default="https://rawaj.io")
 
 # Stripe (Phase 4 — Billing)
 STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY", default="")

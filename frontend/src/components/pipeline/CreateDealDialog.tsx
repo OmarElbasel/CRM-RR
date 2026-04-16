@@ -16,9 +16,10 @@ import { Plus } from 'lucide-react'
 interface CreateDealDialogProps {
   apiUrl: string
   onCreated: () => void
+  trigger?: React.ReactNode
 }
 
-export function CreateDealDialog({ apiUrl, onCreated }: CreateDealDialogProps) {
+export function CreateDealDialog({ apiUrl, onCreated, trigger }: CreateDealDialogProps) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [title, setTitle] = useState('')
@@ -73,10 +74,12 @@ export function CreateDealDialog({ apiUrl, onCreated }: CreateDealDialogProps) {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger
         render={
-          <Button size="sm" className="gap-1.5">
-            <Plus className="w-4 h-4" />
-            Add Deal
-          </Button>
+          trigger || (
+            <button className="bg-primary text-white rounded-lg px-4 py-2 text-sm font-bold flex items-center gap-1.5 hover:bg-primary-dim transition-colors">
+              <Plus className="w-4 h-4" />
+              Add Deal
+            </button>
+          )
         }
       />
       <SheetContent side="right" className="sm:max-w-md">

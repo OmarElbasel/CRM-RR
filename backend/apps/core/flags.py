@@ -19,18 +19,41 @@ def require_flag(flag_name: str):
     DRF view decorator. Returns HTTP 404 if the flag is disabled.
     Using 404 (not 403) makes disabled features appear non-existent to clients.
 
-    Usage:
+    Works on both function-based views and class-based views (APIView subclasses).
+
+    Usage (FBV):
         @require_flag('AI_GENERATION')
         @api_view(['POST'])
         def generate_product_content(request):
             ...
+
+    Usage (CBV):
+        @require_flag('TIKTOK_INBOX')
+        class MyView(APIView):
+            ...
     """
-    def decorator(view_func):
-        @wraps(view_func)
-        def wrapper(*args, **kwargs):
-            if not is_enabled(flag_name):
-                from django.http import HttpResponse
-                return HttpResponse(status=404)
-            return view_func(*args, **kwargs)
-        return wrapper
+    import inspect
+
+    def decorator(view):
+        if inspect.isclass(view):
+            # Class-based view: subclass it and gate dispatch()
+            original_dispatch = view.dispatch
+
+            def gated_dispatch(self, request, *args, **kwargs):
+                if not is_enabled(flag_name):
+                    from django.http import HttpResponse
+                    return HttpResponse(status=404)
+                return original_dispatch(self, request, *args, **kwargs)
+
+            view.dispatch = gated_dispatch
+            return view
+        else:
+            # Function-based view
+            @wraps(view)
+            def wrapper(*args, **kwargs):
+                if not is_enabled(flag_name):
+                    from django.http import HttpResponse
+                    return HttpResponse(status=404)
+                return view(*args, **kwargs)
+            return wrapper
     return decorator

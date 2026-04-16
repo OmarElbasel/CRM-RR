@@ -12,6 +12,24 @@ from django.conf import settings
 from drf_spectacular.extensions import OpenApiAuthenticationExtension
 
 
+class ClerkUser:
+    """
+    Stitch-specific user representation to satisfy request.user.is_authenticated.
+    Since we strictly use Organizations for multi-tenancy, we don't sync real
+    Django User models. (Constitution Principle I)
+    """
+    is_authenticated = True
+
+    def __init__(self, clerk_user_id, email, org_id):
+        self.clerk_user_id = clerk_user_id
+        self.email = email
+        self.org_id = org_id
+        self.id = clerk_user_id  # Some internals expect .id
+
+    def __str__(self):
+        return f"ClerkUser({self.clerk_user_id})"
+
+
 class ClerkJWTAuthenticationScheme(OpenApiAuthenticationExtension):
     """
     Registers ClerkJWTAuthentication with drf-spectacular so that
@@ -41,7 +59,11 @@ class ClerkJWTAuthentication(BaseAuthentication):
     def _get_jwks_client(cls) -> PyJWKClient:
         """Return a cached JWKS client (fetches on first call, then caches)."""
         if cls._jwks_client is None:
-            cls._jwks_client = PyJWKClient(settings.CLERK_JWKS_URL, cache_keys=True)
+            cls._jwks_client = PyJWKClient(
+                settings.CLERK_JWKS_URL, 
+                cache_keys=True,
+                headers={'User-Agent': 'Rawaj-Backend/1.0'}
+            )
         return cls._jwks_client
 
     def authenticate(self, request):
@@ -84,8 +106,10 @@ class ClerkJWTAuthentication(BaseAuthentication):
                 'error_ar': 'رمز المصادقة غير صالح.',
             })
 
-        # Extract org_id claim (Clerk sets this when user belongs to an org)
-        clerk_org_id = claims.get('org_id')
+        # Extract org_id claim (Clerk sets this when user belongs to an org).
+        # Fall back to the user's sub claim so personal Clerk accounts can use the app
+        # (common in dev environments where Clerk Organizations feature is not enabled).
+        clerk_org_id = claims.get('org_id') or claims.get('sub', '')
         if not clerk_org_id:
             raise AuthenticationFailed({
                 'error': 'Token is missing org_id claim. Ensure the user belongs to an organization.',
@@ -96,7 +120,10 @@ class ClerkJWTAuthentication(BaseAuthentication):
         from apps.orgs.models import Organization  # import here to avoid circular import
         org, created = Organization.objects.get_or_create(
             clerk_org_id=clerk_org_id,
-            defaults={'name': claims.get('org', clerk_org_id), 'is_active': True}
+            defaults={
+                'name': claims.get('org_slug') or claims.get('email', clerk_org_id),
+                'is_active': True,
+            }
         )
         
         email_claim = claims.get('email', '')
@@ -122,13 +149,13 @@ class ClerkJWTAuthentication(BaseAuthentication):
         except Exception:
             pass
 
-        # Return (user representation, raw token)
-        user_repr = {
-            'clerk_user_id': claims.get('sub', ''),
-            'email': claims.get('email', ''),
-            'org_id': clerk_org_id,
-        }
-        return (user_repr, token)
+        # Return (user object, raw token)
+        user = ClerkUser(
+            clerk_user_id=claims.get('sub', ''),
+            email=claims.get('email', ''),
+            org_id=clerk_org_id,
+        )
+        return (user, token)
 
     def authenticate_header(self, request) -> str:
         return 'Bearer realm="Rawaj API"'
@@ -175,7 +202,7 @@ class PublicKeyAuthentication(BaseAuthentication):
 
         request.org = org
 
-        return ({'api_key': api_key, 'org_id': org.clerk_org_id}, api_key)
+        return (ClerkUser(clerk_user_id='api_key', email='', org_id=org.clerk_org_id), api_key)
 
     def authenticate_header(self, request) -> str:
         return 'X-API-Key realm="Rawaj Widget"'

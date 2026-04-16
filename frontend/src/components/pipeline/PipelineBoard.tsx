@@ -32,9 +32,11 @@ interface PipelineBoardProps {
   data: PipelineBoardData
   onStageChange: (dealId: number, newStage: string) => Promise<void>
   onDealClick?: (deal: DealData) => void
+  onCreated?: () => void
+  apiUrl?: string
 }
 
-export function PipelineBoard({ data, onStageChange, onDealClick }: PipelineBoardProps) {
+export function PipelineBoard({ data, onStageChange, onDealClick, onCreated, apiUrl }: PipelineBoardProps) {
   const [stages, setStages] = useState<StageGroup[]>(data.stages)
   const [activeDeal, setActiveDeal] = useState<DealData | null>(null)
 
@@ -115,18 +117,22 @@ export function PipelineBoard({ data, onStageChange, onDealClick }: PipelineBoar
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex gap-4 overflow-x-auto pb-4 min-h-[calc(100vh-220px)]">
-        {stages.map((stage) => (
-          <PipelineColumn
-            key={stage.stage}
-            stage={stage.stage}
-            label={stage.label}
-            totalValue={stage.total_value}
-            count={stage.count}
-            deals={stage.deals}
-            onDealClick={onDealClick}
-          />
-        ))}
+      <div className="overflow-x-auto pb-4 scrollbar-hide w-full max-w-full">
+        <div className="flex gap-4 min-w-max pb-8 px-8">
+          {stages.map((stage) => (
+            <PipelineColumn
+              key={stage.stage}
+              stage={stage.stage}
+              label={stage.label}
+              totalValue={stage.total_value}
+              count={stage.count}
+              deals={stage.deals}
+              onDealClick={onDealClick}
+              onCreated={onCreated}
+              apiUrl={apiUrl}
+            />
+          ))}
+        </div>
       </div>
 
       <DragOverlay>
