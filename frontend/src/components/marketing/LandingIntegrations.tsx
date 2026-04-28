@@ -10,18 +10,22 @@ export function Integrations() {
     { n: 'Facebook', c: '#1877F2', i: 'f' },
   ];
   return (
-    <section className="band paper" style={{ paddingTop: 100, paddingBottom: 100 }}>
-      <div className="container-rl">
-        <div className="section-head" style={{ marginBottom: 48, maxWidth: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 32, flexWrap: 'wrap' }}>
+    <section className="bg-paper-2 py-[100px] relative">
+      <div className="max-w-[1240px] mx-auto px-8">
+        <div className="mb-12 max-w-full flex justify-between items-end gap-8 flex-wrap" style={{ maxWidth: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 32, flexWrap: 'wrap' }}>
           <div style={{ maxWidth: 560 }}>
-            <div className="kicker"><span className="kdot" />Integrations</div>
-            <h2 className="section-title" style={{ fontSize: 42 }}>Connect your store and channels in minutes.</h2>
+            <div className="inline-flex items-center gap-2 text-[11.5px] text-ds-primary-ink uppercase tracking-[0.14em] font-semibold mb-5">
+              <span className="w-[5px] h-[5px] bg-ds-primary rounded-full" />Integrations
+            </div>
+            <h2 className="font-display font-medium tracking-[-0.03em] text-[42px] leading-[1.04] m-0 text-ds-text">
+              Connect your store and channels in minutes.
+            </h2>
           </div>
         </div>
-        <div className="integ-grid">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
           {tools.map(t => (
-            <div className="ilogo" key={t.n}>
-              <span style={{ width: 28, height: 28, borderRadius: 8, background: t.c, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, fontFamily: 'Inter Tight', letterSpacing: '-0.02em' }}>{t.i}</span>
+            <div key={t.n} className="aspect-[1.4/1] border border-ds-line rounded-xl flex items-center justify-center bg-white flex-col gap-1.5 text-ds-text-2 text-xs font-medium tracking-[-0.01em] transition-all duration-150 hover:border-ds-line-2 hover:text-ds-text hover:-translate-y-px">
+              <span className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold font-display tracking-[-0.02em]" style={{ background: t.c, color: '#fff' }}>{t.i}</span>
               {t.n}
             </div>
           ))}

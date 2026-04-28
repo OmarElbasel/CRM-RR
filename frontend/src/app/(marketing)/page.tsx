@@ -12,11 +12,13 @@ import { Integrations } from '@/components/marketing/LandingIntegrations';
 import { PricingCards } from '@/components/marketing/LandingPricing';
 import { FinalCta } from '@/components/marketing/FinalCta';
 import { Footer } from '@/components/marketing/LandingFooter';
-import './landing.css';
 
 export default function LandingPage() {
   return (
-    <div className="rawaj-landing">
+    <div
+      className="min-h-screen bg-paper text-ds-text font-display antialiased"
+      style={{ fontFeatureSettings: '"ss01", "cv11"' }}
+    >
       <Nav />
       <main>
         <Hero />

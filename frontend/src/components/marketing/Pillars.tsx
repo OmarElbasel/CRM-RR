@@ -20,157 +20,213 @@ const staggerContainer = {
 
 export function Pillars() {
   return (
-    <section id="pillars" className="band light">
-      <div className="container-rl">
-        <motion.div 
-          className="section-head"
+    <section id="pillars" className="bg-paper py-[96px] lg:py-[140px] relative">
+      <div className="max-w-[1240px] mx-auto px-8">
+        <motion.div
+          className="max-w-[760px] mb-[72px]"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: '-100px' }}
           variants={staggerContainer}
         >
-          <motion.div className="kicker" variants={fadeUp}><span className="kdot" />One platform, four superpowers</motion.div>
-          <motion.h2 className="section-title" variants={fadeUp}>Everything a Gulf merchant needs to <em>scale.</em></motion.h2>
-          <motion.p className="section-lede" variants={fadeUp}>
+          <motion.div className="inline-flex items-center gap-2 text-[11.5px] text-ds-primary-ink uppercase tracking-[0.14em] font-semibold mb-5" variants={fadeUp}>
+            <span className="w-[5px] h-[5px] bg-ds-primary rounded-full" />One platform, four superpowers
+          </motion.div>
+          <motion.h2 className="font-display font-medium tracking-[-0.03em] text-[40px] lg:text-[52px] leading-[1.04] m-0 text-ds-text" variants={fadeUp}>
+            Everything a Gulf merchant needs to <em className="italic text-ds-primary font-normal">scale.</em>
+          </motion.h2>
+          <motion.p className="mt-5 text-[17.5px] leading-[1.55] text-ds-text-2 max-w-[600px]" variants={fadeUp}>
             Rawaj replaces the tangle of copywriting tools, inbox apps, and spreadsheets with one calm, intelligent workspace built for Arabic-first e-commerce.
           </motion.p>
         </motion.div>
 
-        <div className="pillars">
-          <div className="pillar lg">
-            <div className="p-head">
-              <div className="p-icon"><BotIcon /></div>
-              <div className="p-name">AI Product Generator</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="md:col-span-2 bg-white border border-ds-line rounded-[20px] p-8 flex flex-col min-h-[480px] relative overflow-hidden">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-7 h-7 rounded-lg bg-ds-primary-soft text-ds-primary-ink flex items-center justify-center"><BotIcon /></div>
+              <div className="font-display font-semibold text-[13px] tracking-[0.02em] uppercase text-ds-text-2">AI Product Generator</div>
             </div>
-            <h3>Write product copy that <em>sells</em> in Gulf Arabic.</h3>
-            <p>Instantly generate product titles, descriptions, and SEO metadata in authentic Gulf Arabic dialect and professional English. Choose your tone, category, and language — AI does the rest.</p>
-            <div className="visual">
-              <div className="agents">
-                <div className="agent">
-                  <div className="agent-top"><span className="adot" style={{ background: '#C8FE5E', boxShadow: '0 0 0 3px rgba(200,254,94,0.3)' }} /><span className="role">Product: Silk Abaya</span></div>
-                  <div className="task">Generating title and description in Gulf Arabic...</div>
-                  <div className="prog"><span style={{ width: '72%' }} /></div>
-                  <div className="task-meta"><span>Arabic · Luxury tone</span><span>ETA 3s</span></div>
+            <h3 className="font-display font-medium text-[30px] leading-[1.08] tracking-[-0.02em] m-0 mb-3 text-ds-text">
+              Write product copy that <em className="italic text-ds-primary font-normal">sells</em> in Gulf Arabic.
+            </h3>
+            <p className="m-0 text-ds-text-2 text-[15px] leading-[1.55] max-w-[420px]">
+              Instantly generate product titles, descriptions, and SEO metadata in authentic Gulf Arabic dialect and professional English. Choose your tone, category, and language — AI does the rest.
+            </p>
+            <div className="mt-auto pt-6">
+              <div className="grid grid-cols-3 gap-2.5">
+                <div className="bg-paper border border-ds-line rounded-xl p-3.5">
+                  <div className="flex items-center gap-2 mb-2.5">
+                    <span className="w-2 h-2 rounded-full bg-[#C8FE5E] shadow-[0_0_0_3px_rgba(200,254,94,0.3)]" />
+                    <span className="text-[11px] text-ds-text-2 uppercase tracking-[0.08em] font-semibold">Product: Silk Abaya</span>
+                  </div>
+                  <div className="text-[13px] font-medium leading-[1.35] text-ds-text font-display tracking-[-0.01em]">Generating title and description in Gulf Arabic...</div>
+                  <div className="h-[3px] bg-ds-line rounded-sm mt-1.5 overflow-hidden"><span className="block h-full bg-ds-primary rounded-sm" style={{ width: '72%' }} /></div>
+                  <div className="text-[11px] text-ds-text-3 mt-2 flex justify-between"><span>Arabic · Luxury tone</span><span>ETA 3s</span></div>
                 </div>
-                <div className="agent">
-                  <div className="agent-top"><span className="adot" style={{ background: '#594FBF', boxShadow: '0 0 0 3px rgba(89,79,191,0.3)' }} /><span className="role">Product: Oud Perfume</span></div>
-                  <div className="task">Drafting bilingual description...</div>
-                  <div className="prog"><span style={{ width: '44%', background: '#594FBF' }} /></div>
-                  <div className="task-meta"><span>English + Arabic</span><span>Done</span></div>
+                <div className="bg-paper border border-ds-line rounded-xl p-3.5">
+                  <div className="flex items-center gap-2 mb-2.5">
+                    <span className="w-2 h-2 rounded-full bg-[#594FBF] shadow-[0_0_0_3px_rgba(89,79,191,0.3)]" />
+                    <span className="text-[11px] text-ds-text-2 uppercase tracking-[0.08em] font-semibold">Product: Oud Perfume</span>
+                  </div>
+                  <div className="text-[13px] font-medium leading-[1.35] text-ds-text font-display tracking-[-0.01em]">Drafting bilingual description...</div>
+                  <div className="h-[3px] bg-ds-line rounded-sm mt-1.5 overflow-hidden"><span className="block h-full bg-ds-primary rounded-sm" style={{ width: '44%', background: '#594FBF' }} /></div>
+                  <div className="text-[11px] text-ds-text-3 mt-2 flex justify-between"><span>English + Arabic</span><span>Done</span></div>
                 </div>
-                <div className="agent">
-                  <div className="agent-top"><span className="adot" style={{ background: '#F4B740', boxShadow: '0 0 0 3px rgba(244,183,64,0.3)' }} /><span className="role">Product: Sports Shoes</span></div>
-                  <div className="task">Generating SEO keywords...</div>
-                  <div className="prog"><span style={{ width: '88%', background: '#F4B740' }} /></div>
-                  <div className="task-meta"><span>Casual tone</span><span>Almost done</span></div>
+                <div className="bg-paper border border-ds-line rounded-xl p-3.5">
+                  <div className="flex items-center gap-2 mb-2.5">
+                    <span className="w-2 h-2 rounded-full bg-[#F4B740] shadow-[0_0_0_3px_rgba(244,183,64,0.3)]" />
+                    <span className="text-[11px] text-ds-text-2 uppercase tracking-[0.08em] font-semibold">Product: Sports Shoes</span>
+                  </div>
+                  <div className="text-[13px] font-medium leading-[1.35] text-ds-text font-display tracking-[-0.01em]">Generating SEO keywords...</div>
+                  <div className="h-[3px] bg-ds-line rounded-sm mt-1.5 overflow-hidden"><span className="block h-full bg-ds-primary rounded-sm" style={{ width: '88%', background: '#F4B740' }} /></div>
+                  <div className="text-[11px] text-ds-text-3 mt-2 flex justify-between"><span>Casual tone</span><span>Almost done</span></div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="pillar">
-            <div className="p-head">
-              <div className="p-icon"><InboxIcon /></div>
-              <div className="p-name">Unified Inbox</div>
+          <div className="bg-white border border-ds-line rounded-[20px] p-8 flex flex-col min-h-[440px] relative overflow-hidden">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-7 h-7 rounded-lg bg-ds-primary-soft text-ds-primary-ink flex items-center justify-center"><InboxIcon /></div>
+              <div className="font-display font-semibold text-[13px] tracking-[0.02em] uppercase text-ds-text-2">Unified Inbox</div>
             </div>
-            <h3>Every channel, <em>one</em> thread.</h3>
-            <p>WhatsApp Business, Instagram DMs, and Facebook Messenger — all stitched into a single customer timeline. AI detects buyer intent, scores leads, and drafts replies in your voice.</p>
-            <div className="visual">
-              <div className="inbox-mini">
-                <div className="row on">
-                  <div className="src wa">W</div>
+            <h3 className="font-display font-medium text-[30px] leading-[1.08] tracking-[-0.02em] m-0 mb-3 text-ds-text">
+              Every channel, <em className="italic text-ds-primary font-normal">one</em> thread.
+            </h3>
+            <p className="m-0 text-ds-text-2 text-[15px] leading-[1.55] max-w-[420px]">
+              WhatsApp Business, Instagram DMs, and Facebook Messenger — all stitched into a single customer timeline. AI detects buyer intent, scores leads, and drafts replies in your voice.
+            </p>
+            <div className="mt-auto pt-6">
+              <div className="border border-ds-line rounded-xl overflow-hidden bg-white">
+                <div className="grid grid-cols-[24px_1fr_auto] gap-2.5 px-3 py-2 border-b border-ds-line items-center text-xs bg-paper-2">
+                  <div className="w-[18px] h-[18px] rounded-[5px] bg-[#DFF5E3] text-[10px] flex items-center justify-center font-bold text-[#136D2C]">W</div>
                   <div>
-                    <div className="who">Priya Shah</div>
-                    <div className="prev">Can you handle cash on delivery in Dubai?</div>
+                    <div className="font-semibold text-[12.5px] tracking-[-0.01em]">Priya Shah</div>
+                    <div className="text-ds-text-2 text-[11.5px] whitespace-nowrap overflow-hidden text-ellipsis max-w-[170px]">Can you handle cash on delivery in Dubai?</div>
                   </div>
-                  <div className="t">2m</div>
+                  <div className="text-[10.5px] text-ds-text-3">2m</div>
                 </div>
-                <div className="row">
-                  <div className="src ig">IG</div>
+                <div className="grid grid-cols-[24px_1fr_auto] gap-2.5 px-3 py-2 border-b border-ds-line items-center text-xs">
+                  <div className="w-[18px] h-[18px] rounded-[5px] bg-[#FFE0F0] text-[10px] flex items-center justify-center font-bold text-[#AA1D72]">IG</div>
                   <div>
-                    <div className="who">@amelia.ux</div>
-                    <div className="prev">Thanks for the quick reply — placing order now</div>
+                    <div className="font-semibold text-[12.5px] tracking-[-0.01em]">@amelia.ux</div>
+                    <div className="text-ds-text-2 text-[11.5px] whitespace-nowrap overflow-hidden text-ellipsis max-w-[170px]">Thanks for the quick reply — placing order now</div>
                   </div>
-                  <div className="t">14m</div>
+                  <div className="text-[10.5px] text-ds-text-3">14m</div>
                 </div>
-                <div className="row">
-                  <div className="src fb">f</div>
+                <div className="grid grid-cols-[24px_1fr_auto] gap-2.5 px-3 py-2 border-b border-ds-line items-center text-xs">
+                  <div className="w-[18px] h-[18px] rounded-[5px] bg-[#FFE0F0] text-[10px] flex items-center justify-center font-bold text-[#AA1D72]">f</div>
                   <div>
-                    <div className="who">Carlos Mendes</div>
-                    <div className="prev">Do you have this in a larger size?</div>
+                    <div className="font-semibold text-[12.5px] tracking-[-0.01em]">Carlos Mendes</div>
+                    <div className="text-ds-text-2 text-[11.5px] whitespace-nowrap overflow-hidden text-ellipsis max-w-[170px]">Do you have this in a larger size?</div>
                   </div>
-                  <div className="t">1h</div>
+                  <div className="text-[10.5px] text-ds-text-3">1h</div>
                 </div>
-                <div className="row">
-                  <div className="src wa">W</div>
+                <div className="grid grid-cols-[24px_1fr_auto] gap-2.5 px-3 py-2 items-center text-xs">
+                  <div className="w-[18px] h-[18px] rounded-[5px] bg-[#DFF5E3] text-[10px] flex items-center justify-center font-bold text-[#136D2C]">W</div>
                   <div>
-                    <div className="who">Derrick Okafor</div>
-                    <div className="prev">Can I get a discount on 5 items?</div>
+                    <div className="font-semibold text-[12.5px] tracking-[-0.01em]">Derrick Okafor</div>
+                    <div className="text-ds-text-2 text-[11.5px] whitespace-nowrap overflow-hidden text-ellipsis max-w-[170px]">Can I get a discount on 5 items?</div>
                   </div>
-                  <div className="t">3h</div>
+                  <div className="text-[10.5px] text-ds-text-3">3h</div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="pillar">
-            <div className="p-head">
-              <div className="p-icon"><BoardIcon /></div>
-              <div className="p-name">Deal Pipeline</div>
+          <div className="bg-white border border-ds-line rounded-[20px] p-8 flex flex-col min-h-[440px] relative overflow-hidden">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-7 h-7 rounded-lg bg-ds-primary-soft text-ds-primary-ink flex items-center justify-center"><BoardIcon /></div>
+              <div className="font-display font-semibold text-[13px] tracking-[0.02em] uppercase text-ds-text-2">Deal Pipeline</div>
             </div>
-            <h3>A pipeline that <em>updates</em> itself.</h3>
-            <p>Track customers from first message to paid order on a visual Kanban board. AI scores each deal and flags risk before you lose the sale. Drag, drop, and close.</p>
-            <div className="visual">
-              <div className="kanban">
-                <div className="col-rl">
-                  <div className="col-h"><span>New</span><span className="count">6</span></div>
-                  <div className="k-deal"><div className="k-name">Helios Store</div><div className="k-val">420 QAR</div><div className="bar"><span style={{ width: '20%' }} /></div></div>
-                  <div className="k-deal"><div className="k-name">Kelvin Fashion</div><div className="k-val">210 QAR</div><div className="bar"><span style={{ width: '15%' }} /></div></div>
+            <h3 className="font-display font-medium text-[30px] leading-[1.08] tracking-[-0.02em] m-0 mb-3 text-ds-text">
+              A pipeline that <em className="italic text-ds-primary font-normal">updates</em> itself.
+            </h3>
+            <p className="m-0 text-ds-text-2 text-[15px] leading-[1.55] max-w-[420px]">
+              Track customers from first message to paid order on a visual Kanban board. AI scores each deal and flags risk before you lose the sale. Drag, drop, and close.
+            </p>
+            <div className="mt-auto pt-6">
+              <div className="grid grid-cols-4 gap-2 min-h-[140px]">
+                <div className="bg-paper border border-ds-line rounded-[10px] p-2.5">
+                  <div className="flex justify-between text-[10.5px] font-semibold uppercase tracking-[0.08em] text-ds-text-2 mb-2">
+                    <span>New</span><span className="bg-white py-px px-1.5 rounded border border-ds-line text-ds-text">6</span>
+                  </div>
+                  <div className="bg-white border border-ds-line rounded-lg p-2 mb-1.5">
+                    <div className="text-[11.5px] font-semibold tracking-[-0.01em]">Helios Store</div>
+                    <div className="text-[11px] text-ds-text-2 mt-[3px]">420 QAR</div>
+                    <div className="mt-[5px] h-[2px] bg-ds-line rounded-sm overflow-hidden"><span className="block h-full bg-ds-primary rounded-sm" style={{ width: '20%' }} /></div>
+                  </div>
+                  <div className="bg-white border border-ds-line rounded-lg p-2 mb-1.5">
+                    <div className="text-[11.5px] font-semibold tracking-[-0.01em]">Kelvin Fashion</div>
+                    <div className="text-[11px] text-ds-text-2 mt-[3px]">210 QAR</div>
+                    <div className="mt-[5px] h-[2px] bg-ds-line rounded-sm overflow-hidden"><span className="block h-full bg-ds-primary rounded-sm" style={{ width: '15%' }} /></div>
+                  </div>
                 </div>
-                <div className="col-rl">
-                  <div className="col-h"><span>Qual</span><span className="count">4</span></div>
-                  <div className="k-deal hot"><div className="k-name">Parallax</div><div className="k-val">1,800 QAR</div><div className="bar"><span style={{ width: '55%' }} /></div></div>
+                <div className="bg-paper border border-ds-line rounded-[10px] p-2.5">
+                  <div className="flex justify-between text-[10.5px] font-semibold uppercase tracking-[0.08em] text-ds-text-2 mb-2">
+                    <span>Qual</span><span className="bg-white py-px px-1.5 rounded border border-ds-line text-ds-text">4</span>
+                  </div>
+                  <div className="bg-[#FBFAE4] border border-[#E4EE8A] rounded-lg p-2 mb-1.5">
+                    <div className="text-[11.5px] font-semibold tracking-[-0.01em]">Parallax</div>
+                    <div className="text-[11px] text-ds-text-2 mt-[3px]">1,800 QAR</div>
+                    <div className="mt-[5px] h-[2px] bg-ds-line rounded-sm overflow-hidden"><span className="block h-full bg-ds-primary rounded-sm" style={{ width: '55%' }} /></div>
+                  </div>
                 </div>
-                <div className="col-rl">
-                  <div className="col-h"><span>Prop</span><span className="count">3</span></div>
-                  <div className="k-deal"><div className="k-name">Vertex</div><div className="k-val">3,200 QAR</div><div className="bar"><span style={{ width: '78%' }} /></div></div>
+                <div className="bg-paper border border-ds-line rounded-[10px] p-2.5">
+                  <div className="flex justify-between text-[10.5px] font-semibold uppercase tracking-[0.08em] text-ds-text-2 mb-2">
+                    <span>Prop</span><span className="bg-white py-px px-1.5 rounded border border-ds-line text-ds-text">3</span>
+                  </div>
+                  <div className="bg-white border border-ds-line rounded-lg p-2 mb-1.5">
+                    <div className="text-[11.5px] font-semibold tracking-[-0.01em]">Vertex</div>
+                    <div className="text-[11px] text-ds-text-2 mt-[3px]">3,200 QAR</div>
+                    <div className="mt-[5px] h-[2px] bg-ds-line rounded-sm overflow-hidden"><span className="block h-full bg-ds-primary rounded-sm" style={{ width: '78%' }} /></div>
+                  </div>
                 </div>
-                <div className="col-rl">
-                  <div className="col-h"><span>Won</span><span className="count">2</span></div>
-                  <div className="k-deal" style={{ background: '#EAF6EE', borderColor: '#CDE7D6' }}><div className="k-name">Northwind</div><div className="k-val" style={{ color: '#1C6A35' }}>960 QAR &#10003;</div></div>
+                <div className="bg-paper border border-ds-line rounded-[10px] p-2.5">
+                  <div className="flex justify-between text-[10.5px] font-semibold uppercase tracking-[0.08em] text-ds-text-2 mb-2">
+                    <span>Won</span><span className="bg-white py-px px-1.5 rounded border border-ds-line text-ds-text">2</span>
+                  </div>
+                  <div className="bg-[#EAF6EE] border border-[#CDE7D6] rounded-lg p-2 mb-1.5">
+                    <div className="text-[11.5px] font-semibold tracking-[-0.01em]">Northwind</div>
+                    <div className="text-[11px] text-[#1C6A35] mt-[3px]">960 QAR &#10003;</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="pillar lg">
-            <div className="p-head">
-              <div className="p-icon"><PenIcon /></div>
-              <div className="p-name">Content &amp; Scheduler</div>
+          <div className="md:col-span-2 bg-white border border-ds-line rounded-[20px] p-8 flex flex-col min-h-[480px] relative overflow-hidden">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-7 h-7 rounded-lg bg-ds-primary-soft text-ds-primary-ink flex items-center justify-center"><PenIcon /></div>
+              <div className="font-display font-semibold text-[13px] tracking-[0.02em] uppercase text-ds-text-2">Content &amp; Scheduler</div>
             </div>
-            <h3>Social content that sounds <em>like you.</em></h3>
-            <p>Generate captions, ad copy, and WhatsApp broadcast messages in Arabic and English. Schedule posts across platforms and send bulk campaigns — all from one place.</p>
-            <div className="visual">
-              <div className="composer">
-                <div className="composer-hd">
-                  <div className="to">New broadcast · <b>Ramadan Collection</b></div>
-                  <div className="mode">
-                    <span>Plain</span>
-                    <span className="on">&#10022; AI Draft</span>
+            <h3 className="font-display font-medium text-[30px] leading-[1.08] tracking-[-0.02em] m-0 mb-3 text-ds-text">
+              Social content that sounds <em className="italic text-ds-primary font-normal">like you.</em>
+            </h3>
+            <p className="m-0 text-ds-text-2 text-[15px] leading-[1.55] max-w-[420px]">
+              Generate captions, ad copy, and WhatsApp broadcast messages in Arabic and English. Schedule posts across platforms and send bulk campaigns — all from one place.
+            </p>
+            <div className="mt-auto pt-6">
+              <div className="border border-ds-line rounded-[14px] bg-white p-4">
+                <div className="flex gap-2 mb-2.5 items-center">
+                  <div className="text-xs text-ds-text-2">New broadcast · <b className="text-ds-text">Ramadan Collection</b></div>
+                  <div className="ml-auto flex gap-1">
+                    <span className="text-[11px] py-[3px] px-2 rounded-md text-ds-text-2 cursor-pointer">Plain</span>
+                    <span className="text-[11px] py-[3px] px-2 rounded-md bg-ink text-white cursor-pointer">&#10022; AI Draft</span>
                   </div>
                 </div>
-                <div className="draft">
+                <div className="text-[13px] leading-[1.55] text-ds-text py-3 px-0 pb-3.5 border-b border-dashed border-ds-line">
                   &#x627;&#x644;&#x633;&#x644;&#x627;&#x645; &#x639;&#x644;&#x64A;&#x643;&#x645;! &#x62A;&#x634;&#x643;&#x64A;&#x644;&#x629; &#x631;&#x645;&#x636;&#x627;&#x646; &#x627;&#x644;&#x62C;&#x62F;&#x64A;&#x62F;&#x629; &#x648;&#x635;&#x644;&#x62A; &#x627;&#x644;&#x62D;&#x64A;&#x646;! &#x627;&#x633;&#x62A;&#x643;&#x634;&#x641;&#x648;&#x627; &#x627;&#x644;&#x62A;&#x635;&#x627;&#x645;&#x64A;&#x645; &#x627;&#x644;&#x645;&#x62D;&#x62F;&#x648;&#x62F;&#x629; &#x648;&#x627;&#x62D;&#x635;&#x644;&#x648;&#x627; &#x639;&#x644;&#x649; &#x62E;&#x635;&#x645; 20% &#x644;&#x644;&#x637;&#x644;&#x628;&#x627;&#x62A; &#x627;&#x644;&#x623;&#x648;&#x644;&#x649;.
                 </div>
-                <div className="foot">
-                  <div className="left">
-                    <span className="chip-c">Tone: Warm</span>
-                    <span className="chip-c">+ Hashtags</span>
-                    <span className="chip-c">+ CTA</span>
+                <div className="flex gap-2 items-center mt-3 flex-wrap">
+                  <div className="flex gap-1.5 flex-wrap">
+                    <span className="py-1 px-[9px] border border-ds-line rounded-md text-[11px] text-ds-text-2 bg-white cursor-pointer">Tone: Warm</span>
+                    <span className="py-1 px-[9px] border border-ds-line rounded-md text-[11px] text-ds-text-2 bg-white cursor-pointer">+ Hashtags</span>
+                    <span className="py-1 px-[9px] border border-ds-line rounded-md text-[11px] text-ds-text-2 bg-white cursor-pointer">+ CTA</span>
                   </div>
-                  <div className="send">
-                    <button className="schedule">Schedule</button>
-                    <button className="go">Send now <ArrowIcon style={{ marginLeft: 4 }} /></button>
+                  <div className="ml-auto flex gap-1.5">
+                    <button className="h-7 px-2.5 rounded-md text-xs border border-ds-line bg-white text-ds-text cursor-pointer font-medium">Schedule</button>
+                    <button className="h-7 px-2.5 rounded-md text-xs border-0 bg-ink text-white cursor-pointer font-medium">Send now <ArrowIcon className="inline ml-1" /></button>
                   </div>
                 </div>
               </div>
