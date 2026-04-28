@@ -27,7 +27,7 @@ interface Props {
 const PLATFORM_CONFIG = {
   instagram: {
     name: 'Instagram',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg',
+    logo: '/brands/instagram.svg',
     color: 'text-pink-600',
     bg: 'bg-pink-50',
     accountLabel: 'Instagram Business Account ID',
@@ -37,7 +37,7 @@ const PLATFORM_CONFIG = {
   },
   facebook: {
     name: 'Facebook Page',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/0/04/Facebook_f_logo_%282021%29.svg',
+    logo: '/brands/facebook.svg',
     color: 'text-blue-600',
     bg: 'bg-blue-50',
     accountLabel: 'Facebook Page ID',

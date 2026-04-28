@@ -13,10 +13,10 @@ import { ArrowLeft, MessageCircle, MessageSquare, Music2 } from 'lucide-react'
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 const PLATFORM_LOGO: Record<string, string> = {
-  INSTAGRAM: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg',
-  WHATSAPP: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg',
-  FACEBOOK: 'https://upload.wikimedia.org/wikipedia/en/0/04/Facebook_f_logo_%282021%29.svg',
-  TIKTOK: 'https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg',
+  INSTAGRAM: '/brands/instagram.svg',
+  WHATSAPP: '/brands/whatsapp.svg',
+  FACEBOOK: '/brands/facebook.svg',
+  TIKTOK: '/brands/tiktok.svg',
 }
 
 const Instagram = ({ className }: { className?: string }) => (

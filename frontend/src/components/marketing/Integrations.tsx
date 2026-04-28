@@ -2,58 +2,29 @@
 
 import { Megaphone, Podcast as Music, Camera } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
+import { BrandLogo } from '@/components/ui/BrandLogo';
 
 export function Integrations() {
   const integrations = [
     {
       name: 'Shopify',
-      icon: (
-        <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ58f__Hs5QwGWIEcsawDwW1o5IQzaYNPONhQ&s"
-          alt="Shopify"
-          className="w-10 h-10 object-contain"
-        />
-      ),
+      icon: <BrandLogo brand="shopify" className="w-10 h-10 object-contain" />,
     },
     {
       name: 'Meta Ads',
-      icon: (
-        <img
-          src="https://upload.wikimedia.org/wikipedia/en/0/04/Facebook_f_logo_%282021%29.svg"
-          alt="Meta"
-          className="w-10 h-10 object-contain"
-        />
-      ),
+      icon: <BrandLogo brand="facebook" className="w-10 h-10 object-contain" />,
     },
     {
       name: 'TikTok',
-      icon: (
-        <img
-          src="https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg"
-          alt="TikTok"
-          className="w-10 h-10 object-contain"
-        />
-      ),
+      icon: <BrandLogo brand="tiktok" className="w-10 h-10 object-contain" />,
     },
     {
       name: 'WhatsApp',
-      icon: (
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-          alt="WhatsApp"
-          className="w-10 h-10 object-contain"
-        />
-      ),
+      icon: <BrandLogo brand="whatsapp" className="w-10 h-10 object-contain" />,
     },
     {
       name: 'Instagram',
-      icon: (
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg"
-          alt="Instagram"
-          className="w-10 h-10 object-contain"
-        />
-      ),
+      icon: <BrandLogo brand="instagram" className="w-10 h-10 object-contain" />,
     },
   ];
 

@@ -115,7 +115,7 @@ export function ShopifyConnectModal({ open, onOpenChange, onSubmit }: Props) {
             <div className="flex items-center gap-3 mb-1">
               <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center">
                 <img
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ58f__Hs5QwGWIEcsawDwW1o5IQzaYNPONhQ&s"
+                  src="/brands/shopify.svg"
                   alt="Shopify"
                   className="w-6 h-6 object-contain"
                 />

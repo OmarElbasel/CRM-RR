@@ -40,10 +40,10 @@ interface InboxListProps {
 }
 
 const PLATFORM_CONFIG: Record<string, { logo: string; bg: string }> = {
-  INSTAGRAM: { logo: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg', bg: 'bg-white' },
-  WHATSAPP: { logo: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg', bg: 'bg-white' },
-  FACEBOOK: { logo: 'https://upload.wikimedia.org/wikipedia/en/0/04/Facebook_f_logo_%282021%29.svg', bg: 'bg-white' },
-  TIKTOK: { logo: 'https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg', bg: 'bg-white' },
+  INSTAGRAM: { logo: '/brands/instagram.svg', bg: 'bg-white' },
+  WHATSAPP: { logo: '/brands/whatsapp.svg', bg: 'bg-white' },
+  FACEBOOK: { logo: '/brands/facebook.svg', bg: 'bg-white' },
+  TIKTOK: { logo: '/brands/tiktok.svg', bg: 'bg-white' },
 }
 
 const INTENT_CONFIG: Record<string, { label: string, className: string }> = {
