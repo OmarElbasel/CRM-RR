@@ -1,4 +1,5 @@
 import logging
+from datetime import timedelta
 from decimal import Decimal
 
 from django.db.models import Sum, Count, Q, OuterRef, Subquery, Exists
@@ -460,3 +461,57 @@ class NotificationMarkAllReadView(APIView):
         ).update(read_at=now)
 
         return Response({"marked_read": updated})
+
+
+class PipelineStatsView(APIView):
+    """GET /api/pipeline/stats/ — Aggregate pipeline stats for the org."""
+
+    @extend_schema(operation_id="pipeline_stats", tags=["pipeline"])
+    def get(self, request):
+        org = request.org
+        deals = Deal.objects.filter(org=org)
+
+        total_value = deals.aggregate(total=Sum("value"))["total"] or Decimal("0.00")
+
+        # Group by source_platform
+        by_source = []
+        sources = deals.values("source_platform").annotate(
+            amount=Sum("value"),
+            count=Count("id"),
+        )
+        for s in sources:
+            source = s["source_platform"] or "manual"
+            amount = s["amount"] or Decimal("0.00")
+            percent = round((amount / total_value * 100), 1) if total_value > 0 else 0
+            by_source.append({
+                "source": source,
+                "amount": str(amount),
+                "percent": percent,
+            })
+
+        # Month-over-month change
+        now = timezone.now()
+        trailing_30 = now - timedelta(days=30)
+        previous_30_start = now - timedelta(days=60)
+
+        trailing_value = deals.filter(
+            created_at__gte=trailing_30
+        ).aggregate(total=Sum("value"))["total"] or Decimal("0.00")
+
+        previous_value = deals.filter(
+            created_at__gte=previous_30_start,
+            created_at__lt=trailing_30,
+        ).aggregate(total=Sum("value"))["total"] or Decimal("0.00")
+
+        mom_change_percent = None
+        if previous_value > 0:
+            mom_change_percent = round(
+                float((trailing_value - previous_value) / previous_value * 100), 1
+            )
+
+        return Response({
+            "total_value": str(total_value),
+            "currency": "QAR",
+            "by_source": by_source,
+            "mom_change_percent": mom_change_percent,
+        })

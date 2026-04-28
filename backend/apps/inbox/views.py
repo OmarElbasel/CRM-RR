@@ -1104,3 +1104,27 @@ class DisconnectView(APIView):
                 "message_ar": f"تم فصل {channel.get_platform_display()} بنجاح.",
             }
         )
+
+
+class ChannelStatsView(APIView):
+    """GET /api/channels/stats/ — Channel aggregate stats for the org."""
+
+    @extend_schema(operation_id="channel_stats", tags=["channels"])
+    def get(self, request):
+        org = request.org
+        from datetime import timedelta
+
+        now = timezone.now()
+        trailing_30 = now - timedelta(days=30)
+
+        active_channels = SocialChannel.objects.filter(org=org, is_active=True).count()
+        messages_synced_30d = Message.objects.filter(
+            contact__org=org,
+            sent_at__gte=trailing_30,
+        ).count()
+
+        return Response({
+            "uptime_percent_30d": None,
+            "messages_synced_30d": messages_synced_30d,
+            "active_channels": active_channels,
+        })

@@ -29,4 +29,5 @@ urlpatterns = [
         views.NotificationMarkAllReadView.as_view(),
         name="notification-mark-all-read",
     ),
+    path("stats/", views.PipelineStatsView.as_view(), name="pipeline-stats"),
 ]

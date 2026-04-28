@@ -241,3 +241,43 @@ def org_update(request):
         'reset_date': reset_date.isoformat(),
     })
 
+
+ONBOARDING_STEPS = {'created_workspace', 'connected_channel', 'first_generation', 'invited_teammate'}
+
+
+@extend_schema(
+    summary='Get onboarding state',
+    tags=['Organizations'],
+)
+@api_view(['GET'])
+def onboarding_state(request):
+    """Return the organization's onboarding progress."""
+    org = request.org
+    state = org.onboarding_state or {}
+    # Ensure all keys exist
+    for step in ONBOARDING_STEPS:
+        if step not in state:
+            state[step] = False
+    return Response(state)
+
+
+@extend_schema(
+    summary='Complete an onboarding step',
+    tags=['Organizations'],
+)
+@api_view(['POST'])
+def onboarding_complete(request):
+    """Mark an onboarding step as complete."""
+    org = request.org
+    step = request.data.get('step')
+    if step not in ONBOARDING_STEPS:
+        return Response(
+            {'error': f'Invalid step. Must be one of: {", ".join(sorted(ONBOARDING_STEPS))}'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    if not org.onboarding_state:
+        org.onboarding_state = {}
+    org.onboarding_state[step] = True
+    org.save(update_fields=['onboarding_state'])
+    return Response({'step': step, 'completed': True})
+

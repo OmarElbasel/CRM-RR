@@ -90,6 +90,13 @@ class Organization(models.Model):
         help_text='Primary owner email. Populated from Clerk JWT on first authentication.',
     )
 
+    # Phase 13 — Server-persisted onboarding state
+    onboarding_state = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text='Onboarding progress: created_workspace, connected_channel, first_generation, invited_teammate.',
+    )
+
     class Meta:
         verbose_name = 'Organization'
         verbose_name_plural = 'Organizations'
