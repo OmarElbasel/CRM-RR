@@ -19,11 +19,12 @@ const STAGE_CONFIG: Record<string, { color: string; dot: string; bg: string }> =
   ENGAGED: { color: 'text-blue-600', dot: 'bg-blue-500', bg: 'bg-blue-50/30' },
   PRICE_SENT: { color: 'text-amber-600', dot: 'bg-amber-400', bg: 'bg-amber-50/30' },
   ORDER_PLACED: { color: 'text-purple-600', dot: 'bg-purple-500', bg: 'bg-purple-50/30' },
-  PAID: { color: 'text-secondary-dim', dot: 'bg-secondary-container', bg: 'bg-emerald-50/30' },
+  PAID: { color: 'text-secondary-dim', dot: 'bg-ds-accent/20', bg: 'bg-emerald-50/30' },
   LOST: { color: 'text-on-error-container', dot: 'bg-error', bg: 'bg-error-container/10' },
 }
 
 import { CreateDealDialog } from './CreateDealDialog'
+import { Plus } from 'lucide-react'
 
 export function PipelineColumn({ stage, label, totalValue, count, deals, onDealClick, onCreated, apiUrl }: PipelineColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id: stage })
@@ -32,7 +33,7 @@ export function PipelineColumn({ stage, label, totalValue, count, deals, onDealC
   return (
     <div
       ref={setNodeRef}
-      className={`flex flex-col min-w-[320px] max-w-[320px] w-full rounded-xl transition-all ${isOver ? 'bg-surface-container-high/50 ring-2 ring-primary/20 scale-[1.01]' : ''}`}
+      className={`flex flex-col min-w-[320px] max-w-[320px] w-full rounded-xl transition-all ${isOver ? 'bg-paper-2/50 ring-2 ring-primary/20 scale-[1.01]' : ''}`}
     >
       <div className="flex items-center justify-between px-1 mb-4 shrink-0">
         <div className="flex items-center gap-2">
@@ -56,14 +57,14 @@ export function PipelineColumn({ stage, label, totalValue, count, deals, onDealC
               onCreated={onCreated || (() => {})} 
               trigger={
                 <button className="dashed border-2 border-dashed border-slate-300 rounded-lg py-3 text-slate-400 text-sm font-medium hover:border-indigo-400 hover:text-indigo-600 transition-all flex items-center justify-center gap-2 group">
-                  <span className="material-symbols-outlined text-sm group-hover:rotate-90 transition-transform">add</span>
+                  <Plus className="text-sm group-hover:rotate-90 transition-transform" />
                   New Manual Order
                 </button>
               }
             />
         )}
         {deals.length === 0 && stage !== 'NEW_MESSAGE' && (
-          <div className="py-12 border-2 border-dashed border-outline-variant/10 rounded-xl flex flex-col items-center justify-center opacity-30">
+          <div className="py-12 border-2 border-dashed border-ds-line-2/10 rounded-xl flex flex-col items-center justify-center opacity-30">
              <span className="material-symbols-outlined text-4xl mb-2">drag_indicator</span>
              <p className="text-xs font-medium">No deals in {label}</p>
           </div>

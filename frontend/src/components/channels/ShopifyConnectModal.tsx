@@ -253,7 +253,7 @@ export function ShopifyConnectModal({ open, onOpenChange, onSubmit }: Props) {
           <div className="flex gap-2 pt-1">
             <Button
               type="button"
-              variant="outline"
+              variant="ds-line"
               className="flex-1 h-9 text-sm"
               onClick={() => handleOpenChange(false)}
               disabled={loading}

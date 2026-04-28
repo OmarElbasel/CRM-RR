@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { OrganizationSwitcher } from '@clerk/nextjs'
+import { LogOut, User } from 'lucide-react'
 
 export const NAV_ITEMS = [
   { label: 'Dashboard', href: '/dashboard', icon: 'dashboard' },
@@ -89,11 +90,11 @@ export function Sidebar() {
           href="/dashboard/settings?tab=account"
           className="py-2 px-3 flex items-center gap-3 transition-colors text-sm rounded-[10px] text-[#B8B8C8] hover:text-[#fff] hover:bg-white/[0.04]"
         >
-          <span className="material-symbols-outlined text-[20px]">person</span>
+          <User className="text-[20px]" />
           <span className="font-medium">Account</span>
         </Link>
         <button className="w-full text-[#B8B8C8] py-2 px-3 flex items-center gap-3 hover:text-[#fff] hover:bg-white/[0.04] transition-all text-sm rounded-[10px] mt-0.5">
-          <span className="material-symbols-outlined text-[20px]">logout</span>
+          <LogOut className="text-[20px]" />
           <span className="font-medium">Logout</span>
         </button>
       </div>

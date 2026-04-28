@@ -1,6 +1,6 @@
 'use client'
 
-import { FileText } from 'lucide-react'
+import { Bell, FileText, HelpCircle } from 'lucide-react'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { PlaceholderFeature } from '@/components/ui/PlaceholderFeature'
 import { isEnabled } from '@/lib/flags'
@@ -57,11 +57,11 @@ export default function ContentPage() {
 
           <div className="flex items-center gap-4">
             <button className="p-2 text-slate-600 hover:bg-slate-50 rounded-full transition-colors relative">
-              <span className="material-symbols-outlined">notifications</span>
+              <Bell className="w-5 h-5" />
               <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-white"></span>
             </button>
             <button className="p-2 text-slate-600 hover:bg-slate-50 rounded-full transition-colors">
-              <span className="material-symbols-outlined">help</span>
+              <HelpCircle className="w-5 h-5" />
             </button>
           </div>
         </header>

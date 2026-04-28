@@ -95,11 +95,11 @@ export function SchedulerCalendar() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))}>
+          <Button variant="ds-line" size="sm" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <span className="font-medium">{monthName}</span>
-          <Button variant="outline" size="sm" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))}>
+          <Button variant="ds-line" size="sm" onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))}>
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
@@ -157,7 +157,7 @@ export function SchedulerCalendar() {
                           <div className="flex gap-2">
                             {post.status === 'PENDING' && (
                               <>
-                                <Button size="sm" variant="outline" onClick={() => { setEditingPost(post); setDialogOpen(true) }}>Edit</Button>
+                                <Button size="sm" variant="ds-line" onClick={() => { setEditingPost(post); setDialogOpen(true) }}>Edit</Button>
                                 <Button size="sm" variant="destructive" onClick={() => handleDelete(post.id)}>Delete</Button>
                               </>
                             )}

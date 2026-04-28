@@ -8,7 +8,7 @@ import { ConversationThread, type ThreadMessage } from '@/components/inbox/Conve
 import { ReplyComposer } from '@/components/inbox/ReplyComposer'
 import { ContactSidebar } from '@/components/inbox/ContactSidebar'
 import { useInboxStream } from '@/hooks/useInboxStream'
-import { MessageSquare, MessageCircle, Music2 } from 'lucide-react'
+import { ArrowLeft, MessageCircle, MessageSquare, Music2 } from 'lucide-react'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -111,20 +111,20 @@ export default function ThreadPage() {
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Thread Header */}
-        <header className="flex justify-between items-center px-6 h-16 bg-white border-b border-outline-variant shrink-0 z-10">
+        <header className="flex justify-between items-center px-6 h-16 bg-white border-b border-ds-line-2 shrink-0 z-10">
           <div className="flex items-center gap-4">
             <button
               onClick={() => router.push('/inbox')}
-              className="p-2 hover:bg-surface-container-low rounded-full transition-colors text-on-surface-variant"
+              className="p-2 hover:bg-paper rounded-full transition-colors text-ds-text-2"
               aria-label="Back to inbox"
             >
-              <span className="material-symbols-outlined">arrow_back</span>
+              <ArrowLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-3">
               <Avatar name={displayName} src={contact?.avatar_url} size={40} />
               <div>
-                <h2 className="text-md font-bold text-on-surface leading-tight">{displayName}</h2>
-                <p className="text-[10px] text-on-surface-variant flex items-center gap-1 font-medium">
+                <h2 className="text-md font-bold text-ds-text leading-tight">{displayName}</h2>
+                <p className="text-[10px] text-ds-text-2 flex items-center gap-1 font-medium">
                   <Icon className="w-3 h-3" />
                   {contact?.platform}
                 </p>

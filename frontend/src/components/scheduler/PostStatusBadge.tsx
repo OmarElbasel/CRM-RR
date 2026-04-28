@@ -11,5 +11,5 @@ export function PostStatusBadge({ status }: PostStatusBadgeProps) {
   if (status === 'FAILED') {
     return <Badge variant="destructive">Failed</Badge>
   }
-  return <Badge variant="outline" className="text-yellow-600 border-yellow-300">Pending</Badge>
+  return <Badge variant="ds-line" className="text-yellow-600 border-yellow-300">Pending</Badge>
 }

@@ -63,8 +63,8 @@
 .rawaj-landing .btn-primary { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
 .rawaj-landing .btn-primary:hover { filter: brightness(1.05); }
 .rawaj-landing .btn-dark { background: var(--ink); color: #fff; }
-.rawaj-landing .btn-outline { border-color: var(--line-2); color: var(--text); background: #fff; }
-.rawaj-landing .btn-outline:hover { border-color: var(--text); }
+.rawaj-landing .btn-ds-line { border-color: var(--line-2); color: var(--text); background: #fff; }
+.rawaj-landing .btn-ds-line:hover { border-color: var(--text); }
 .rawaj-landing .btn-lg { height: 44px; padding: 0 18px; border-radius: 11px; font-size: 14px; }
 .rawaj-landing .btn-arrow { transition: transform 0.2s; }
 .rawaj-landing .btn-rl:hover .btn-arrow { transform: translateX(2px); }

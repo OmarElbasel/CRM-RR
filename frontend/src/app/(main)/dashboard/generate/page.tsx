@@ -6,8 +6,8 @@ export default function GeneratorPage() {
       <div className="max-w-6xl mx-auto">
         {/* Header Section from Design */}
         <div className="mb-10">
-          <h1 className="text-3xl font-extrabold text-on-surface tracking-tight mb-2">AI Generator</h1>
-          <p className="text-on-surface-variant font-body">Generate product descriptions powered by AI to boost your conversion rates.</p>
+          <h1 className="text-3xl font-extrabold text-ds-text tracking-tight mb-2">AI Generator</h1>
+          <p className="text-ds-text-2 font-body">Generate product descriptions powered by AI to boost your conversion rates.</p>
         </div>
 
         <GeneratorForm />

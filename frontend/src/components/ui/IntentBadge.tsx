@@ -32,7 +32,7 @@ const INTENT_CONFIG: Record<Intent, { label: string; className: string }> = {
 export function IntentBadge({ intent }: IntentBadgeProps) {
   const config = INTENT_CONFIG[intent]
   return (
-    <Badge variant="outline" className={`${config.className} text-xs font-medium`}>
+    <Badge variant="ds-line" className={`${config.className} text-xs font-medium`}>
       {config.label}
     </Badge>
   )

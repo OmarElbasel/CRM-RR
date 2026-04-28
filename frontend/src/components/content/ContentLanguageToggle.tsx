@@ -11,7 +11,7 @@ export function ContentLanguageToggle({ value, onChange }: ContentLanguageToggle
   return (
     <div className="inline-flex rounded-lg border p-1">
       <Button
-        variant={value === 'ar' ? 'default' : 'outline'}
+        variant={value === 'ar' ? 'default' : 'ds-line'}
         size="sm"
         onClick={() => onChange('ar')}
         className="h-8 px-3 text-xs"
@@ -19,7 +19,7 @@ export function ContentLanguageToggle({ value, onChange }: ContentLanguageToggle
         AR
       </Button>
       <Button
-        variant={value === 'en' ? 'default' : 'outline'}
+        variant={value === 'en' ? 'default' : 'ds-line'}
         size="sm"
         onClick={() => onChange('en')}
         className="h-8 px-3 text-xs"

@@ -44,7 +44,7 @@ export function EmbedSnippets({ apiKeyPublic }: EmbedSnippetsProps) {
               {scriptTag}
             </pre>
             <Button
-              variant="outline"
+              variant="ds-line"
               size="sm"
               onClick={() => copyCode(scriptTag, 'script')}
               className="rounded-lg"
@@ -59,7 +59,7 @@ export function EmbedSnippets({ apiKeyPublic }: EmbedSnippetsProps) {
               {iframeTag}
             </pre>
             <Button
-              variant="outline"
+              variant="ds-line"
               size="sm"
               onClick={() => copyCode(iframeTag, 'iframe')}
               className="rounded-lg"

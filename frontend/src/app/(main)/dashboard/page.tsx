@@ -6,6 +6,7 @@ import { formatPrice } from '@/lib/currency'
 import { isEnabled } from '@/lib/flags'
 import { OnboardingChecklist } from '@/components/dashboard/OnboardingChecklist'
 import Link from 'next/link'
+import { ArrowRight, Code, Copy, Key, LayoutGrid, Rocket, Share2, Sparkles } from 'lucide-react'
 
 interface UsageData {
   plan: string
@@ -112,7 +113,7 @@ export default async function DashboardPage() {
           <div className="bg-white p-6 rounded-[14px] border border-ds-line shadow-[0_1px_0_rgba(0,0,0,0.02),0_30px_60px_-30px_rgba(10,10,20,0.15)]">
             <div className="flex justify-between items-start mb-4">
               <div className="p-2 bg-ds-primary-soft rounded-[8px] text-ds-primary">
-                <span className="material-symbols-outlined">auto_awesome</span>
+                <Sparkles className="w-5 h-5" />
               </div>
             </div>
             <div className="space-y-1">
@@ -130,7 +131,7 @@ export default async function DashboardPage() {
           {/* API Key */}
           <div className="bg-white p-6 rounded-[14px] border border-ds-line shadow-[0_1px_0_rgba(0,0,0,0.02),0_30px_60px_-30px_rgba(10,10,20,0.15)] relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4">
-              <span className="material-symbols-outlined text-ds-line-2 text-5xl opacity-30 select-none">key</span>
+              <Key className="text-ds-line-2 text-5xl opacity-30 select-none" />
             </div>
             <p className="text-sm font-medium text-ds-text-2 mb-4">Active API Key</p>
             <div className="bg-paper p-3 rounded-[10px] border border-ds-line font-mono text-[11px] text-ds-text-2 break-all mb-4">
@@ -140,7 +141,7 @@ export default async function DashboardPage() {
               href="/dashboard/api-keys"
               className="w-full py-2 bg-paper text-ds-primary font-bold text-xs rounded-[10px] hover:bg-ds-primary hover:text-white transition-all flex items-center justify-center gap-2 border border-ds-line"
             >
-              <span className="material-symbols-outlined text-sm">content_copy</span>
+              <Copy className="text-sm" />
               Copy Key
             </Link>
           </div>
@@ -172,7 +173,7 @@ export default async function DashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Link href="/dashboard/generate" className="group bg-white p-6 rounded-[14px] border border-ds-line hover:border-ds-primary transition-all cursor-pointer hover:shadow-xl hover:-translate-y-1 block">
               <div className="w-12 h-12 bg-ds-primary-soft rounded-[10px] flex items-center justify-center text-ds-primary mb-4 group-hover:bg-ds-primary group-hover:text-white transition-colors">
-                <span className="material-symbols-outlined text-3xl">auto_awesome</span>
+                <Sparkles className="text-3xl" />
               </div>
               <h3 className="font-bold text-ds-text text-lg mb-2">AI Generator</h3>
               <p className="text-sm text-ds-text-2 leading-relaxed">Generate product titles and descriptions in Gulf Arabic and English.</p>
@@ -180,7 +181,7 @@ export default async function DashboardPage() {
 
             <Link href="/dashboard/embed" className="group bg-white p-6 rounded-[14px] border border-ds-line hover:border-ds-accent transition-all cursor-pointer hover:shadow-xl hover:-translate-y-1 block">
               <div className="w-12 h-12 bg-ds-accent/20 rounded-[10px] flex items-center justify-center text-ds-accent-ink mb-4 group-hover:bg-ds-accent group-hover:text-ds-accent-ink transition-colors">
-                <span className="material-symbols-outlined text-3xl">widgets</span>
+                <LayoutGrid className="text-3xl" />
               </div>
               <h3 className="font-bold text-ds-text text-lg mb-2">Embed Widget</h3>
               <p className="text-sm text-ds-text-2 leading-relaxed">Install the AI product description widget on your storefront.</p>
@@ -188,7 +189,7 @@ export default async function DashboardPage() {
 
             <Link href="/dashboard/api-keys" className="group bg-white p-6 rounded-[14px] border border-ds-line hover:border-ds-text transition-all cursor-pointer hover:shadow-xl hover:-translate-y-1 block">
               <div className="w-12 h-12 bg-paper-2 rounded-[10px] flex items-center justify-center text-ds-text-2 mb-4 group-hover:bg-ink group-hover:text-white transition-colors">
-                <span className="material-symbols-outlined text-3xl">api</span>
+                <Code className="text-3xl" />
               </div>
               <h3 className="font-bold text-ds-text text-lg mb-2">API Keys</h3>
               <p className="text-sm text-ds-text-2 leading-relaxed">Manage authentication tokens for widget embeds.</p>
@@ -198,7 +199,7 @@ export default async function DashboardPage() {
               <Link href={`/dashboard/upgrade?plan=${nextPlan.id}`} className="group relative bg-white p-6 rounded-[14px] border border-ds-primary/20 transition-all cursor-pointer hover:shadow-xl hover:-translate-y-1 overflow-hidden block">
                 <div className="relative z-10">
                   <div className="w-12 h-12 bg-ds-primary-soft rounded-[10px] flex items-center justify-center text-ds-primary mb-4 group-hover:bg-ds-primary group-hover:text-white transition-colors">
-                    <span className="material-symbols-outlined text-3xl">rocket_launch</span>
+                    <Rocket className="text-3xl" />
                   </div>
                   <h3 className="font-bold text-ds-text text-lg mb-2">Upgrade to {nextPlan.name}</h3>
                   <p className="text-sm text-ds-text-2 leading-relaxed">More generations, more channels, and priority support. {formatPrice(nextPlan.priceUSD, "QAR")}</p>
@@ -208,7 +209,7 @@ export default async function DashboardPage() {
               <div className="group relative bg-white p-6 rounded-[14px] border border-ds-primary/20 transition-all cursor-pointer hover:shadow-xl hover:-translate-y-1 overflow-hidden block">
                 <div className="relative z-10">
                   <div className="w-12 h-12 bg-ds-primary-soft rounded-[10px] flex items-center justify-center text-ds-primary mb-4 group-hover:bg-ds-primary group-hover:text-white transition-colors">
-                    <span className="material-symbols-outlined text-3xl">rocket_launch</span>
+                    <Rocket className="text-3xl" />
                   </div>
                   <h3 className="font-bold text-ds-text text-lg mb-2">Enterprise Plan Active</h3>
                   <p className="text-sm text-ds-text-2 leading-relaxed">Enjoy unlimited generations and dedicated support.</p>
@@ -227,33 +228,33 @@ export default async function DashboardPage() {
             <div className="divide-y divide-ds-line/50">
               <Link href="/dashboard/generate" className="p-4 flex items-center gap-4 hover:bg-paper transition-colors block">
                 <div className="w-12 h-12 rounded-[8px] bg-ds-primary-soft flex-shrink-0 flex items-center justify-center text-ds-primary">
-                  <span className="material-symbols-outlined">auto_awesome</span>
+                  <Sparkles className="w-5 h-5" />
                 </div>
                 <div className="flex-1">
                   <h4 className="text-sm font-bold text-ds-text">Generate your first product</h4>
                   <p className="text-xs text-ds-text-2">Create Arabic and English product copy in seconds.</p>
                 </div>
-                <span className="material-symbols-outlined text-ds-text-3">arrow_forward</span>
+                <ArrowRight className="text-ds-text-3" />
               </Link>
               <Link href="/dashboard/embed" className="p-4 flex items-center gap-4 hover:bg-paper transition-colors block">
                 <div className="w-12 h-12 rounded-[8px] bg-ds-accent/20 flex-shrink-0 flex items-center justify-center text-ds-accent-ink">
-                  <span className="material-symbols-outlined">widgets</span>
+                  <LayoutGrid className="w-5 h-5" />
                 </div>
                 <div className="flex-1">
                   <h4 className="text-sm font-bold text-ds-text">Copy your embed code</h4>
                   <p className="text-xs text-ds-text-2">Add the widget to your Shopify, Salla, or Zid store.</p>
                 </div>
-                <span className="material-symbols-outlined text-ds-text-3">arrow_forward</span>
+                <ArrowRight className="text-ds-text-3" />
               </Link>
               <Link href="/channels" className="p-4 flex items-center gap-4 hover:bg-paper transition-colors block">
                 <div className="w-12 h-12 rounded-[8px] bg-paper-2 flex-shrink-0 flex items-center justify-center text-ds-text-2">
-                  <span className="material-symbols-outlined">share</span>
+                  <Share2 className="w-5 h-5" />
                 </div>
                 <div className="flex-1">
                   <h4 className="text-sm font-bold text-ds-text">Connect a channel</h4>
                   <p className="text-xs text-ds-text-2">Link WhatsApp, Instagram, or Facebook to your inbox.</p>
                 </div>
-                <span className="material-symbols-outlined text-ds-text-3">arrow_forward</span>
+                <ArrowRight className="text-ds-text-3" />
               </Link>
             </div>
           </div>
@@ -269,7 +270,7 @@ export default async function DashboardPage() {
             </div>
             <a className="relative z-10 flex items-center gap-2 text-ds-accent font-bold text-sm group/btn" href="mailto:hello@rawaj.ai">
               Contact support
-              <span className="material-symbols-outlined text-sm group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+              <ArrowRight className="text-sm group-hover/btn:translate-x-1 transition-transform" />
             </a>
           </div>
         </section>

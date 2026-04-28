@@ -82,7 +82,7 @@ export default function RateLimitsPage() {
                             <div className="flex flex-col">
                               <span className="text-sm font-bold text-gray-900">{item.name}</span>
                               <div className="flex items-center gap-2">
-                                <Badge variant="outline" className="text-[9px] uppercase">{item.plan}</Badge>
+                                <Badge variant="ds-line" className="text-[9px] uppercase">{item.plan}</Badge>
                                 <span className="text-[10px] text-gray-400 font-mono">{item.org_id}</span>
                               </div>
                             </div>

@@ -39,7 +39,7 @@ export function PlaceholderFeature({
         <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-500 mb-6">
           Coming in {phase}
         </span>
-        <Button onClick={handleNotify} variant="outline" className="rounded-lg">
+        <Button onClick={handleNotify} variant="ds-line" className="rounded-lg">
           {ctaLabel}
         </Button>
       </CardContent>

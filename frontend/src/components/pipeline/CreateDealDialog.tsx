@@ -81,7 +81,7 @@ export function CreateDealDialog({ apiUrl, onCreated, trigger }: CreateDealDialo
         render={() => (
           <>
             {trigger || (
-              <button className="bg-primary text-white rounded-lg px-4 py-2 text-sm font-bold flex items-center gap-1.5 hover:bg-primary-dim transition-colors">
+              <button className="bg-primary text-white rounded-lg px-4 py-2 text-sm font-bold flex items-center gap-1.5 hover:bg-ds-primary/90 transition-colors">
                 <Plus className="w-4 h-4" />
                 Add Deal
               </button>

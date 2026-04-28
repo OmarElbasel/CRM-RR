@@ -68,7 +68,7 @@ export function ChannelSettingsCard({ platform, channel, apiUrl, onDisconnect }:
             </div>
           </div>
           <Badge
-            variant={isConnected ? 'default' : 'outline'}
+            variant={isConnected ? 'default' : 'ds-line'}
             className={isConnected ? 'bg-green-50 text-green-700 border-green-200' : ''}
           >
             {isConnected ? 'Connected' : 'Not connected'}

@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation'
 import { ChannelCard, type ChannelProps } from '@/components/channels/ChannelCard'
 import { ShopifyConnectModal } from '@/components/channels/ShopifyConnectModal'
 import { MetaConnectModal } from '@/components/channels/MetaConnectModal'
+import { ArrowRight, Bell, FileText, HelpCircle, Lock, Search } from 'lucide-react'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -272,7 +273,7 @@ export default function ChannelsPage() {
           <h2 className="text-lg font-black text-indigo-700 uppercase tracking-tight">Rawaj AI</h2>
           <div className="relative ml-4">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
-              <span className="material-symbols-outlined text-sm">search</span>
+              <Search className="text-sm" />
             </span>
             <input 
               className="pl-10 pr-4 py-1.5 bg-slate-100 border-none rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 w-64 transition-all" 
@@ -284,11 +285,11 @@ export default function ChannelsPage() {
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-4 text-slate-500">
             <button className="hover:text-indigo-600 transition-colors relative">
-              <span className="material-symbols-outlined">notifications</span>
+              <Bell className="w-5 h-5" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full border-2 border-white"></span>
             </button>
             <button className="hover:text-indigo-600 transition-colors">
-              <span className="material-symbols-outlined">help</span>
+              <HelpCircle className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -323,7 +324,7 @@ export default function ChannelsPage() {
                 <h3 className="font-headline font-black text-lg text-slate-900">Connection Statistics</h3>
                 <button className="text-indigo-600 text-sm font-bold flex items-center gap-1 hover:underline">
                   View Full Report
-                  <span className="material-symbols-outlined text-xs">arrow_forward</span>
+                  <ArrowRight className="text-xs" />
                 </button>
               </div>
               <div className="p-10 grid grid-cols-3 gap-8 text-center items-center">
@@ -347,7 +348,7 @@ export default function ChannelsPage() {
             
             <div className="relative z-10">
               <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-white mx-auto mb-6">
-                <span className="material-symbols-outlined text-4xl">lock</span>
+                <Lock className="text-4xl" />
               </div>
               <h4 className="font-headline font-black text-white text-xl mb-3">Secure Connections</h4>
               <p className="text-indigo-100/80 text-sm mb-6 leading-relaxed">
@@ -369,7 +370,7 @@ export default function ChannelsPage() {
             </p>
             <div className="flex flex-wrap gap-4">
               <button className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-900/40 active:scale-95">
-                <span className="material-symbols-outlined text-sm">description</span>
+                <FileText className="text-sm" />
                 API Docs
               </button>
               <button className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-8 py-3 rounded-xl font-bold transition-all active:scale-95">

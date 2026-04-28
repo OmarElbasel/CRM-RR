@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { ArrowRight } from 'lucide-react'
 
 type Method = 'oauth' | 'manual'
 type Platform = 'instagram' | 'facebook'
@@ -231,7 +232,7 @@ export function MetaConnectModal({ open, platform, onOpenChange, onOAuth, onManu
           <div className="flex gap-2 pt-1">
             <Button
               type="button"
-              variant="outline"
+              variant="ds-line"
               className="flex-1 h-9 text-sm"
               onClick={() => handleOpenChange(false)}
               disabled={loading}
@@ -251,7 +252,7 @@ export function MetaConnectModal({ open, platform, onOpenChange, onOAuth, onManu
               ) : method === 'oauth' ? (
                 <span className="flex items-center gap-1.5">
                   Continue to Facebook
-                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                  <ArrowRight className="text-sm" />
                 </span>
               ) : (
                 'Connect Account'

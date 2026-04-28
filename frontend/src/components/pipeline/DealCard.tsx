@@ -45,8 +45,8 @@ const PLATFORM_ICONS: Record<string, string> = {
 }
 
 const PRIORITY_STYLES: Record<string, { label: string; className: string }> = {
-  HIGH: { label: 'High Priority', className: 'bg-secondary-container text-on-secondary-container' },
-  MEDIUM: { label: 'Med Priority', className: 'bg-surface-container text-on-surface-variant' },
+  HIGH: { label: 'High Priority', className: 'bg-ds-accent/20 text-on-ds-accent/20' },
+  MEDIUM: { label: 'Med Priority', className: 'bg-paper text-ds-text-2' },
   LOW: { label: 'Low Priority', className: 'bg-error-container text-on-error-container' },
   URGENT: { label: 'Urgent', className: 'bg-error text-white' },
 }

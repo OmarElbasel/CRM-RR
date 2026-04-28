@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { CheckCircle2, Zap, Rocket, Building2 } from 'lucide-react'
+import { ArrowLeft, Building2, CheckCircle2, Rocket, Zap } from 'lucide-react'
 import Link from 'next/link'
 
 const PLANS = [
@@ -66,7 +66,7 @@ export default function UpgradePage() {
       <header className="sticky top-0 z-40 bg-white border-b border-slate-200 px-8 h-16 flex items-center justify-between font-headline">
         <div className="flex items-center gap-4">
           <Link href="/dashboard/settings" className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition-all">
-             <span className="material-symbols-outlined">arrow_back</span>
+             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div className="h-4 w-px bg-slate-200"></div>
           <h2 className="text-lg font-black text-indigo-700 uppercase tracking-tight">Upgrade Hub</h2>

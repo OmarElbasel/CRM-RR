@@ -13,14 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { 
-  Copy, 
-  Check, 
-  RefreshCw, 
-  Loader2, 
-  AlertTriangle, 
-  ChevronRight
-} from 'lucide-react'
+import { AlertTriangle, Check, ChevronRight, Copy, FileText, Loader2, RefreshCw, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 
 type FormStep = 'input' | 'generating' | 'result'
@@ -178,7 +171,7 @@ export function GeneratorForm() {
       <div className="grid grid-cols-12 gap-8 items-start">
         {/* Left Column: Input Form (lg:col-span-7) */}
         <div className="col-span-12 lg:col-span-7">
-          <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant p-8 relative overflow-hidden transition-all duration-500">
+          <div className="bg-paper rounded-xl shadow-sm border border-ds-line-2 p-8 relative overflow-hidden transition-all duration-500">
             {/* Decorative glow */}
             <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary-container/20 blur-[100px] rounded-full pointer-events-none"></div>
             
@@ -187,26 +180,26 @@ export function GeneratorForm() {
                 <div className="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center text-primary shadow-inner">
                   <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>magic_button</span>
                 </div>
-                <h2 className="text-2xl font-bold tracking-tight text-on-surface">Product Details</h2>
+                <h2 className="text-2xl font-bold tracking-tight text-ds-text">Product Details</h2>
               </div>
 
               <form onSubmit={handleGenerate} className="space-y-6">
                 <div className="space-y-2">
-                  <Label className="block text-sm font-bold text-on-surface-variant mb-2">Product Name</Label>
+                  <Label className="block text-sm font-bold text-ds-text-2 mb-2">Product Name</Label>
                   <Input
                     value={productName}
                     onChange={(e) => setProductName(e.target.value)}
                     placeholder="e.g., Silk Abaya"
-                    className="w-full h-12 px-4 py-3 rounded-lg border border-outline-variant bg-surface-bright focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-slate-400"
+                    className="w-full h-12 px-4 py-3 rounded-lg border border-ds-line-2 bg-paper-bright focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-slate-400"
                     required
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="block text-sm font-bold text-on-surface-variant mb-2">Category</Label>
+                    <Label className="block text-sm font-bold text-ds-text-2 mb-2">Category</Label>
                     <Select value={category} onValueChange={(val) => val && setCategory(val)}>
-                      <SelectTrigger className="h-12 border-outline-variant bg-surface-bright rounded-lg">
+                      <SelectTrigger className="h-12 border-ds-line-2 bg-paper-bright rounded-lg">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -219,33 +212,33 @@ export function GeneratorForm() {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label className="block text-sm font-bold text-on-surface-variant mb-2">Price (QAR)</Label>
+                    <Label className="block text-sm font-bold text-ds-text-2 mb-2">Price (QAR)</Label>
                     <Input
                       type="number"
                       step="0.01"
                       value={price}
                       onChange={(e) => setPrice(e.target.value)}
                       placeholder="0.00"
-                      className="h-12 border-outline-variant bg-surface-bright rounded-lg"
+                      className="h-12 border-ds-line-2 bg-paper-bright rounded-lg"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="block text-sm font-bold text-on-surface-variant mb-2">Target Audience</Label>
+                  <Label className="block text-sm font-bold text-ds-text-2 mb-2">Target Audience</Label>
                   <Input
                     value={targetAudience}
                     onChange={(e) => setTargetAudience(e.target.value)}
                     placeholder="e.g., Young professional women in Qatar"
-                    className="h-12 border-outline-variant bg-surface-bright rounded-lg"
+                    className="h-12 border-ds-line-2 bg-paper-bright rounded-lg"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="block text-sm font-bold text-on-surface-variant mb-2">Tone</Label>
+                    <Label className="block text-sm font-bold text-ds-text-2 mb-2">Tone</Label>
                     <Select value={tone} onValueChange={(val) => val && setTone(val)}>
-                      <SelectTrigger className="h-12 border-outline-variant bg-surface-bright rounded-lg">
+                      <SelectTrigger className="h-12 border-ds-line-2 bg-paper-bright rounded-lg">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -257,9 +250,9 @@ export function GeneratorForm() {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label className="block text-sm font-bold text-on-surface-variant mb-2">Language</Label>
+                    <Label className="block text-sm font-bold text-ds-text-2 mb-2">Language</Label>
                     <Select value={language} onValueChange={(val) => val && setLanguage(val)}>
-                      <SelectTrigger className="h-12 border-outline-variant bg-surface-bright rounded-lg">
+                      <SelectTrigger className="h-12 border-ds-line-2 bg-paper-bright rounded-lg">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -280,7 +273,7 @@ export function GeneratorForm() {
                     {loading ? (
                       <Loader2 className="w-5 h-5 animate-spin" />
                     ) : (
-                      <span className="material-symbols-outlined">auto_awesome</span>
+                      <Sparkles className="w-5 h-5" />
                     )}
                     Generate Product Description
                   </button>
@@ -293,15 +286,15 @@ export function GeneratorForm() {
         {/* Right Column: Preview / Result (lg:col-span-5) */}
         <div className="col-span-12 lg:col-span-5 space-y-6">
           {/* Main Content Area */}
-          <div className={`rounded-xl border shadow-sm transition-all duration-500 min-h-[460px] flex flex-col ${result || step === 'generating' ? 'bg-surface-container-lowest border-outline-variant' : 'bg-surface-container border-dashed border-outline items-center justify-center text-center px-8'}`}>
+          <div className={`rounded-xl border shadow-sm transition-all duration-500 min-h-[460px] flex flex-col ${result || step === 'generating' ? 'bg-paper border-ds-line-2' : 'bg-paper border-dashed border-ds-line items-center justify-center text-center px-8'}`}>
             
             {step === 'input' && !result && (
               <div className="animate-in fade-in zoom-in duration-500">
-                <div className="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center text-outline-variant mb-6 mx-auto">
-                  <span className="material-symbols-outlined text-4xl">description</span>
+                <div className="w-16 h-16 rounded-full bg-paper-2est flex items-center justify-center text-ds-line-2 mb-6 mx-auto">
+                  <FileText className="text-4xl" />
                 </div>
-                <h3 className="text-xl font-bold text-on-surface mb-3 headline">No Description Generated</h3>
-                <p className="text-on-surface-variant max-w-[260px] mx-auto text-sm leading-relaxed">
+                <h3 className="text-xl font-bold text-ds-text mb-3 headline">No Description Generated</h3>
+                <p className="text-ds-text-2 max-w-[260px] mx-auto text-sm leading-relaxed">
                   Fill in the details on the left and click "Generate" to see the magic happen.
                 </p>
               </div>
@@ -312,7 +305,7 @@ export function GeneratorForm() {
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-2">
                     <span className="material-symbols-outlined text-indigo-500" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
-                    <span className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">AI Output</span>
+                    <span className="text-xs font-bold uppercase tracking-widest text-ds-text-2">AI Output</span>
                   </div>
                   {step === 'generating' && (
                     <div className="flex items-center gap-2 text-primary font-bold text-xs animate-pulse">
@@ -322,7 +315,7 @@ export function GeneratorForm() {
                   )}
                 </div>
 
-                <div className="flex-1 bg-surface-bright rounded-xl border border-outline-variant p-6 mb-6 whitespace-pre-wrap text-sm text-on-surface leading-relaxed overflow-y-auto max-h-[280px] font-body shadow-inner">
+                <div className="flex-1 bg-paper-bright rounded-xl border border-ds-line-2 p-6 mb-6 whitespace-pre-wrap text-sm text-ds-text leading-relaxed overflow-y-auto max-h-[280px] font-body shadow-inner">
                   {streamedText || result?.long_description || 'Pre-generating...'}
                 </div>
 
@@ -337,9 +330,9 @@ export function GeneratorForm() {
                         Copy All
                       </Button>
                       <Button
-                        variant="outline"
+                        variant="ds-line"
                         onClick={handleRegenerate}
-                        className="h-11 border-outline-variant hover:bg-surface-container transition-all"
+                        className="h-11 border-ds-line-2 hover:bg-paper transition-all"
                       >
                         <RefreshCw className="w-4 h-4" />
                       </Button>
@@ -360,7 +353,7 @@ export function GeneratorForm() {
               <span className="material-symbols-outlined text-base">lightbulb</span>
               AI Generation Tips
             </h4>
-            <ul className="text-sm space-y-4 text-on-surface-variant">
+            <ul className="text-sm space-y-4 text-ds-text-2">
               {[
                 "Be specific with your audience to get highly personalized hooks.",
                 "Using 'Luxury' tone for premium products increases 'perceived value' vocabulary.",
@@ -385,24 +378,24 @@ export function GeneratorForm() {
       </div>
 
       {/* Bottom Section: Recent Generations */}
-      <div className="pt-8 border-t border-outline-variant">
+      <div className="pt-8 border-t border-ds-line-2">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-black tracking-tight text-on-surface">Recent Generations</h2>
+          <h2 className="text-2xl font-black tracking-tight text-ds-text">Recent Generations</h2>
           <Button variant="ghost" className="text-sm font-bold text-primary hover:bg-primary/5 px-4 h-10">
             View History <ChevronRight className="w-4 h-4 ml-1" />
           </Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {RECENT_GENERATIONS.map((gen) => (
-            <div key={gen.id} className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex items-center gap-4 hover:border-primary hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 cursor-pointer group">
-              <div className="w-14 h-14 rounded-lg bg-surface-variant overflow-hidden flex-shrink-0 shadow-sm border border-outline-variant/30">
+            <div key={gen.id} className="bg-paper p-4 rounded-xl border border-ds-line-2 flex items-center gap-4 hover:border-primary hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 cursor-pointer group">
+              <div className="w-14 h-14 rounded-lg bg-paper-variant overflow-hidden flex-shrink-0 shadow-sm border border-ds-line-2/30">
                 <img className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src={gen.image} alt={gen.title} />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-sm text-on-surface truncate group-hover:text-primary transition-colors">{gen.title}</p>
-                <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest opacity-70">{gen.category} • {gen.time}</p>
+                <p className="font-bold text-sm text-ds-text truncate group-hover:text-primary transition-colors">{gen.title}</p>
+                <p className="text-[10px] font-bold text-ds-text-2 uppercase tracking-widest opacity-70">{gen.category} • {gen.time}</p>
               </div>
-              <ChevronRight className="w-4 h-4 text-outline group-hover:text-primary group-hover:translate-x-1 transition-all" />
+              <ChevronRight className="w-4 h-4 text-ds-line group-hover:text-primary group-hover:translate-x-1 transition-all" />
             </div>
           ))}
         </div>

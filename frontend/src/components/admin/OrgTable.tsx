@@ -55,7 +55,7 @@ export function OrgTable({ data, onViewDetail, onRefresh }: OrgTableProps) {
       cell: ({ row }) => {
         const plan = row.original.plan;
         const variants: Record<string, any> = {
-          free: "outline",
+          free: "ds-line",
           starter: "secondary",
           pro: "default",
           enterprise: "default",

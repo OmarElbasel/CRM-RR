@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ContentLanguageToggle } from './ContentLanguageToggle'
 import { SeasonalTemplateGallery } from './SeasonalTemplateGallery'
-import { Loader2, Copy, FileText } from 'lucide-react'
+import { Copy, FileText, Loader2, RefreshCw } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
@@ -72,16 +72,16 @@ export function BroadcastComposer() {
         <div className="bg-white p-6 rounded shadow-sm border border-slate-200">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-headline font-bold text-lg">Broadcast Parameters</h3>
-            <div className="flex bg-surface-container rounded-lg p-1 border border-outline-variant/30">
+            <div className="flex bg-paper rounded-lg p-1 border border-ds-line-2/30">
               <button 
                 onClick={() => setLang('en')}
-                className={`px-4 py-1.5 text-xs font-bold rounded transition-all ${lang === 'en' ? 'bg-white text-primary shadow-sm' : 'text-on-surface-variant hover:text-primary'}`}
+                className={`px-4 py-1.5 text-xs font-bold rounded transition-all ${lang === 'en' ? 'bg-white text-primary shadow-sm' : 'text-ds-text-2 hover:text-primary'}`}
               >
                 EN
               </button>
               <button 
                 onClick={() => setLang('ar')}
-                className={`px-4 py-1.5 text-xs font-bold rounded transition-all ${lang === 'ar' ? 'bg-white text-primary shadow-sm' : 'text-on-surface-variant hover:text-primary'}`}
+                className={`px-4 py-1.5 text-xs font-bold rounded transition-all ${lang === 'ar' ? 'bg-white text-primary shadow-sm' : 'text-ds-text-2 hover:text-primary'}`}
               >
                 AR
               </button>
@@ -90,18 +90,18 @@ export function BroadcastComposer() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-xs font-black text-on-surface-variant uppercase tracking-wider mb-2">Target Audience / Offer</label>
+              <label className="block text-xs font-black text-ds-text-2 uppercase tracking-wider mb-2">Target Audience / Offer</label>
               <textarea 
                 value={audienceDescription}
                 onChange={(e) => setAudienceDescription(e.target.value)}
-                className="w-full h-32 bg-surface-container-lowest border border-slate-200 rounded-xl p-4 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400 font-body"
+                className="w-full h-32 bg-paper border border-slate-200 rounded-xl p-4 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400 font-body"
                 placeholder="Describe your audience... (e.g. Existing customers who haven't ordered in 30 days)"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
                <div>
-                  <label className="block text-xs font-black text-on-surface-variant uppercase tracking-wider mb-2">Campaign Type</label>
+                  <label className="block text-xs font-black text-ds-text-2 uppercase tracking-wider mb-2">Campaign Type</label>
                   <select 
                     value={campaignType} 
                     onChange={(e) => setCampaignType(e.target.value)} 
@@ -169,7 +169,7 @@ export function BroadcastComposer() {
                  disabled={loading || !audienceDescription.trim()}
                  className="text-[10px] font-black text-indigo-600 flex items-center gap-1 hover:underline disabled:opacity-50"
               >
-                <span className="material-symbols-outlined text-sm">refresh</span> New Draft
+                <RefreshCw className="text-sm" /> New Draft
               </button>
             </div>
           </div>
@@ -224,7 +224,7 @@ export function BroadcastComposer() {
               disabled={!result}
               className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-[#25D366] text-white rounded-xl font-bold text-sm hover:bg-[#20bd5a] transition-all shadow-lg shadow-green-100 disabled:opacity-50 disabled:shadow-none"
             >
-              <span className="material-symbols-outlined text-lg">content_copy</span> Copy to WhatsApp
+              <Copy className="text-lg" /> Copy to WhatsApp
             </button>
           </div>
         </div>

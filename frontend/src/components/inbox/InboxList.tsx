@@ -6,6 +6,7 @@ import { useAuth } from '@clerk/nextjs'
 import { useInboxStream } from '@/hooks/useInboxStream'
 import { formatDistanceToNow } from 'date-fns'
 import Avatar from './Avatar'
+import { Inbox } from 'lucide-react'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -45,9 +46,9 @@ const PLATFORM_CONFIG: Record<string, { logo: string; bg: string }> = {
 }
 
 const INTENT_CONFIG: Record<string, { label: string, className: string }> = {
-  READY_TO_BUY: { label: 'Ready to Buy', className: 'bg-secondary-container text-on-secondary-container border-secondary' },
+  READY_TO_BUY: { label: 'Ready to Buy', className: 'bg-ds-accent/20 text-on-ds-accent/20 border-secondary' },
   PRICE_INQUIRY: { label: 'Price Inquiry', className: 'bg-tertiary-container text-on-tertiary-container border-tertiary' },
-  CUSTOMER_SUPPORT: { label: 'Support', className: 'bg-surface-container-high text-on-surface-variant border-outline-variant' },
+  CUSTOMER_SUPPORT: { label: 'Support', className: 'bg-paper-2 text-ds-text-2 border-ds-line-2' },
   SPAM: { label: 'Irrelevant', className: 'bg-error-container text-on-error-container border-error' },
   INFO_REQUEST: { label: 'Inquiry', className: 'bg-primary-container text-on-primary-container border-primary' },
 }
@@ -80,7 +81,7 @@ function CircularScore({ score }: { score: number }) {
           className="transition-all duration-500 ease-out"
         />
       </svg>
-      <span className="absolute text-[10px] font-bold text-on-surface">{score}</span>
+      <span className="absolute text-[10px] font-bold text-ds-text">{score}</span>
     </div>
   )
 }
@@ -130,19 +131,19 @@ export function InboxList({ filters }: InboxListProps) {
 
   if (loading) {
     return (
-      <div className="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-sm animate-pulse">
-        <div className="h-12 bg-surface-container border-b border-outline-variant/30" />
+      <div className="bg-paper rounded-xl border border-ds-line-2 overflow-hidden shadow-sm animate-pulse">
+        <div className="h-12 bg-paper border-b border-ds-line-2/30" />
         {[1, 2, 3, 4, 5].map((i) => (
-          <div key={i} className="h-20 border-b border-outline-variant/30 bg-surface/50" />
+          <div key={i} className="h-20 border-b border-ds-line-2/30 bg-paper/50" />
         ))}
       </div>
     )
   }
 
   return (
-    <div className="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+    <div className="bg-paper rounded-xl border border-ds-line-2 overflow-hidden shadow-sm">
       {/* List Header */}
-      <div className="grid grid-cols-[48px_1fr_120px_100px_80px_100px] gap-4 px-6 py-3 bg-surface-container text-[11px] font-bold text-outline uppercase tracking-wider">
+      <div className="grid grid-cols-[48px_1fr_120px_100px_80px_100px] gap-4 px-6 py-3 bg-paper text-[11px] font-bold text-ds-line uppercase tracking-wider">
         <div className="text-center">Src</div>
         <div>Customer</div>
         <div>AI Intent</div>
@@ -152,22 +153,22 @@ export function InboxList({ filters }: InboxListProps) {
       </div>
 
       {/* Conversation Rows */}
-      <div className="divide-y divide-outline-variant/30">
+      <div className="divide-y divide-ds-line-2/30">
         {contacts.length === 0 ? (
           <div className="py-20 text-center space-y-3">
-             <span className="material-symbols-outlined text-4xl text-outline-variant">inbox</span>
-             <p className="text-sm text-on-surface-variant max-w-xs mx-auto">No conversations matching your filters. New messages will appear here.</p>
+             <Inbox className="text-4xl text-ds-line-2" />
+             <p className="text-sm text-ds-text-2 max-w-xs mx-auto">No conversations matching your filters. New messages will appear here.</p>
           </div>
         ) : (
           contacts.map((contact) => {
             const config = PLATFORM_CONFIG[contact.platform] || null
-            const intent = contact.latest_message?.intent ? (INTENT_CONFIG[contact.latest_message.intent] || { label: contact.latest_message.intent, className: 'bg-surface-container text-on-surface-variant border-outline-variant' }) : null
+            const intent = contact.latest_message?.intent ? (INTENT_CONFIG[contact.latest_message.intent] || { label: contact.latest_message.intent, className: 'bg-paper text-ds-text-2 border-ds-line-2' }) : null
             
             return (
               <Link
                 key={contact.id}
                 href={`/inbox/${contact.id}`}
-                className={`grid grid-cols-[48px_1fr_120px_100px_80px_100px] gap-4 px-6 py-4 items-center hover:bg-surface-container-low transition-colors cursor-pointer group ${contact.unread_count > 0 ? 'bg-surface-container-lowest' : 'bg-surface/50'}`}
+                className={`grid grid-cols-[48px_1fr_120px_100px_80px_100px] gap-4 px-6 py-4 items-center hover:bg-paper transition-colors cursor-pointer group ${contact.unread_count > 0 ? 'bg-paper' : 'bg-paper/50'}`}
               >
                 <div className="relative flex justify-center">
                   <Avatar name={contact.name || contact.platform} src={contact.avatar_url} size={40} />
@@ -183,12 +184,12 @@ export function InboxList({ filters }: InboxListProps) {
                 
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-on-surface truncate">{contact.name || contact.platform}</span>
+                    <span className="font-bold text-ds-text truncate">{contact.name || contact.platform}</span>
                     {contact.unread_count > 0 && (
                       <div className="w-1.5 h-1.5 rounded-full bg-primary ring-4 ring-primary-container/20"></div>
                     )}
                   </div>
-                  <p className="text-sm text-on-surface-variant truncate">
+                  <p className="text-sm text-ds-text-2 truncate">
                     {contact.latest_message?.content || 'No messages yet...'}
                   </p>
                 </div>
@@ -206,12 +207,12 @@ export function InboxList({ filters }: InboxListProps) {
                 </div>
 
                 <div className="flex justify-center">
-                  <span className={`material-symbols-outlined transition-colors ${contact.unread_count > 0 ? 'text-primary' : 'text-on-surface-variant/30'}`}>
+                  <span className={`material-symbols-outlined transition-colors ${contact.unread_count > 0 ? 'text-primary' : 'text-ds-text-2/30'}`}>
                     {contact.unread_count > 0 ? 'mark_chat_unread' : 'check_circle'}
                   </span>
                 </div>
 
-                <div className="text-right text-xs font-medium text-on-surface-variant">
+                <div className="text-right text-xs font-medium text-ds-text-2">
                    {contact.latest_message?.sent_at ? formatDistanceToNow(new Date(contact.latest_message.sent_at), { addSuffix: true }).replace('about ', '') : ''}
                 </div>
               </Link>
@@ -221,13 +222,13 @@ export function InboxList({ filters }: InboxListProps) {
       </div>
 
       {/* Footer / Pagination */}
-      <div className="bg-surface-container-low px-6 py-3 flex items-center justify-between">
-        <p className="text-xs font-medium text-on-surface-variant">
+      <div className="bg-paper px-6 py-3 flex items-center justify-between">
+        <p className="text-xs font-medium text-ds-text-2">
           Showing {contacts.length > 0 ? (pagination.current - 1) * 25 + 1 : 0}-{(pagination.current - 1) * 25 + contacts.length} of {pagination.count} conversations
         </p>
         <div className="flex items-center gap-1">
           <button 
-            className="p-1 rounded hover:bg-white text-on-surface-variant disabled:opacity-30 transition-colors"
+            className="p-1 rounded hover:bg-white text-ds-text-2 disabled:opacity-30 transition-colors"
             disabled={pagination.current === 1}
             onClick={() => fetchInbox(pagination.current - 1)}
           >
@@ -239,7 +240,7 @@ export function InboxList({ filters }: InboxListProps) {
           </span>
           
           <button 
-            className="p-1 rounded hover:bg-white text-on-surface-variant disabled:opacity-30 transition-colors"
+            className="p-1 rounded hover:bg-white text-ds-text-2 disabled:opacity-30 transition-colors"
             disabled={contacts.length < 25 || pagination.current * 25 >= pagination.count}
             onClick={() => fetchInbox(pagination.current + 1)}
           >

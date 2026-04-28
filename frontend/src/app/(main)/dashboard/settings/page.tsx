@@ -6,7 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { OrgSettings } from '@/components/settings/OrgSettings'
 import { BillingSettings } from '@/components/settings/BillingSettings'
 import { AccountSettings } from '@/components/settings/AccountSettings'
-import { Loader2 } from 'lucide-react'
+import { HelpCircle, Loader2, Settings } from 'lucide-react'
 
 interface UsageData {
   plan: string
@@ -83,10 +83,10 @@ export default function SettingsPage() {
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-4 text-slate-500">
             <button className="hover:text-indigo-600 transition-colors">
-              <span className="material-symbols-outlined">help</span>
+              <HelpCircle className="w-5 h-5" />
             </button>
             <button className="hover:text-indigo-600 transition-colors">
-              <span className="material-symbols-outlined">settings</span>
+              <Settings className="w-5 h-5" />
             </button>
           </div>
         </div>

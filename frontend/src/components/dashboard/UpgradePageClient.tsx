@@ -81,7 +81,7 @@ export function UpgradePageClient({ currentPlan }: UpgradePageClientProps) {
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="text-lg font-semibold text-gray-900">{plan.name}</h3>
                     {isCurrent && (
-                      <Badge variant="outline" className="text-xs bg-indigo-50 text-indigo-600 border-indigo-200">
+                      <Badge variant="ds-line" className="text-xs bg-indigo-50 text-indigo-600 border-indigo-200">
                         Current
                       </Badge>
                     )}
@@ -101,11 +101,11 @@ export function UpgradePageClient({ currentPlan }: UpgradePageClientProps) {
                 </ul>
 
                 {isCurrent ? (
-                  <Button disabled variant="outline" className="w-full rounded-lg">
+                  <Button disabled variant="ds-line" className="w-full rounded-lg">
                     Current plan
                   </Button>
                 ) : plan.priceUSD === null ? (
-                  <Button variant="outline" className="w-full rounded-lg" render={<a href="mailto:hello@rawaj.app" />}>
+                  <Button variant="ds-line" className="w-full rounded-lg" render={<a href="mailto:hello@rawaj.app" />}>
                     Contact us
                   </Button>
                 ) : (
@@ -117,7 +117,7 @@ export function UpgradePageClient({ currentPlan }: UpgradePageClientProps) {
                         ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
                         : ''
                     }`}
-                    variant={isRecommended ? 'default' : 'outline'}
+                    variant={isRecommended ? 'default' : 'ds-line'}
                   >
                     {loadingPlan === plan.id ? (
                       <Loader2 className="w-4 h-4 animate-spin" />

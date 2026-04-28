@@ -69,7 +69,7 @@ export function SeasonalTemplateGallery({ onSelect }: SeasonalTemplateGalleryPro
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-base">{template.name}</CardTitle>
-              <Badge variant="outline">{template.occasion.replace(/_/g, ' ')}</Badge>
+              <Badge variant="ds-line">{template.occasion.replace(/_/g, ' ')}</Badge>
             </div>
           </CardHeader>
           <CardContent>

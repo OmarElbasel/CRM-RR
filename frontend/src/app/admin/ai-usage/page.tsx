@@ -145,7 +145,7 @@ export default function AIUsagePage() {
       <section className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
           <h2 className="text-sm font-bold text-gray-900 uppercase tracking-tight">Model Breakdown</h2>
-          <Button variant="outline" size="sm" className="h-8 text-xs">Export CSV</Button>
+          <Button variant="ds-line" size="sm" className="h-8 text-xs">Export CSV</Button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left">

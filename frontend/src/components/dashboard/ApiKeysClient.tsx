@@ -79,7 +79,7 @@ export function ApiKeysClient({ initialPublicKey }: ApiKeysClientProps) {
             </code>
             {keyState.publicKey && (
               <Button
-                variant="outline"
+                variant="ds-line"
                 size="sm"
                 onClick={() => copyToClipboard(keyState.publicKey, 'public')}
                 className="rounded-lg"
@@ -105,7 +105,7 @@ export function ApiKeysClient({ initialPublicKey }: ApiKeysClientProps) {
                 {keyState.secretKey}
               </code>
               <Button
-                variant="outline"
+                variant="ds-line"
                 size="sm"
                 onClick={() => copyToClipboard(keyState.secretKey!, 'secret')}
                 className="rounded-lg border-amber-300 hover:bg-amber-100"
@@ -162,7 +162,7 @@ export function ApiKeysClient({ initialPublicKey }: ApiKeysClientProps) {
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setShowRotateDialog(false)} className="rounded-lg">
+                <Button variant="ds-line" onClick={() => setShowRotateDialog(false)} className="rounded-lg">
                   Cancel
                 </Button>
                 <Button variant="destructive" onClick={handleRotate} className="rounded-lg">

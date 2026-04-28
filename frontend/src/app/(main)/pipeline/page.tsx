@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useAuth } from '@clerk/nextjs'
 import posthog from 'posthog-js'
-import { GitBranch } from 'lucide-react'
+import { Banknote, FileEdit, GitBranch, MessageCircle, ShoppingBag, TrendingUp } from 'lucide-react'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { PlaceholderFeature } from '@/components/ui/PlaceholderFeature'
 import { PipelineBoard, type PipelineBoardData } from '@/components/pipeline/PipelineBoard'
@@ -106,10 +106,10 @@ export default function PipelinePage() {
       {/* Page Header & Currency Switcher */}
       <div className="px-8 py-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <h2 className="text-2xl font-extrabold text-on-surface tracking-tight headline">Order Hub</h2>
-          <p className="text-on-surface-variant text-sm">Manage your omnichannel sales and logistics in one place.</p>
+          <h2 className="text-2xl font-extrabold text-ds-text tracking-tight headline">Order Hub</h2>
+          <p className="text-ds-text-2 text-sm">Manage your omnichannel sales and logistics in one place.</p>
         </div>
-        <div className="flex bg-surface-container p-1 rounded-lg shadow-inner">
+        <div className="flex bg-paper p-1 rounded-lg shadow-inner">
           {(['SAR', 'QAR', 'USD'] as const).map((curr) => (
             <button
               key={curr}
@@ -117,7 +117,7 @@ export default function PipelinePage() {
               className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${
                 currency === curr 
                   ? 'bg-white text-primary shadow-sm scale-100' 
-                  : 'text-on-surface-variant hover:text-on-surface scale-95 opacity-70'
+                  : 'text-ds-text-2 hover:text-ds-text scale-95 opacity-70'
               }`}
             >
               {curr}
@@ -130,21 +130,21 @@ export default function PipelinePage() {
       <div className="px-8 grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-primary p-5 rounded-xl text-white shadow-lg shadow-primary/20 relative overflow-hidden group transition-all hover:scale-[1.02]">
           <div className="relative z-10">
-            <p className="text-primary-fixed text-xs font-medium uppercase tracking-wider mb-1">Total Revenue</p>
+            <p className="text-ds-primary/15 text-xs font-medium uppercase tracking-wider mb-1">Total Revenue</p>
             <h3 className="text-3xl font-black mb-1">{data?.aggregate_total_value || '0.00'}</h3>
-            <div className="flex items-center gap-1 text-secondary-container text-xs font-bold">
-              <span className="material-symbols-outlined text-sm">trending_up</span>
+            <div className="flex items-center gap-1 text-ds-accent/20 text-xs font-bold">
+              <TrendingUp className="text-sm" />
               +12.4% vs last month
             </div>
           </div>
-          <span className="material-symbols-outlined absolute -bottom-4 -right-4 text-9xl opacity-10 rotate-12 group-hover:rotate-0 transition-transform duration-500">payments</span>
+          <Banknote className="absolute -bottom-4 -right-4 text-9xl opacity-10 rotate-12 group-hover:rotate-0 transition-transform duration-500" />
         </div>
 
         <div className="bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-200 transition-all hover:shadow-md cursor-default">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
-                <span className="material-symbols-outlined text-lg">shopping_bag</span>
+                <ShoppingBag className="text-lg" />
               </div>
               <p className="text-slate-500 text-xs font-bold uppercase tracking-tight">Shopify</p>
             </div>
@@ -158,7 +158,7 @@ export default function PipelinePage() {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center text-green-600">
-                <span className="material-symbols-outlined text-lg">chat</span>
+                <MessageCircle className="text-lg" />
               </div>
               <p className="text-slate-500 text-xs font-bold uppercase tracking-tight">WhatsApp</p>
             </div>
@@ -172,7 +172,7 @@ export default function PipelinePage() {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-600">
-                <span className="material-symbols-outlined text-lg">edit_note</span>
+                <FileEdit className="text-lg" />
               </div>
               <p className="text-slate-500 text-xs font-bold uppercase tracking-tight">Manual</p>
             </div>

@@ -94,11 +94,11 @@ function OrderHubContent() {
       {/* Page Header & Currency Switcher */}
       <div className="px-8 py-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <h2 className="text-2xl font-extrabold text-on-surface tracking-tight headline">Orders Hub</h2>
-          <p className="text-on-surface-variant text-sm">Real-time sync and order management across all channels.</p>
+          <h2 className="text-2xl font-extrabold text-ds-text tracking-tight headline">Orders Hub</h2>
+          <p className="text-ds-text-2 text-sm">Real-time sync and order management across all channels.</p>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex bg-surface-container p-1 rounded-lg shadow-inner">
+          <div className="flex bg-paper p-1 rounded-lg shadow-inner">
             {(['EGP', 'SAR', 'QAR', 'USD'] as Currency[]).map((c) => (
               <button
                 key={c}
@@ -106,7 +106,7 @@ function OrderHubContent() {
                 className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${
                   currency === c
                     ? 'bg-white text-primary shadow-sm scale-100'
-                    : 'text-on-surface-variant hover:text-on-surface scale-95 opacity-70'
+                    : 'text-ds-text-2 hover:text-ds-text scale-95 opacity-70'
                 }`}
               >
                 {c}

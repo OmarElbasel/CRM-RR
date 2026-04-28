@@ -57,7 +57,7 @@ export function OrgDetailDrawer({ org, isOpen, onClose, onUpdate }: OrgDetailPro
       <SheetContent className="sm:max-w-xl overflow-y-auto">
         <SheetHeader>
           <div className="flex items-center gap-2 mb-2">
-            <Badge variant={org.plan === 'free' ? 'outline' : 'default'} className="uppercase text-[10px]">
+            <Badge variant={org.plan === 'free' ? 'ds-line' : 'default'} className="uppercase text-[10px]">
               {org.plan}
             </Badge>
             <Badge variant={org.is_active ? 'secondary' : 'destructive'} className="text-[10px]">
@@ -118,7 +118,7 @@ export function OrgDetailDrawer({ org, isOpen, onClose, onUpdate }: OrgDetailPro
             </h3>
             <div className="grid grid-cols-1 gap-2">
               <Button 
-                variant="outline" 
+                variant="ds-line" 
                 className="justify-start text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
                 onClick={() => handleAction((t) => adminApi.extendOrgLimit(t, org.id))}
                 disabled={loading}
@@ -127,7 +127,7 @@ export function OrgDetailDrawer({ org, isOpen, onClose, onUpdate }: OrgDetailPro
                 Add +50 Gen Bonus
               </Button>
               <Button 
-                variant="outline" 
+                variant="ds-line" 
                 className="justify-start text-orange-600 hover:text-orange-700 hover:bg-orange-50"
                 onClick={() => handleAction((t) => adminApi.resetOrgUsage(t, org.id))}
                 disabled={loading}
@@ -136,7 +136,7 @@ export function OrgDetailDrawer({ org, isOpen, onClose, onUpdate }: OrgDetailPro
                 Reset Usage Counter
               </Button>
               <Button 
-                variant="outline" 
+                variant="ds-line" 
                 className="justify-start"
                 onClick={() => handleAction((t) => adminApi.rotateOrgKeys(t, org.id))}
                 disabled={loading}
@@ -145,7 +145,7 @@ export function OrgDetailDrawer({ org, isOpen, onClose, onUpdate }: OrgDetailPro
                 Rotate API Keys
               </Button>
               <Button 
-                variant="outline" 
+                variant="ds-line" 
                 className={org.is_active ? "justify-start text-red-600 hover:text-red-700 hover:bg-red-50" : "justify-start text-green-600 hover:text-green-700 hover:bg-green-50"}
                 onClick={() => handleAction((t) => adminApi.toggleOrgStatus(t, org.id, !org.is_active))}
                 disabled={loading}

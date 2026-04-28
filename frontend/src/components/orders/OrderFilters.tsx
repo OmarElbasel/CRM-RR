@@ -14,7 +14,7 @@ export function OrderFilters() {
   }
 
   return (
-    <div className="flex flex-wrap gap-4 p-4 bg-surface-container/50 rounded-xl border border-slate-100 shadow-sm mb-6">
+    <div className="flex flex-wrap gap-4 p-4 bg-paper/50 rounded-xl border border-slate-100 shadow-sm mb-6">
       <div className="flex flex-col gap-1.5 min-w-[140px]">
         <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Source</label>
         <select

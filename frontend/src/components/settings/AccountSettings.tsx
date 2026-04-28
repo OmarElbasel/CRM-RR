@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { UserProfile, useUser } from '@clerk/nextjs'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Lock } from 'lucide-react'
 
 export function AccountSettings() {
   const { user, isLoaded } = useUser()
@@ -57,7 +57,7 @@ export function AccountSettings() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all group">
                   <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                     <span className="material-symbols-outlined">lock</span>
+                     <Lock className="w-5 h-5" />
                   </div>
                   <h4 className="font-bold text-slate-900 mb-2">Password & Security</h4>
                   <p className="text-xs text-slate-500 font-medium mb-6 leading-relaxed">Change your password or manage multi-factor authentication (MFA) to keep your account safe.</p>

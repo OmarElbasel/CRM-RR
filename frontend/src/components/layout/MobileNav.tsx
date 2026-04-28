@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X } from 'lucide-react'
+import { Bell, Menu, User, X } from 'lucide-react'
 import { NAV_ITEMS } from './Sidebar'
 import { isEnabled } from '@/lib/flags'
 import {
@@ -68,7 +68,7 @@ export function MobileNav() {
                  onClick={() => setOpen(false)}
                  className="text-slate-400 hover:text-white hover:bg-slate-800 rounded-md px-3 py-2 flex items-center gap-3 transition-colors"
                >
-                 <span className="material-symbols-outlined">person</span>
+                 <User className="w-5 h-5" />
                  <span className="font-medium text-sm">Account Settings</span>
                </Link>
             </div>
@@ -85,7 +85,7 @@ export function MobileNav() {
 
         {/* Placeholder for notification bell if needed or just empty space to keep balance */}
         <div className="w-9 h-9 flex items-center justify-center text-slate-400">
-           <span className="material-symbols-outlined">notifications</span>
+           <Bell className="w-5 h-5" />
         </div>
       </div>
     </div>

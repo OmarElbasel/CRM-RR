@@ -29,7 +29,7 @@ export function MessageStatusBadge({ status }: MessageStatusBadgeProps) {
   const config = STATUS_CONFIG[status]
   const Icon = config.icon
   return (
-    <Badge variant="outline" className={`${config.className} text-xs font-medium gap-1`}>
+    <Badge variant="ds-line" className={`${config.className} text-xs font-medium gap-1`}>
       <Icon className="w-3 h-3" />
       {config.label}
     </Badge>

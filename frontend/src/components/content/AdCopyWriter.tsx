@@ -5,7 +5,7 @@ import { useAuth } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ContentLanguageToggle } from './ContentLanguageToggle'
-import { Loader2, Copy } from 'lucide-react'
+import { Copy, Loader2, RefreshCw } from 'lucide-react'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -71,16 +71,16 @@ export function AdCopyWriter() {
         <div className="bg-white p-6 rounded shadow-sm border border-slate-200">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-headline font-bold text-lg">Ad Copy Parameters</h3>
-            <div className="flex bg-surface-container rounded-lg p-1 border border-outline-variant/30">
+            <div className="flex bg-paper rounded-lg p-1 border border-ds-line-2/30">
               <button 
                 onClick={() => setLang('en')}
-                className={`px-4 py-1.5 text-xs font-bold rounded transition-all ${lang === 'en' ? 'bg-white text-primary shadow-sm' : 'text-on-surface-variant hover:text-primary'}`}
+                className={`px-4 py-1.5 text-xs font-bold rounded transition-all ${lang === 'en' ? 'bg-white text-primary shadow-sm' : 'text-ds-text-2 hover:text-primary'}`}
               >
                 EN
               </button>
               <button 
                 onClick={() => setLang('ar')}
-                className={`px-4 py-1.5 text-xs font-bold rounded transition-all ${lang === 'ar' ? 'bg-white text-primary shadow-sm' : 'text-on-surface-variant hover:text-primary'}`}
+                className={`px-4 py-1.5 text-xs font-bold rounded transition-all ${lang === 'ar' ? 'bg-white text-primary shadow-sm' : 'text-ds-text-2 hover:text-primary'}`}
               >
                 AR
               </button>
@@ -89,18 +89,18 @@ export function AdCopyWriter() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-xs font-black text-on-surface-variant uppercase tracking-wider mb-2">Offer/Product Description</label>
+              <label className="block text-xs font-black text-ds-text-2 uppercase tracking-wider mb-2">Offer/Product Description</label>
               <textarea 
                 value={productDescription}
                 onChange={(e) => setProductDescription(e.target.value)}
-                className="w-full h-32 bg-surface-container-lowest border border-slate-200 rounded-xl p-4 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400 font-body"
+                className="w-full h-32 bg-paper border border-slate-200 rounded-xl p-4 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400 font-body"
                 placeholder="Describe your offer... (e.g. 20% off for first-time customers on our organic coffee)"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
                <div>
-                  <label className="block text-xs font-black text-on-surface-variant uppercase tracking-wider mb-2">Platform</label>
+                  <label className="block text-xs font-black text-ds-text-2 uppercase tracking-wider mb-2">Platform</label>
                   <select 
                     value={platform} 
                     onChange={(e) => setPlatform(e.target.value)} 
@@ -112,7 +112,7 @@ export function AdCopyWriter() {
                   </select>
                </div>
                <div>
-                  <label className="block text-xs font-black text-on-surface-variant uppercase tracking-wider mb-2">Tone</label>
+                  <label className="block text-xs font-black text-ds-text-2 uppercase tracking-wider mb-2">Tone</label>
                   <select 
                     value={tone} 
                     onChange={(e) => setTone(e.target.value)} 
@@ -139,13 +139,13 @@ export function AdCopyWriter() {
         </div>
 
         {/* Small Tip Card */}
-        <div className="bg-secondary-container/10 border border-secondary/20 p-5 rounded-xl flex gap-4 transition-all hover:bg-secondary-container/20 cursor-default">
-          <div className="w-10 h-10 bg-secondary-container rounded-full flex items-center justify-center shrink-0">
+        <div className="bg-ds-accent/20/10 border border-secondary/20 p-5 rounded-xl flex gap-4 transition-all hover:bg-ds-accent/20/20 cursor-default">
+          <div className="w-10 h-10 bg-ds-accent/20 rounded-full flex items-center justify-center shrink-0">
             <span className="material-symbols-outlined text-secondary">insights</span>
           </div>
           <div>
-            <p className="text-sm font-bold text-on-secondary-container">Performance Note</p>
-            <p className="text-xs text-on-secondary-container/80 leading-relaxed font-body">Direct-response copies with price transparency usually perform 18% better on {platform === 'META' ? 'Instagram' : 'TikTok'}.</p>
+            <p className="text-sm font-bold text-on-ds-accent/20">Performance Note</p>
+            <p className="text-xs text-on-ds-accent/20/80 leading-relaxed font-body">Direct-response copies with price transparency usually perform 18% better on {platform === 'META' ? 'Instagram' : 'TikTok'}.</p>
           </div>
         </div>
       </div>
@@ -161,7 +161,7 @@ export function AdCopyWriter() {
                  disabled={loading || !productDescription.trim()}
                  className="text-[10px] font-black text-indigo-600 flex items-center gap-1 hover:underline disabled:opacity-50"
               >
-                <span className="material-symbols-outlined text-sm">refresh</span> Regenerate
+                <RefreshCw className="text-sm" /> Regenerate
               </button>
             </div>
           </div>
@@ -184,7 +184,7 @@ export function AdCopyWriter() {
 
             {result && (
               <>
-                <div className="relative group p-6 bg-surface-container rounded-xl border border-slate-100 shadow-inner">
+                <div className="relative group p-6 bg-paper rounded-xl border border-slate-100 shadow-inner">
                   <div className="absolute -left-4 top-4 bottom-4 w-1 bg-indigo-600 rounded-full"></div>
                   <h4 className={`text-xl font-headline font-black text-slate-900 mb-4 ${lang === 'ar' ? 'text-right' : ''}`} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
                     {lang === 'ar' ? result.headline_ar : result.headline_en}
@@ -212,7 +212,7 @@ export function AdCopyWriter() {
                 disabled={!result}
                 className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-lg font-bold text-sm hover:bg-indigo-700 transition-colors disabled:opacity-50"
               >
-                <span className="material-symbols-outlined text-lg">content_copy</span> Copy for {platform}
+                <Copy className="text-lg" /> Copy for {platform}
               </button>
             </div>
           </div>

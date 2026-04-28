@@ -162,7 +162,7 @@ export default function AIConfigPage() {
                 <div key={provider} className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900">{provider}</h3>
-                    <Badge variant="outline" className="text-[10px]">VERIFIED RATES</Badge>
+                    <Badge variant="ds-line" className="text-[10px]">VERIFIED RATES</Badge>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="space-y-2">

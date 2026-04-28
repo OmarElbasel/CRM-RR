@@ -121,7 +121,7 @@ export default function AdminOverview() {
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
-                    <Badge variant={org.plan === 'free' ? 'outline' : 'secondary'} className="uppercase text-[10px]">
+                    <Badge variant={org.plan === 'free' ? 'ds-line' : 'secondary'} className="uppercase text-[10px]">
                       {org.plan}
                     </Badge>
                     <Link href="/admin/orgs">
@@ -167,13 +167,13 @@ export default function AdminOverview() {
             </CardHeader>
             <CardContent className="grid grid-cols-1 gap-2">
               <Link href="/admin/ai-config">
-                <Button variant="outline" className="w-full justify-start text-xs font-medium">
+                <Button variant="ds-line" className="w-full justify-start text-xs font-medium">
                   <Package className="w-3.5 h-3.5 mr-2 text-indigo-600" />
                   Manage Plan Budgets
                 </Button>
               </Link>
               <Link href="/admin/ai-usage">
-                <Button variant="outline" className="w-full justify-start text-xs font-medium">
+                <Button variant="ds-line" className="w-full justify-start text-xs font-medium">
                   <Zap className="w-3.5 h-3.5 mr-2 text-orange-500" />
                   AI Model Performance
                 </Button>

@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@clerk/nextjs'
 import { fetchOrderSummary, type OrderSummaryResponse } from '@/lib/orders'
+import { Banknote, TrendingUp } from 'lucide-react'
 
 const SOURCE_LABELS = { SHOPIFY: 'Shopify', WHATSAPP: 'WhatsApp', MANUAL: 'Manual' }
 
@@ -19,16 +20,16 @@ export function RevenueSummary() {
     <div className="px-8 grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
       <div className="bg-primary p-5 rounded-xl text-white shadow-lg shadow-primary/20 relative overflow-hidden group transition-all hover:scale-[1.02] cursor-default">
         <div className="relative z-10">
-          <p className="text-primary-fixed text-xs font-medium uppercase tracking-wider mb-1">Total Revenue</p>
+          <p className="text-ds-primary/15 text-xs font-medium uppercase tracking-wider mb-1">Total Revenue</p>
           <h3 className="text-3xl font-black mb-1">
             {data.total_amount} {data.currency}
           </h3>
-          <div className="flex items-center gap-1 text-secondary-container text-xs font-bold">
-            <span className="material-symbols-outlined text-sm">trending_up</span>
+          <div className="flex items-center gap-1 text-ds-accent/20 text-xs font-bold">
+            <TrendingUp className="text-sm" />
             {data.month}
           </div>
         </div>
-        <span className="material-symbols-outlined absolute -bottom-4 -right-4 text-9xl opacity-10 rotate-12 group-hover:rotate-0 transition-transform duration-500">payments</span>
+        <Banknote className="absolute -bottom-4 -right-4 text-9xl opacity-10 rotate-12 group-hover:rotate-0 transition-transform duration-500" />
       </div>
 
       {(['SHOPIFY', 'WHATSAPP', 'MANUAL'] as const).map((src) => {
