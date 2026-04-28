@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { AlertTriangle, Check, ChevronRight, Copy, FileText, Loader2, RefreshCw, Sparkles } from 'lucide-react'
+import { AlertTriangle, Check, ChevronRight, Copy, FileText, Loader2, RefreshCw, Sparkles, Wand2, Lightbulb } from 'lucide-react'
 import Link from 'next/link'
 
 type FormStep = 'input' | 'generating' | 'result'
@@ -178,7 +178,7 @@ export function GeneratorForm() {
             <div className="relative z-10">
               <div className="flex items-center gap-4 mb-10">
                 <div className="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center text-primary shadow-inner">
-                  <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>magic_button</span>
+                   <Wand2 className="text-2xl" />
                 </div>
                 <h2 className="text-2xl font-bold tracking-tight text-ds-text">Product Details</h2>
               </div>
@@ -304,7 +304,7 @@ export function GeneratorForm() {
               <div className="p-8 flex-1 flex flex-col animate-in fade-in duration-500">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-indigo-500" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+                    <Sparkles className="text-indigo-500" />
                     <span className="text-xs font-bold uppercase tracking-widest text-ds-text-2">AI Output</span>
                   </div>
                   {step === 'generating' && (
@@ -350,7 +350,7 @@ export function GeneratorForm() {
           {/* AI Generation Tips */}
           <div className="bg-gradient-to-br from-tertiary/10 to-primary/10 rounded-xl p-6 border border-tertiary-container/30 transition-all hover:shadow-md">
             <h4 className="text-sm font-extrabold text-tertiary mb-4 flex items-center gap-2 uppercase tracking-tight">
-              <span className="material-symbols-outlined text-base">lightbulb</span>
+               <Lightbulb className="text-base" />
               AI Generation Tips
             </h4>
             <ul className="text-sm space-y-4 text-ds-text-2">

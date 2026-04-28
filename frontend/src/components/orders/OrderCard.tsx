@@ -1,10 +1,11 @@
 import { useDraggable } from '@dnd-kit/core'
 import type { Order } from '@/lib/orders'
+import { ShoppingBag, MessageSquare, FileEdit } from 'lucide-react'
 
-const SOURCE_CONFIG: Record<string, { label: string; icon: string; color: string; bg: string }> = {
-  SHOPIFY: { label: 'Shopify', icon: 'shopping_bag', color: 'text-indigo-600', bg: 'bg-indigo-50' },
-  WHATSAPP: { label: 'WhatsApp', icon: 'chat', color: 'text-green-600', bg: 'bg-green-50' },
-  MANUAL: { label: 'Manual', icon: 'edit_note', color: 'text-slate-600', bg: 'bg-slate-50' },
+const SOURCE_CONFIG: Record<string, { label: string; icon: React.ReactNode; color: string; bg: string }> = {
+  SHOPIFY: { label: 'Shopify', icon: <ShoppingBag className="text-sm" />, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+  WHATSAPP: { label: 'WhatsApp', icon: <MessageSquare className="text-sm" />, color: 'text-green-600', bg: 'bg-green-50' },
+  MANUAL: { label: 'Manual', icon: <FileEdit className="text-sm" />, color: 'text-slate-600', bg: 'bg-slate-50' },
 }
 
 interface OrderCardProps {
@@ -52,7 +53,7 @@ export function OrderCard({
           <span className={`text-[10px] font-extrabold py-0.5 px-2 rounded uppercase tracking-wider ${source.bg} ${source.color}`}>
             {order.order_number ? `#${order.order_number}` : `#${order.id.toString().padStart(4, '0')}`}
           </span>
-          <span className={`material-symbols-outlined text-sm ${source.color}`}>
+          <span className={source.color}>
             {source.icon}
           </span>
         </div>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useAuth } from '@clerk/nextjs'
-import { Languages, RefreshCw, Send } from 'lucide-react'
+import { Languages, RefreshCw, Send, Wand2, CornerDownLeft, PlusCircle, Smile, Paperclip } from 'lucide-react'
 import type { ThreadMessage } from './ConversationThread'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
@@ -59,7 +59,7 @@ export function ReplyComposer({ messageId, aiDraft, aiDraftAr, disabled, onReply
         {(aiDraft || aiDraftAr) && (
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-[20px]">magic_button</span>
+              <Wand2 className="text-primary text-[20px]" />
               <h3 className="text-[10px] font-bold text-primary uppercase tracking-wider">AI Suggested Replies</h3>
             </div>
             <button className="text-[10px] text-ds-text-2 hover:text-primary transition-colors flex items-center gap-1 uppercase font-bold">
@@ -85,7 +85,7 @@ export function ReplyComposer({ messageId, aiDraft, aiDraftAr, disabled, onReply
               </div>
               <div className="mt-3 flex items-center justify-end text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                 <span className="text-[10px] font-bold mr-1">Insert</span>
-                <span className="material-symbols-outlined text-sm">keyboard_return</span>
+                <CornerDownLeft className="text-sm" />
               </div>
             </button>
           )}
@@ -104,7 +104,7 @@ export function ReplyComposer({ messageId, aiDraft, aiDraftAr, disabled, onReply
               </div>
               <div className="mt-3 flex items-center justify-end text-tertiary opacity-0 group-hover:opacity-100 transition-opacity">
                 <span className="text-[10px] font-bold mr-1">Insert</span>
-                <span className="material-symbols-outlined text-sm">keyboard_return</span>
+                <CornerDownLeft className="text-sm" />
               </div>
             </button>
           )}
@@ -115,7 +115,7 @@ export function ReplyComposer({ messageId, aiDraft, aiDraftAr, disabled, onReply
           {error && <p className="absolute -top-6 left-0 text-[10px] text-error font-bold">{error}</p>}
           <div className="flex items-center gap-2 bg-paper border border-ds-line-2 rounded-2xl p-2 pl-4 shadow-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10 transition-all">
             <button className="p-2 text-ds-text-2 hover:text-primary transition-colors">
-              <span className="material-symbols-outlined">add_circle</span>
+              <PlusCircle />
             </button>
             <input 
               value={content}
@@ -127,10 +127,10 @@ export function ReplyComposer({ messageId, aiDraft, aiDraftAr, disabled, onReply
               type="text"
             />
             <button className="p-2 text-ds-text-2 hover:text-primary transition-colors">
-              <span className="material-symbols-outlined">sentiment_satisfied</span>
+              <Smile />
             </button>
             <button className="p-2 text-ds-text-2 hover:text-primary transition-colors">
-              <span className="material-symbols-outlined">attach_file</span>
+              <Paperclip />
             </button>
             <div className="w-px h-6 bg-ds-line-2/30 mx-1"></div>
             <button 
@@ -138,7 +138,7 @@ export function ReplyComposer({ messageId, aiDraft, aiDraftAr, disabled, onReply
               disabled={!content.trim() || sending}
               className="bg-primary text-white w-10 h-10 rounded-xl flex items-center justify-center hover:bg-ds-primary/90 transition-colors shadow-lg shadow-primary/20 disabled:opacity-50 disabled:grayscale"
             >
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>send</span>
+              <Send />
             </button>
           </div>
         </div>

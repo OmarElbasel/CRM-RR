@@ -1,6 +1,16 @@
 'use client'
 
 import React from 'react'
+import { TrendingUp, TrendingDown, CreditCard, ShoppingCart, MousePointerClick, Hand, Eye } from 'lucide-react'
+
+const ICON_MAP: Record<string, React.ReactNode> = {
+  trending_up: <TrendingUp />,
+  payments: <CreditCard />,
+  shopping_cart_checkout: <ShoppingCart />,
+  ads_click: <MousePointerClick />,
+  touch_app: <Hand />,
+  visibility: <Eye />,
+}
 
 const PERFORMANCE_METRICS = [
   {
@@ -74,14 +84,14 @@ export function AdsPerformance() {
 
           <div className="flex justify-between items-start mb-4">
             <div className={`p-2.5 rounded-xl flex items-center justify-center ${metric.className.includes('indigo-600') ? 'bg-indigo-500 text-white' : 'bg-slate-50 text-slate-500'}`}>
-              <span className="material-symbols-outlined">{metric.icon}</span>
+              {ICON_MAP[metric.icon] || <TrendingUp />}
             </div>
             <div className={`flex items-center gap-1 text-xs font-bold font-headline ${
               metric.isPositive
                 ? (metric.className.includes('indigo-600') ? 'text-indigo-200' : 'text-emerald-600')
                 : 'text-rose-500'
             }`}>
-              <span className="material-symbols-outlined text-sm">{metric.isPositive ? 'trending_up' : 'trending_down'}</span>
+              {metric.isPositive ? <TrendingUp className="text-sm" /> : <TrendingDown className="text-sm" />}
               {metric.trend}
             </div>
           </div>

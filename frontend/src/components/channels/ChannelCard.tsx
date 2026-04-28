@@ -1,6 +1,15 @@
 'use client'
 
 import React from 'react'
+import { Camera, MessageSquare, Users, Music, ShoppingCart, CheckCircle2 } from 'lucide-react'
+
+const ICON_MAP: Record<string, React.ReactNode> = {
+  camera_alt: <Camera className="text-3xl" />,
+  chat: <MessageSquare className="text-3xl" />,
+  groups: <Users className="text-3xl" />,
+  music_note: <Music className="text-3xl" />,
+  shopping_cart: <ShoppingCart className="text-3xl" />,
+}
 
 export interface ChannelProps {
   id: string
@@ -42,8 +51,8 @@ export function ChannelCard({ channel, onConnect, onDisconnect }: ChannelCardPro
           {channel.logoUrl ? (
             <img src={channel.logoUrl} alt={channel.name} className="w-10 h-10 object-contain" />
           ) : (
-            <span className={`material-symbols-outlined text-3xl ${channel.color}`} style={{ fontVariationSettings: "'FILL' 0" }}>
-              {channel.icon}
+            <span className={channel.color}>
+              {ICON_MAP[channel.icon] || <MessageSquare className="text-3xl" />}
             </span>
           )}
         </div>
@@ -57,7 +66,7 @@ export function ChannelCard({ channel, onConnect, onDisconnect }: ChannelCardPro
         {isConnected ? (
           <>
             <div className="flex items-center gap-2 text-xs text-emerald-600 font-bold bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-100">
-              <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+               <CheckCircle2 className="text-sm" />
               {channel.syncInfo || 'Everything is up to date'}
             </div>
             <button 
@@ -79,7 +88,7 @@ export function ChannelCard({ channel, onConnect, onDisconnect }: ChannelCardPro
 
       {/* Subtle Background Platform Icon */}
       <div className={`absolute -bottom-4 -right-4 opacity-[0.03] text-8xl pointer-events-none group-hover:opacity-[0.06] group-hover:scale-110 transition-all duration-500 ${channel.color}`}>
-        <span className="material-symbols-outlined">{channel.icon}</span>
+        {ICON_MAP[channel.icon] || <MessageSquare />}
       </div>
     </div>
   )

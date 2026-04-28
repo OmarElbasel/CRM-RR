@@ -5,7 +5,7 @@ import { useAuth } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ContentLanguageToggle } from './ContentLanguageToggle'
-import { Copy, Loader2, RefreshCw } from 'lucide-react'
+import { Copy, Loader2, RefreshCw, MousePointerClick, BarChart3, LayoutTemplate, Info } from 'lucide-react'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -130,9 +130,11 @@ export function AdCopyWriter() {
               disabled={loading || !productDescription.trim()}
               className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold headline flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 disabled:opacity-50 disabled:shadow-none"
             >
-              <span className={`material-symbols-outlined ${loading ? 'animate-spin' : ''}`}>
-                {loading ? 'sync' : 'ads_click'}
-              </span>
+               {loading ? (
+                 <Loader2 className="animate-spin" />
+               ) : (
+                 <MousePointerClick />
+               )}
               {loading ? 'Writing Copy...' : 'Generate Ad Copy'}
             </button>
           </form>
@@ -141,7 +143,7 @@ export function AdCopyWriter() {
         {/* Small Tip Card */}
         <div className="bg-ds-accent/20/10 border border-secondary/20 p-5 rounded-xl flex gap-4 transition-all hover:bg-ds-accent/20/20 cursor-default">
           <div className="w-10 h-10 bg-ds-accent/20 rounded-full flex items-center justify-center shrink-0">
-            <span className="material-symbols-outlined text-secondary">insights</span>
+             <BarChart3 className="text-secondary" />
           </div>
           <div>
             <p className="text-sm font-bold text-on-ds-accent/20">Performance Note</p>
@@ -169,7 +171,7 @@ export function AdCopyWriter() {
           <div className="p-8 space-y-8 flex-1">
             {!result && !loading && (
               <div className="flex flex-col items-center justify-center h-full text-slate-300 py-12">
-                 <span className="material-symbols-outlined text-6xl mb-4 opacity-20">ad_group</span>
+                  <LayoutTemplate className="text-6xl mb-4 opacity-20" />
                  <p className="font-bold text-sm">Ad Copy will appear here</p>
               </div>
             )}
@@ -196,7 +198,7 @@ export function AdCopyWriter() {
 
                 <div className="p-4 bg-indigo-50/50 border border-indigo-100 rounded-lg">
                    <div className="flex items-center gap-2 text-indigo-700 font-bold text-[10px] uppercase tracking-wider mb-2">
-                      <span className="material-symbols-outlined text-sm">info</span>
+                       <Info className="text-sm" />
                       Suggested Target Audience
                    </div>
                    <p className="text-xs text-indigo-600/80 font-medium">Coffee enthusiasts, organic lifestyle followers, ages 24-45, Middle East region.</p>

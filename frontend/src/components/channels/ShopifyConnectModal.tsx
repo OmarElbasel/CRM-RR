@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Key, ExternalLink, Ticket } from 'lucide-react'
 
 type Method = 'client_credentials' | 'static_token' | 'oauth'
 
@@ -20,24 +21,24 @@ interface Props {
   onSubmit: (payload: Record<string, string>) => Promise<void>
 }
 
-const METHODS: { id: Method; label: string; badge?: string; icon: string; desc: string }[] = [
+const METHODS: { id: Method; label: string; badge?: string; icon: React.ReactNode; desc: string }[] = [
   {
     id: 'client_credentials',
     label: 'Client Credentials',
     badge: 'Recommended',
-    icon: 'vpn_key',
+    icon: <Key className="text-lg" />,
     desc: 'Use your Client ID & Secret from the Shopify dev dashboard.',
   },
   {
     id: 'static_token',
     label: 'Access Token',
-    icon: 'token',
+    icon: <Ticket className="text-lg" />,
     desc: 'Paste a static shpat_… token from a custom app.',
   },
   {
     id: 'oauth',
     label: 'OAuth Install',
-    icon: 'open_in_new',
+    icon: <ExternalLink className="text-lg" />,
     desc: 'Redirect through the Shopify OAuth flow.',
   },
 ]
@@ -148,12 +149,7 @@ export function ShopifyConnectModal({ open, onOpenChange, onSubmit }: Props) {
                     {m.badge}
                   </span>
                 )}
-                <span
-                  className="material-symbols-outlined text-lg"
-                  style={{ fontVariationSettings: "'FILL' 0" }}
-                >
-                  {m.icon}
-                </span>
+                {m.icon}
                 <span className="leading-tight">{m.label}</span>
               </button>
             ))}

@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Sparkles, TrendingUp } from 'lucide-react'
+import { Sparkles, TrendingUp, Zap, Star, MessageSquare } from 'lucide-react'
 
 export function InboxStats() {
   return (
@@ -9,7 +9,7 @@ export function InboxStats() {
       <div className="p-4 bg-white border border-ds-line-2 rounded-xl shadow-sm space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-[10px] font-bold text-ds-line uppercase tracking-widest">Active Chats</span>
-          <span className="material-symbols-outlined text-primary text-sm">bolt</span>
+          <Zap className="text-primary text-sm" />
         </div>
         <div className="text-2xl font-black text-ds-text font-headline">42</div>
         <div className="text-[10px] font-medium text-secondary flex items-center gap-1">
@@ -21,7 +21,7 @@ export function InboxStats() {
       <div className="p-4 bg-white border border-ds-line-2 rounded-xl shadow-sm space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-[10px] font-bold text-ds-line uppercase tracking-widest">Avg. AI Score</span>
-          <span className="material-symbols-outlined text-secondary text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+          <Star className="text-secondary text-sm" />
         </div>
         <div className="text-2xl font-black text-ds-text font-headline">78.4</div>
         <div className="text-[10px] font-medium text-secondary flex items-center gap-1">
@@ -33,7 +33,7 @@ export function InboxStats() {
       <div className="p-4 bg-white border border-ds-line-2 rounded-xl shadow-sm space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-[10px] font-bold text-ds-line uppercase tracking-widest">Unread</span>
-          <span className="material-symbols-outlined text-primary text-sm">mark_chat_unread</span>
+          <MessageSquare className="text-primary text-sm" />
         </div>
         <div className="text-2xl font-black text-ds-text font-headline">09</div>
         <div className="text-[10px] font-medium text-ds-text-2 flex items-center gap-1">

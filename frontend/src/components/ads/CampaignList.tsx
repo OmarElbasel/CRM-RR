@@ -1,6 +1,12 @@
 'use client'
 
 import React from 'react'
+import { BarChart3, MoreHorizontal, Facebook, Music } from 'lucide-react'
+
+const ICON_MAP: Record<string, React.ReactNode> = {
+  facebook: <Facebook className="text-xl" />,
+  music_note: <Music className="text-xl" />,
+}
 
 const CAMPAIGNS = [
   {
@@ -50,7 +56,7 @@ export function CampaignList() {
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 ${campaign.color} rounded-xl flex items-center justify-center text-white`}>
-                  <span className="material-symbols-outlined text-xl">{campaign.icon}</span>
+                  {ICON_MAP[campaign.icon] || <BarChart3 className="text-xl" />}
                 </div>
                 <div>
                   <h4 className="font-headline font-black text-sm text-slate-900 line-clamp-1">{campaign.name}</h4>
@@ -93,11 +99,11 @@ export function CampaignList() {
           
           <div className="mt-auto px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex justify-between items-center">
              <button className="text-xs font-bold text-slate-600 hover:text-indigo-600 transition-colors flex items-center gap-1">
-                <span className="material-symbols-outlined text-sm">insights</span>
+                 <BarChart3 className="text-sm" />
                 Details
              </button>
              <button className="text-xs font-bold text-slate-400 hover:text-indigo-600 transition-colors">
-                <span className="material-symbols-outlined text-sm">more_horiz</span>
+                 <MoreHorizontal className="text-sm" />
              </button>
           </div>
         </div>

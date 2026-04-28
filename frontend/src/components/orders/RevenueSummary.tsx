@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@clerk/nextjs'
 import { fetchOrderSummary, type OrderSummaryResponse } from '@/lib/orders'
-import { Banknote, TrendingUp } from 'lucide-react'
+import { Banknote, TrendingUp, ShoppingBag, MessageSquare, FileEdit } from 'lucide-react'
 
 const SOURCE_LABELS = { SHOPIFY: 'Shopify', WHATSAPP: 'WhatsApp', MANUAL: 'Manual' }
 
@@ -34,9 +34,9 @@ export function RevenueSummary() {
 
       {(['SHOPIFY', 'WHATSAPP', 'MANUAL'] as const).map((src) => {
         const config = {
-          SHOPIFY: { label: 'Shopify', icon: 'shopping_bag', color: 'text-emerald-600', bg: 'bg-emerald-50' },
-          WHATSAPP: { label: 'WhatsApp', icon: 'chat', color: 'text-green-600', bg: 'bg-green-50' },
-          MANUAL: { label: 'Manual', icon: 'edit_note', color: 'text-slate-600', bg: 'bg-slate-50' },
+          SHOPIFY: { label: 'Shopify', icon: <ShoppingBag className="text-lg" />, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+          WHATSAPP: { label: 'WhatsApp', icon: <MessageSquare className="text-lg" />, color: 'text-green-600', bg: 'bg-green-50' },
+          MANUAL: { label: 'Manual', icon: <FileEdit className="text-lg" />, color: 'text-slate-600', bg: 'bg-slate-50' },
         }[src]
 
         return (
@@ -44,7 +44,7 @@ export function RevenueSummary() {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <div className={`w-8 h-8 rounded-lg ${config.bg} flex items-center justify-center ${config.color}`}>
-                  <span className="material-symbols-outlined text-lg">{config.icon}</span>
+                  {config.icon}
                 </div>
                 <p className="text-slate-500 text-xs font-bold uppercase tracking-tight">{config.label}</p>
               </div>

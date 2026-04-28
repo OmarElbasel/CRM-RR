@@ -2,6 +2,7 @@
 
 import { useDraggable } from '@dnd-kit/core'
 import { Card, CardContent } from '@/components/ui/card'
+import { CheckCircle2, XCircle, MessageSquare, ShoppingBag } from 'lucide-react'
 
 export interface DealData {
   id: number
@@ -36,12 +37,12 @@ interface DealCardProps {
   stage?: string
 }
 
-const PLATFORM_ICONS: Record<string, string> = {
-  INSTAGRAM: 'retweet',
-  TIKTOK: 'youtube_trending',
-  SNAPCHAT: 'swipe',
-  WHATSAPP: 'forum',
-  FACEBOOK: 'send',
+const PLATFORM_ICON_MAP: Record<string, React.ReactNode> = {
+  INSTAGRAM: <MessageSquare className="text-sm" />,
+  TIKTOK: <MessageSquare className="text-sm" />,
+  SNAPCHAT: <MessageSquare className="text-sm" />,
+  WHATSAPP: <MessageSquare className="text-sm" />,
+  FACEBOOK: <MessageSquare className="text-sm" />,
 }
 
 const PRIORITY_STYLES: Record<string, { label: string; className: string }> = {
@@ -79,11 +80,13 @@ export function DealCard({ deal, onClick, isDragOverlay, stage }: DealCardProps)
           <span className={`text-[10px] font-bold py-0.5 px-2 rounded ${isPaid ? 'bg-indigo-50 text-indigo-600' : isLost ? 'bg-slate-100 text-slate-400' : 'bg-indigo-50 text-indigo-600'}`}>
             #{deal.id}
           </span>
-          <span 
-            className={`material-symbols-outlined text-sm ${isPaid ? 'text-secondary-dim' : isLost ? 'text-error' : PLATFORM_COLORS[deal.contact?.platform || '']?.includes('green') ? 'text-green-600' : 'text-emerald-600'}`}
-          >
-            {isPaid ? 'check_circle' : isLost ? 'cancel' : (PLATFORM_ICONS[deal.contact?.platform || ''] === 'forum' ? 'chat' : 'shopping_bag')}
-          </span>
+          {isPaid ? (
+            <CheckCircle2 className={`text-sm ${isPaid ? 'text-secondary-dim' : ''}`} />
+          ) : isLost ? (
+            <XCircle className="text-sm text-error" />
+          ) : (
+            PLATFORM_ICON_MAP[deal.contact?.platform || ''] || <ShoppingBag className={`text-sm ${PLATFORM_COLORS[deal.contact?.platform || '']?.includes('green') ? 'text-green-600' : 'text-emerald-600'}`} />
+          )}
         </div>
 
         <p className={`text-sm font-bold mb-1 ${isLost ? 'text-slate-500' : 'text-slate-900'}`}>

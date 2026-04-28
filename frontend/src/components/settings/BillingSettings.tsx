@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
+import { Info, Receipt } from 'lucide-react'
 
 interface UsageData {
   plan: string
@@ -93,7 +94,7 @@ export function BillingSettings({ usage }: BillingSettingsProps) {
         </div>
 
         <div className="mt-6 flex items-center gap-2 text-xs font-bold text-slate-400 italic">
-          <span className="material-symbols-outlined text-sm">info</span>
+          <Info className="text-sm" />
           Bypassing check for Enterprise users.
         </div>
       </div>
@@ -102,7 +103,7 @@ export function BillingSettings({ usage }: BillingSettingsProps) {
       <div className="bg-slate-50 rounded-2xl border border-slate-200 p-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-slate-600">
-            <span className="material-symbols-outlined">receipt_long</span>
+            <Receipt />
           </div>
           <div>
             <h4 className="font-bold text-slate-900">Need specific invoices?</h4>

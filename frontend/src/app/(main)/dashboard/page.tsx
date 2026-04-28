@@ -12,7 +12,7 @@ import { formatPrice } from '@/lib/currency'
 import { isEnabled } from '@/lib/flags'
 import { OnboardingChecklist } from '@/components/dashboard/OnboardingChecklist'
 import Link from 'next/link'
-import { ArrowRight, Code, Copy, Key, LayoutGrid, Rocket, Share2, Sparkles } from 'lucide-react'
+import { ArrowRight, Code, Copy, Headphones, Key, LayoutGrid, Plus, Rocket, Share2, Sparkles } from 'lucide-react'
 
 interface UsageData {
   plan: string
@@ -95,7 +95,7 @@ export default async function DashboardPage() {
             href="/dashboard/generate"
             className="bg-ds-primary text-white px-5 py-2.5 rounded-[11px] font-bold text-sm flex items-center gap-2 hover:brightness-105 transition-all active:scale-95 shadow-lg shadow-ds-primary/20"
           >
-            <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>add</span>
+            <Plus className="text-base" />
             New Generation
           </Link>
         </section>
@@ -266,7 +266,7 @@ export default async function DashboardPage() {
           {/* Help Card */}
           <div className="bg-ink text-white rounded-[14px] p-6 flex flex-col justify-between relative overflow-hidden group border border-ds-line-dark">
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-              <span className="material-symbols-outlined text-8xl" style={{ fontVariationSettings: "'FILL' 1" }}>support_agent</span>
+              <Headphones className="text-8xl" />
             </div>
             <div className="relative z-10">
               <h3 className="text-xl font-black font-headline mb-4">Need help?</h3>

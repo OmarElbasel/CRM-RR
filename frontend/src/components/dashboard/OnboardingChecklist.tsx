@@ -58,7 +58,7 @@ export function OnboardingChecklist() {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-ds-primary-soft flex items-center justify-center text-ds-primary">
-            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+            <CheckCircle2 />
           </div>
           <div>
             <h3 className="font-bold text-lg font-headline text-ds-text">Get Started</h3>

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useAuth } from '@clerk/nextjs'
 import { Input } from '@/components/ui/input'
+import { ClipboardList, CheckCircle2, Circle, PlusCircle, Send } from 'lucide-react'
 
 interface DealTaskData {
   id: number
@@ -63,7 +64,7 @@ export function DealTaskList({ dealId, tasks, apiUrl, onUpdate }: DealTaskListPr
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2 mb-2">
-        <span className="material-symbols-outlined text-secondary text-[20px]">assignment</span>
+        <ClipboardList className="text-secondary text-[20px]" />
         <h3 className="text-sm font-black font-headline uppercase tracking-widest text-ds-text">Precision Task List</h3>
       </div>
 
@@ -80,9 +81,9 @@ export function DealTaskList({ dealId, tasks, apiUrl, onUpdate }: DealTaskListPr
                 className="flex-shrink-0 flex items-center justify-center"
               >
                 {isComplete ? (
-                  <span className="material-symbols-outlined text-primary text-[24px]">check_circle</span>
+                  <CheckCircle2 className="text-primary text-[24px]" />
                 ) : (
-                  <span className="material-symbols-outlined text-ds-line-2 text-[24px] group-hover:text-primary transition-colors">radio_button_unchecked</span>
+                  <Circle className="text-ds-line-2 text-[24px] group-hover:text-primary transition-colors" />
                 )}
               </button>
               <div className="flex-1 min-w-0">
@@ -106,7 +107,7 @@ export function DealTaskList({ dealId, tasks, apiUrl, onUpdate }: DealTaskListPr
       </div>
 
       <div className="flex items-center gap-3 bg-paper rounded-2xl p-3 border border-ds-line-2/30">
-        <span className="material-symbols-outlined text-on-ds-accent/20/50 ml-2">add_task</span>
+        <PlusCircle className="text-on-ds-accent/20/50 ml-2" />
         <input
           placeholder="Provision a new task..."
           value={newTitle}
@@ -119,7 +120,7 @@ export function DealTaskList({ dealId, tasks, apiUrl, onUpdate }: DealTaskListPr
           disabled={loading || !newTitle.trim()}
           className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/20 hover:bg-ds-primary/90 disabled:opacity-50 disabled:shadow-none transition-all"
         >
-          <span className="material-symbols-outlined text-[20px]">send</span>
+          <Send className="text-[20px]" />
         </button>
       </div>
     </div>

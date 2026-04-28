@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { UserProfile, useUser } from '@clerk/nextjs'
-import { Loader2, Lock } from 'lucide-react'
+import { Loader2, Lock, Camera, ShieldCheck, Monitor } from 'lucide-react'
 
 export function AccountSettings() {
   const { user, isLoaded } = useUser()
@@ -27,7 +27,7 @@ export function AccountSettings() {
               className="w-20 h-20 rounded-2xl object-cover ring-4 ring-slate-50 shadow-lg group-hover/avatar:scale-105 transition-transform duration-300"
             />
             <div className="absolute inset-0 bg-black/20 rounded-2xl opacity-0 group-hover/avatar:opacity-100 transition-opacity flex items-center justify-center">
-               <span className="material-symbols-outlined text-white text-xl">photo_camera</span>
+               <Camera className="text-white text-xl" />
             </div>
           </div>
           <div>
@@ -38,7 +38,7 @@ export function AccountSettings() {
         
         <div className="flex flex-col items-end gap-2 text-right">
            <span className="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border border-emerald-100 flex items-center gap-1">
-              <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>verified_user</span>
+               <ShieldCheck className="text-sm" />
               Active Session
            </span>
            <p className="text-xs text-slate-400 font-medium">Last login: {new Date().toLocaleDateString()}</p>
@@ -66,7 +66,7 @@ export function AccountSettings() {
                
                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all group">
                   <div className="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:bg-purple-600 group-hover:text-white transition-colors">
-                     <span className="material-symbols-outlined">devices</span>
+                      <Monitor />
                   </div>
                   <h4 className="font-bold text-slate-900 mb-2">Session Management</h4>
                   <p className="text-xs text-slate-500 font-medium mb-6 leading-relaxed">View all active devices and sessions currently signed into your Rawaj account.</p>

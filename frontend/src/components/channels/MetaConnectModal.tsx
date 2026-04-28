@@ -11,7 +11,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, LogIn, Ticket, CheckCircle2 } from 'lucide-react'
 
 type Method = 'oauth' | 'manual'
 type Platform = 'instagram' | 'facebook'
@@ -47,18 +47,18 @@ const PLATFORM_CONFIG = {
   },
 }
 
-const METHODS: { id: Method; label: string; badge?: string; icon: string; desc: string }[] = [
+const METHODS: { id: Method; label: string; badge?: string; icon: React.ReactNode; desc: string }[] = [
   {
     id: 'oauth',
     label: 'Facebook Login',
     badge: 'Recommended',
-    icon: 'login',
+    icon: <LogIn className="text-lg" />,
     desc: 'Log in with Facebook and approve permissions. Easiest setup — no credentials needed.',
   },
   {
     id: 'manual',
     label: 'Page Token',
-    icon: 'token',
+    icon: <Ticket className="text-lg" />,
     desc: 'Paste a Page Access Token from Meta for Developers. For technical users.',
   },
 ]
@@ -153,9 +153,7 @@ export function MetaConnectModal({ open, platform, onOpenChange, onOAuth, onManu
                     {m.badge}
                   </span>
                 )}
-                <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 0" }}>
-                  {m.icon}
-                </span>
+                {m.icon}
                 <span className="leading-tight">{m.label}</span>
               </button>
             ))}
@@ -173,9 +171,7 @@ export function MetaConnectModal({ open, platform, onOpenChange, onOAuth, onManu
               <ul className="space-y-1.5">
                 {config.features.map((f) => (
                   <li key={f} className="flex items-center gap-2 text-xs text-slate-600">
-                    <span className="material-symbols-outlined text-emerald-500 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
-                      check_circle
-                    </span>
+                    <CheckCircle2 className="text-emerald-500 text-sm" />
                     {f}
                   </li>
                 ))}

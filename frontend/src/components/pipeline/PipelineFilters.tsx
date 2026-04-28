@@ -3,7 +3,7 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { RefreshCw, X } from 'lucide-react'
+import { RefreshCw, X, Calendar, FilterX, MoreVertical } from 'lucide-react'
 
 export interface FilterValues {
   platform: string
@@ -64,7 +64,7 @@ export function PipelineFilters({ filters, onChange, onClear }: PipelineFiltersP
             />
             {filters.assignee && (
                 <button onClick={() => update('assignee', '')} className="absolute right-2 top-1.5 text-ds-text-2 hover:text-primary transition-colors">
-                    <span className="material-symbols-outlined text-sm">close</span>
+                    <X className="text-sm" />
                 </button>
             )}
         </div>
@@ -103,7 +103,7 @@ export function PipelineFilters({ filters, onChange, onClear }: PipelineFiltersP
                     value={filters.date_from}
                     onChange={(e) => update('date_from', e.target.value)}
                 />
-                <span className="material-symbols-outlined absolute left-2 text-sm text-ds-text-2 pointer-events-none">calendar_today</span>
+                <Calendar className="absolute left-2 text-sm text-ds-text-2 pointer-events-none" />
             </div>
             <span className="text-xs text-ds-text-2">to</span>
             <input
@@ -121,14 +121,14 @@ export function PipelineFilters({ filters, onChange, onClear }: PipelineFiltersP
                 onClick={onClear} 
                 className="p-2 rounded hover:bg-paper-2est text-error transition-colors flex items-center gap-1 text-xs font-bold"
             >
-                <span className="material-symbols-outlined text-lg">filter_alt_off</span>
+                <FilterX className="text-lg" />
             </button>
         )}
         <button className="p-2 rounded hover:bg-paper-2est text-ds-text-2 transition-colors">
           <RefreshCw className="text-lg" />
         </button>
         <button className="p-2 rounded hover:bg-paper-2est text-ds-text-2 transition-colors">
-          <span className="material-symbols-outlined text-lg">more_vert</span>
+          <MoreVertical className="text-lg" />
         </button>
       </div>
     </div>

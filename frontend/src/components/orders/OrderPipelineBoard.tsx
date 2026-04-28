@@ -16,6 +16,7 @@ import { useDroppable } from '@dnd-kit/core'
 import type { Order, OrderStatus } from '@/lib/orders'
 import { OrderCard } from './OrderCard'
 import { patchOrder } from '@/lib/orders'
+import { MoreHorizontal, Package } from 'lucide-react'
 
 const COLUMNS: { key: OrderStatus; label: string; dot: string; bg: string }[] = [
   { key: 'PENDING', label: 'Pending', dot: 'bg-slate-400', bg: 'bg-slate-100/50' },
@@ -48,7 +49,7 @@ function OrderColumn({ status, label, dot, bg, orders, selectedCurrency }: { sta
           </span>
         </div>
         <button className="text-slate-400 hover:text-indigo-600 transition-colors">
-          <span className="material-symbols-outlined text-xl">more_horiz</span>
+          <MoreHorizontal className="text-xl" />
         </button>
       </div>
 
@@ -62,7 +63,7 @@ function OrderColumn({ status, label, dot, bg, orders, selectedCurrency }: { sta
         ))}
         {orders.length === 0 && (
           <div className="py-12 border-2 border-dashed border-slate-200/50 rounded-xl flex flex-col items-center justify-center opacity-30">
-             <span className="material-symbols-outlined text-4xl mb-2 text-slate-400">inventory_2</span>
+             <Package className="text-4xl mb-2 text-slate-400" />
              <p className="text-xs font-medium text-slate-400">No orders here</p>
           </div>
         )}

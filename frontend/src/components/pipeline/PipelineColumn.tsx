@@ -24,7 +24,7 @@ const STAGE_CONFIG: Record<string, { color: string; dot: string; bg: string }> =
 }
 
 import { CreateDealDialog } from './CreateDealDialog'
-import { Plus } from 'lucide-react'
+import { Plus, MoreHorizontal, GripVertical } from 'lucide-react'
 
 export function PipelineColumn({ stage, label, totalValue, count, deals, onDealClick, onCreated, apiUrl }: PipelineColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id: stage })
@@ -43,7 +43,7 @@ export function PipelineColumn({ stage, label, totalValue, count, deals, onDealC
           </span>
         </div>
         <button className="text-slate-400 hover:text-indigo-600 transition-colors">
-          <span className="material-symbols-outlined text-xl">more_horiz</span>
+          <MoreHorizontal className="text-xl" />
         </button>
       </div>
 
@@ -65,7 +65,7 @@ export function PipelineColumn({ stage, label, totalValue, count, deals, onDealC
         )}
         {deals.length === 0 && stage !== 'NEW_MESSAGE' && (
           <div className="py-12 border-2 border-dashed border-ds-line-2/10 rounded-xl flex flex-col items-center justify-center opacity-30">
-             <span className="material-symbols-outlined text-4xl mb-2">drag_indicator</span>
+             <GripVertical className="text-4xl mb-2" />
              <p className="text-xs font-medium">No deals in {label}</p>
           </div>
         )}

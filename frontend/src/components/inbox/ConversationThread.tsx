@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { IntentBadge } from '@/components/ui/IntentBadge'
+import { MessageCircle, Brain, User, Store, CheckCheck } from 'lucide-react'
 
 type Intent = 'READY_TO_BUY' | 'PRICE_INQUIRY' | 'INFO_REQUEST' | 'COMPLAINT' | 'BROWSING'
 
@@ -26,7 +27,7 @@ export function ConversationThread({ messages, channelDisconnected }: Conversati
   if (messages.length === 0) {
     return (
       <div className="text-center py-20 space-y-3">
-        <span className="material-symbols-outlined text-4xl text-ds-line-2">chat_bubble</span>
+        <MessageCircle className="text-4xl text-ds-line-2" />
         <p className="text-sm text-ds-text-2 max-w-xs mx-auto">No messages in this conversation yet. Type a reply to get started.</p>
       </div>
     )
@@ -63,7 +64,7 @@ export function ConversationThread({ messages, channelDisconnected }: Conversati
             {isInbound && msg.intent && (
               <div className="flex justify-center -my-2 opacity-0 animate-in fade-in slide-in-from-top-2 duration-700 fill-mode-forwards" style={{ animationDelay: '300ms' }}>
                 <div className="flex items-center gap-2 px-4 py-2 bg-primary-container/30 border border-ds-primary/15 rounded-lg">
-                  <span className="material-symbols-outlined text-primary text-[16px]">psychology</span>
+                  <Brain className="text-primary text-[16px]" />
                   <span className="text-[11px] font-medium text-primary">AI analyzed intent: <span className="font-bold">{msg.intent.replace(/_/g, ' ')}</span></span>
                 </div>
               </div>
@@ -71,9 +72,11 @@ export function ConversationThread({ messages, channelDisconnected }: Conversati
 
             <div className={`flex gap-4 items-start max-w-[85%] ${isInbound ? '' : 'ml-auto flex-row-reverse'}`}>
               <div className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center ${isInbound ? 'bg-paper' : 'bg-primary'}`}>
-                <span className={`material-symbols-outlined text-sm ${isInbound ? 'text-slate-500' : 'text-white'}`} style={!isInbound ? { fontVariationSettings: "'FILL' 1" } : {}}>
-                  {isInbound ? 'person' : 'store'}
-                </span>
+                {isInbound ? (
+                  <User className="text-sm text-slate-500" />
+                ) : (
+                  <Store className="text-sm text-white" />
+                )}
               </div>
               
               <div className={`flex flex-col gap-1 ${isInbound ? 'items-start' : 'items-end'}`}>
@@ -93,7 +96,7 @@ export function ConversationThread({ messages, channelDisconnected }: Conversati
                 <span className={`text-[10px] text-ds-text-2 flex items-center gap-1 ${isInbound ? 'ml-1' : 'mr-1'}`}>
                   {time} • {isInbound ? 'WhatsApp' : 'Sent by AI Agent'}
                   {!isInbound && (
-                    <span className="material-symbols-outlined text-[14px] text-blue-500">done_all</span>
+                    <CheckCheck className="text-[14px] text-blue-500" />
                   )}
                 </span>
               </div>

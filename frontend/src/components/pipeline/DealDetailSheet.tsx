@@ -9,7 +9,10 @@ import {
 } from '@/components/ui/sheet'
 import { DealTaskList } from './DealTaskList'
 import { DUMMY_DEAL_DETAILS } from '@/lib/dummy/pipeline'
-import { User } from 'lucide-react'
+import {
+  User, Layers, AlertTriangle, Network, Zap, Bot, MessageCircle,
+  ExternalLink, Brain, XCircle,
+} from 'lucide-react'
 
 interface DealDetail {
   id: number
@@ -122,11 +125,11 @@ export function DealDetailSheet({ dealId, open, onOpenChange, apiUrl, onUpdate }
                   <h1 className="text-2xl font-black font-headline text-ds-text tracking-tight mb-2">{deal.title}</h1>
                   <div className="flex items-center gap-3">
                     <span className="flex items-center gap-1 text-[11px] font-bold py-1 px-2.5 bg-primary-container text-primary rounded-full uppercase tracking-wider">
-                      <span className="material-symbols-outlined text-[14px] leading-none">layers</span>
+                      <Layers className="text-[14px] leading-none" />
                       {deal.stage.replace('_', ' ')}
                     </span>
                     <span className="flex items-center gap-1 text-[11px] font-bold py-1 px-2.5 bg-ds-accent/20 text-on-ds-accent/20 rounded-full uppercase tracking-wider">
-                      <span className="material-symbols-outlined text-[14px] leading-none">priority_high</span>
+                      <AlertTriangle className="text-[14px] leading-none" />
                       {deal.priority}
                     </span>
                     <span className="text-secondary font-bold text-sm ml-2">Score: {deal.ai_score}</span>
@@ -154,7 +157,7 @@ export function DealDetailSheet({ dealId, open, onOpenChange, apiUrl, onUpdate }
                       <h3 className="text-lg font-bold text-ds-text mb-1">{deal.contact.name}</h3>
                       <div className="flex items-center gap-4 text-[13px] text-ds-text-2 font-medium">
                         <span className="flex items-center gap-1.5">
-                          <span className="material-symbols-outlined text-[16px] text-primary">hub</span>
+                          <Network className="text-[16px] text-primary" />
                           {deal.contact.platform}
                         </span>
                         <span>•</span>
@@ -179,7 +182,7 @@ export function DealDetailSheet({ dealId, open, onOpenChange, apiUrl, onUpdate }
               {staleAlerts.length > 0 && (
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 mb-4">
-                    <span className="material-symbols-outlined text-error text-[20px]">bolt</span>
+                    <Zap className="text-error text-[20px]" />
                     <h3 className="text-sm font-black font-headline uppercase tracking-widest text-ds-text">Urgent AI Observations</h3>
                   </div>
                   <div className="grid gap-4">
@@ -194,7 +197,7 @@ export function DealDetailSheet({ dealId, open, onOpenChange, apiUrl, onUpdate }
                         {alert.draft_en && (
                           <div className="bg-white border border-ds-line-2/30 rounded-xl p-3 space-y-2">
                             <div className="flex items-center gap-1.5 text-[10px] font-bold text-primary mb-1">
-                              <span className="material-symbols-outlined text-[14px]">smart_toy</span>
+                              <Bot className="text-[14px]" />
                               AI Recommended Action
                             </div>
                             <p className="text-xs font-medium text-ds-text italic leading-relaxed">"{alert.draft_en}"</p>
@@ -210,7 +213,7 @@ export function DealDetailSheet({ dealId, open, onOpenChange, apiUrl, onUpdate }
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-primary text-[20px]">chat_bubble</span>
+                    <MessageCircle className="text-primary text-[20px]" />
                     <h3 className="text-sm font-black font-headline uppercase tracking-widest text-ds-text">Live Thread Preview</h3>
                   </div>
                   {deal.contact && (
@@ -219,7 +222,7 @@ export function DealDetailSheet({ dealId, open, onOpenChange, apiUrl, onUpdate }
                       className="text-[11px] font-bold text-primary hover:underline flex items-center gap-1"
                     >
                       Open Full Conversation
-                      <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+                      <ExternalLink className="text-[14px]" />
                     </Link>
                   )}
                 </div>
@@ -237,16 +240,18 @@ export function DealDetailSheet({ dealId, open, onOpenChange, apiUrl, onUpdate }
                           {isInbound && msg.intent && (
                             <div className="flex justify-center mb-4">
                               <div className="flex items-center gap-2 px-3 py-1.5 bg-primary-container/30 border border-ds-primary/15 rounded-full">
-                                <span className="material-symbols-outlined text-primary text-[14px]">psychology</span>
+                                <Brain className="text-primary text-[14px]" />
                                 <span className="text-[10px] font-bold text-primary">AI analyzed intent: {msg.intent.replace(/_/g, ' ')}</span>
                               </div>
                             </div>
                           )}
                           <div className={`flex gap-3 max-w-[90%] ${isInbound ? '' : 'ml-auto flex-row-reverse'}`}>
                             <div className={`w-8 h-8 rounded-xl shrink-0 flex items-center justify-center ${isInbound ? 'bg-paper' : 'bg-primary shadow-md shadow-primary/20'}`}>
-                              <span className={`material-symbols-outlined text-[16px] ${isInbound ? 'text-slate-400' : 'text-white'}`} style={!isInbound ? { fontVariationSettings: "'FILL' 1" } : {}}>
-                                {isInbound ? 'person' : 'smart_toy'}
-                              </span>
+                              {isInbound ? (
+                                <User className="text-[16px] text-slate-400" />
+                              ) : (
+                                <Bot className="text-[16px] text-white" />
+                              )}
                             </div>
                             <div className={`flex flex-col gap-1 ${isInbound ? 'items-start' : 'items-end'}`}>
                               <div className={`p-4 shadow-sm border ${
@@ -282,7 +287,7 @@ export function DealDetailSheet({ dealId, open, onOpenChange, apiUrl, onUpdate }
               {deal.lost_reason && (
                 <div className="p-6 bg-error-container/10 border border-error/30 rounded-3xl">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="material-symbols-outlined text-error text-[20px]">cancel</span>
+                    <XCircle className="text-error text-[20px]" />
                     <h4 className="text-sm font-black font-headline uppercase tracking-widest text-error">Lost Reason & Analysis</h4>
                   </div>
                   <p className="text-sm font-medium text-ds-text leading-relaxed">{deal.lost_reason}</p>

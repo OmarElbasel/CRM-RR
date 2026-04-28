@@ -103,7 +103,7 @@ export function OrgSettings({ initialName, onUpdate }: OrgSettingsProps) {
       {/* Danger Zone */}
       <div className="bg-rose-50/50 rounded-2xl border border-rose-100 p-8 space-y-4">
         <div className="flex items-center gap-3 text-rose-600">
-          <span className="material-symbols-outlined">report_problem</span>
+          <AlertTriangle />
           <h3 className="font-headline font-black text-lg">Danger Zone</h3>
         </div>
         <p className="text-sm text-slate-500 max-w-2xl leading-relaxed font-medium">

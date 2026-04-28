@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { ContentLanguageToggle } from './ContentLanguageToggle'
-import { Copy, Loader2, RefreshCw, Share2 } from 'lucide-react'
+import { Copy, Loader2, RefreshCw, Share2, Rocket, Sparkles, Smile, Wand2, Lightbulb, FileText, Timer } from 'lucide-react'
 import posthog from 'posthog-js'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
@@ -98,27 +98,25 @@ export function CaptionGenerator() {
             <div>
               <label className="block text-xs font-black text-ds-text-2 uppercase tracking-wider mb-2">Voice Tone</label>
               <div className="grid grid-cols-3 gap-2">
-                {[
-                  { value: 'EXCITING', label: 'Exciting', icon: 'rocket_launch' },
-                  { value: 'ELEGANT', label: 'Elegant', icon: 'auto_awesome' },
-                  { value: 'FRIENDLY', label: 'Friendly', icon: 'sentiment_satisfied' },
-                ].map((opt) => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => setTone(opt.value)}
-                    className={`flex flex-col items-center justify-center py-3 border-2 rounded-xl transition-all ${
-                      tone === opt.value 
-                        ? 'border-primary bg-primary/5 text-primary scale-[1.02]' 
-                        : 'border-slate-100 bg-white text-ds-text-2 hover:border-primary/40'
-                    }`}
-                  >
-                    <span className="material-symbols-outlined mb-1" style={{ fontVariationSettings: tone === opt.value ? "'FILL' 1" : undefined }}>
-                      {opt.icon}
-                    </span>
-                    <span className="text-[10px] font-bold uppercase tracking-tight">{opt.label}</span>
-                  </button>
-                ))}
+                  {[
+                   { value: 'EXCITING', label: 'Exciting', icon: <Rocket className="mb-1" /> },
+                   { value: 'ELEGANT', label: 'Elegant', icon: <Sparkles className="mb-1" /> },
+                   { value: 'FRIENDLY', label: 'Friendly', icon: <Smile className="mb-1" /> },
+                 ].map((opt) => (
+                   <button
+                     key={opt.value}
+                     type="button"
+                     onClick={() => setTone(opt.value)}
+                     className={`flex flex-col items-center justify-center py-3 border-2 rounded-xl transition-all ${
+                       tone === opt.value 
+                         ? 'border-primary bg-primary/5 text-primary scale-[1.02]' 
+                         : 'border-slate-100 bg-white text-ds-text-2 hover:border-primary/40'
+                     }`}
+                   >
+                     {opt.icon}
+                     <span className="text-[10px] font-bold uppercase tracking-tight">{opt.label}</span>
+                   </button>
+                 ))}
               </div>
             </div>
 
@@ -127,9 +125,11 @@ export function CaptionGenerator() {
               disabled={loading || !productDescription.trim()}
               className="w-full bg-primary text-white py-4 rounded-xl font-bold headline flex items-center justify-center gap-2 hover:bg-ds-primary/90 transition-all shadow-lg shadow-primary/20 disabled:opacity-50 disabled:shadow-none"
             >
-              <span className={`material-symbols-outlined ${loading ? 'animate-spin' : ''}`}>
-                {loading ? 'sync' : 'magic_button'}
-              </span>
+               {loading ? (
+                 <Loader2 className="animate-spin" />
+               ) : (
+                 <Wand2 />
+               )}
               {loading ? 'Generating...' : 'Generate Captions'}
             </button>
           </form>
@@ -138,7 +138,7 @@ export function CaptionGenerator() {
         {/* Small Tip Card */}
         <div className="bg-ds-accent/20/10 border border-secondary/20 p-5 rounded-xl flex gap-4 transition-all hover:bg-ds-accent/20/20 cursor-default">
           <div className="w-10 h-10 bg-ds-accent/20 rounded-full flex items-center justify-center shrink-0">
-            <span className="material-symbols-outlined text-secondary">lightbulb</span>
+             <Lightbulb className="text-secondary" />
           </div>
           <div>
             <p className="text-sm font-bold text-on-ds-accent/20">Pro Tip</p>
@@ -166,7 +166,7 @@ export function CaptionGenerator() {
           <div className="p-8 space-y-8 flex-1">
             {!result && !loading && (
               <div className="flex flex-col items-center justify-center h-full text-slate-300 py-12">
-                 <span className="material-symbols-outlined text-6xl mb-4 opacity-20">contract_edit</span>
+                  <FileText className="text-6xl mb-4 opacity-20" />
                  <p className="font-bold text-sm">Output will appear here</p>
               </div>
             )}
@@ -224,7 +224,7 @@ export function CaptionGenerator() {
             </div>
             {result && (
               <div className="flex items-center gap-2 text-slate-400 text-[10px] font-bold uppercase tracking-tighter">
-                <span className="material-symbols-outlined text-[14px]">timer</span>
+                 <Timer className="text-[14px]" />
                 Generated in 1.4s
               </div>
             )}

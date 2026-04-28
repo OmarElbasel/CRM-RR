@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ContentLanguageToggle } from './ContentLanguageToggle'
 import { SeasonalTemplateGallery } from './SeasonalTemplateGallery'
-import { Copy, FileText, Loader2, RefreshCw } from 'lucide-react'
+import { Copy, FileText, Loader2, RefreshCw, Library, Send, MessageCircle, MessagesSquare, CheckCheck, Lightbulb } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
@@ -115,7 +115,7 @@ export function BroadcastComposer() {
                <div className="flex items-end">
                   <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                     <DialogTrigger render={<button type="button" className="w-full h-10 flex items-center justify-center gap-2 border border-slate-200 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all" />}>
-                      <span className="material-symbols-outlined text-base">template_library</span>
+                      <Library className="text-base" />
                       Templates
                     </DialogTrigger>
                     <DialogContent className="max-w-4xl p-0 overflow-hidden border-none bg-transparent shadow-none">
@@ -138,9 +138,11 @@ export function BroadcastComposer() {
               disabled={loading || !audienceDescription.trim()}
               className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold headline flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 disabled:opacity-50 disabled:shadow-none"
             >
-              <span className={`material-symbols-outlined ${loading ? 'animate-spin' : ''}`}>
-                {loading ? 'sync' : 'send'}
-              </span>
+              {loading ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <Send />
+              )}
               {loading ? 'Composing...' : 'Generate Broadcast'}
             </button>
           </form>
@@ -149,7 +151,7 @@ export function BroadcastComposer() {
         {/* Small Tip Card */}
         <div className="bg-primary/5 border border-primary/10 p-5 rounded-xl flex gap-4 transition-all hover:bg-primary/10 cursor-default">
           <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-            <span className="material-symbols-outlined text-primary">chat_bubble</span>
+            <MessageCircle className="text-primary" />
           </div>
           <div>
             <p className="text-sm font-bold text-indigo-900">WhatsApp Strategy</p>
@@ -177,7 +179,7 @@ export function BroadcastComposer() {
           <div className="p-8 space-y-8 flex-1">
             {!result && !loading && (
               <div className="flex flex-col items-center justify-center h-full text-slate-300 py-12">
-                 <span className="material-symbols-outlined text-6xl mb-4 opacity-20">forum</span>
+                 <MessagesSquare className="text-6xl mb-4 opacity-20" />
                  <p className="font-bold text-sm">Broadcast message will appear here</p>
               </div>
             )}
@@ -199,13 +201,13 @@ export function BroadcastComposer() {
                    </p>
                    <div className="flex justify-end gap-1 mt-2">
                       <span className="text-[10px] text-slate-400 font-medium">10:42 PM</span>
-                      <span className="material-symbols-outlined text-blue-500 text-[14px]">done_all</span>
+                       <CheckCheck className="text-blue-500 text-[14px]" />
                    </div>
                 </div>
 
                 <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl">
                    <div className="flex items-center gap-2 text-slate-500 font-bold text-[10px] uppercase tracking-wider mb-2">
-                      <span className="material-symbols-outlined text-sm">tips_and_updates</span>
+                       <Lightbulb className="text-sm" />
                       Optimization Tips
                    </div>
                    <ul className="text-xs text-slate-500 space-y-1 font-medium list-disc list-inside">

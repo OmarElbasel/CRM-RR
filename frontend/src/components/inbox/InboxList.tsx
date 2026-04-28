@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@clerk/nextjs'
+import { MessageSquare, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useInboxStream } from '@/hooks/useInboxStream'
 import { formatDistanceToNow } from 'date-fns'
 import Avatar from './Avatar'
@@ -207,9 +208,11 @@ export function InboxList({ filters }: InboxListProps) {
                 </div>
 
                 <div className="flex justify-center">
-                  <span className={`material-symbols-outlined transition-colors ${contact.unread_count > 0 ? 'text-primary' : 'text-ds-text-2/30'}`}>
-                    {contact.unread_count > 0 ? 'mark_chat_unread' : 'check_circle'}
-                  </span>
+                  {contact.unread_count > 0 ? (
+                    <MessageSquare className="transition-colors text-primary" />
+                  ) : (
+                    <CheckCircle2 className="transition-colors text-ds-text-2/30" />
+                  )}
                 </div>
 
                 <div className="text-right text-xs font-medium text-ds-text-2">
@@ -232,7 +235,7 @@ export function InboxList({ filters }: InboxListProps) {
             disabled={pagination.current === 1}
             onClick={() => fetchInbox(pagination.current - 1)}
           >
-            <span className="material-symbols-outlined">chevron_left</span>
+            <ChevronLeft />
           </button>
           
           <span className="px-3 py-1 bg-primary text-white rounded text-xs font-bold shadow-sm">
@@ -244,7 +247,7 @@ export function InboxList({ filters }: InboxListProps) {
             disabled={contacts.length < 25 || pagination.current * 25 >= pagination.count}
             onClick={() => fetchInbox(pagination.current + 1)}
           >
-            <span className="material-symbols-outlined">chevron_right</span>
+            <ChevronRight />
           </button>
         </div>
       </div>
