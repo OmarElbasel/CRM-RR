@@ -10,7 +10,6 @@ type FeatureFlag =
   | 'SALLA_INTEGRATION'
   | 'ZID_INTEGRATION'
   | 'PLUGIN_EMBED'
-  | 'UI_REDESIGN'
   | 'INBOX'
   | 'PIPELINE'
   | 'SHOPIFY_ORDER_HUB'
@@ -24,7 +23,6 @@ const FLAGS: Record<FeatureFlag, boolean> = {
   SALLA_INTEGRATION: process.env.NEXT_PUBLIC_FLAG_SALLA_INTEGRATION === 'true',
   ZID_INTEGRATION: process.env.NEXT_PUBLIC_FLAG_ZID_INTEGRATION === 'true',
   PLUGIN_EMBED: process.env.NEXT_PUBLIC_FLAG_PLUGIN_EMBED === 'true',
-  UI_REDESIGN: process.env.NEXT_PUBLIC_FLAG_UI_REDESIGN === 'true',
   INBOX: process.env.NEXT_PUBLIC_FLAG_INBOX === 'true',
   PIPELINE: process.env.NEXT_PUBLIC_FLAG_PIPELINE === 'true',
   SHOPIFY_ORDER_HUB: process.env.NEXT_PUBLIC_FLAG_SHOPIFY_ORDER_HUB === 'true',

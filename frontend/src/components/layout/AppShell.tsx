@@ -3,6 +3,7 @@
 import { Sidebar } from './Sidebar'
 import { MobileNav } from './MobileNav'
 import { TopNavbar } from './TopNavbar'
+import { DemoModeBanner } from '@/components/ui/DemoModeBanner'
 
 interface AppShellProps {
   children: React.ReactNode
@@ -21,6 +22,7 @@ export function AppShell({ children }: AppShellProps) {
 
       {/* Main content area */}
       <main className="flex-1 flex flex-col lg:ms-64 pt-16 lg:pt-0 min-h-screen w-full relative min-w-0">
+        <DemoModeBanner />
         <div className="hidden lg:block sticky top-0 z-40">
           <TopNavbar />
         </div>
