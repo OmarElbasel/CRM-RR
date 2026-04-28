@@ -1,80 +1,114 @@
-# Rawaj AI Product Description Plugin
+# Rawaj — AI-powered CRM & growth engine for Gulf e-commerce
 
-AI-powered product title and description generator for Gulf e-commerce merchants.
-**Stack**: Next.js 14 · Django 6 · PostgreSQL · Clerk · Railway
+Rawaj is an all-in-one operations platform for e-commerce merchants in the Gulf. It unifies your social inboxes (Instagram, WhatsApp, Facebook), automates lead tracking with an AI-powered pipeline, generates marketing content, schedules posts, and connects to Shopify, Salla, and Zid — all under one roof.
+
+![CI](https://github.com/rawaj-ai/space/actions/workflows/ci.yml/badge.svg)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
 ---
 
-## Local Setup (< 10 minutes)
+## Feature Matrix
+
+| Feature | Flag | Screen | Status |
+|---|---|---|---|
+| AI Generation | `FLAG_AI_GENERATION` | `/dashboard/generate` | Live |
+| Unified Inbox | `FLAG_INBOX` | `/inbox` | Live |
+| Pipeline CRM | `FLAG_PIPELINE` | `/pipeline` | Live |
+| Content Assistant | `FLAG_CONTENT_ASSISTANT` | `/content` | Live |
+| Post Scheduler | `FLAG_POST_SCHEDULER` | `/scheduler` | Live |
+| Ad Copy | `FLAG_AI_GENERATION` | `/ads` | Live |
+| Shopify Order Hub | `FLAG_SHOPIFY_ORDER_HUB` | `/orders` | Live |
+| Billing & Plans | `FLAG_BILLING` | `/settings?tab=billing` | Live |
+| Plugin Embed | `FLAG_PLUGIN_EMBED` | `/settings?tab=embed` | Live |
+| Salla Integration | `FLAG_SALLA_INTEGRATION` | `/channels` | Credentials required |
+| Zid Integration | `FLAG_ZID_INTEGRATION` | `/channels` | Credentials required |
+| TikTok Inbox | `FLAG_TIKTOK_INBOX` | `/channels` | Credentials required |
+
+---
+
+## Screenshots
+
+| Dashboard | Inbox | Pipeline |
+|---|---|---|
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Inbox](docs/screenshots/inbox.png) | ![Pipeline](docs/screenshots/pipeline.png) |
+
+| Content | Scheduler | Channels |
+|---|---|---|
+| ![Content](docs/screenshots/content.png) | ![Scheduler](docs/screenshots/scheduler.png) | ![Channels](docs/screenshots/channels.png) |
+
+---
+
+## Quickstart
 
 ### Prerequisites
 
-- Python 3.12+ — check: `python3 --version`
+- Python 3.14+ — check: `python3 --version`
 - Node.js 20+ — check: `node --version`
 - PostgreSQL 16 locally, or a Railway PostgreSQL URL
 - A Clerk account (free) with an application created
 
-### 1. Clone and switch to the feature branch
+### 1. Clone and install
 
 ```bash
 git clone <repo-url> && cd Space
-git checkout 001-project-foundation
-```
-
-### 2. Backend
-
-```bash
 cd backend
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements/development.txt
-cp .env.example .env   # then fill in your values
-python manage.py migrate
-python manage.py create_superuser_from_env
-python manage.py runserver 8000
+cp .env.example .env   # fill in your values
+cd ../frontend
+npm install
+cp .env.example .env.local   # fill in your Clerk keys
 ```
 
-Verify: `curl http://localhost:8000/api/health/`
-Expected: `{"status":"ok","database":"ok","version":"1.0.0"}`
-
-API docs: http://localhost:8000/api/docs/
-
-### 3. Frontend
+### 2. Run
 
 ```bash
+# Terminal 1 — backend
+cd backend
+python manage.py migrate
+python manage.py runserver 8000
+
+# Terminal 2 — frontend
 cd frontend
-npm install
-cp .env.example .env.local   # then fill in your Clerk keys
 npm run dev
 ```
 
-Verify: `curl http://localhost:3000/health`
-Expected: `{"status":"ok","service":"rawaj-frontend","version":"1.0.0"}`
-
 Open http://localhost:3000 — you will be redirected to Clerk sign-in.
 
----
-
-## Environment Variables
-
-See `backend/.env.example` and `frontend/.env.example` for all required variables.
-**Never commit `.env` or `.env.local` files.**
+> **Note:** By default `NEXT_PUBLIC_USE_DUMMY_DATA=true` so you see a populated product immediately. Set it to `false` and connect a real channel to see live metrics.
 
 ---
 
-## Admin Panel
+## Deploy
 
-http://localhost:8000/admin/ — log in with the superuser credentials from `.env`.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template)
 
 ---
 
-## Feature Flags
+## Live Demo
 
-All features are off by default. Enable via env vars:
+🌐 [https://rawaj.ai](https://rawaj.ai) *(placeholder — update when live)*
 
-| Flag | Env Var | Phase |
-|---|---|---|
-| AI Generation | `FLAG_AI_GENERATION=true` | Phase 2 |
-| Billing | `FLAG_BILLING=true` | Phase 4 |
-| Salla Integration | `FLAG_SALLA_INTEGRATION=true` | Phase 5 |
-| Zid Integration | `FLAG_ZID_INTEGRATION=true` | Phase 5 |
+---
 
+## Documentation
+
+- [Getting Started](docs/phase-history.md)
+- [Design Brief](docs/design-brief.md)
+- [Landing Content](docs/landing-content.md)
+- [Shopify Integration](docs/shopify-integration.md)
+
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Security
+
+See [SECURITY.md](SECURITY.md).
+
+## License
+
+[MIT](LICENSE) © Rawaj AI

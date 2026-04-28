@@ -47,4 +47,12 @@ Thumbs.db
 *.swp
 *.swo
 
-*.md
+# Tool directories
+.opencode/
+.windsurf/
+.agent/
+.specify/
+claude-skills/
+
+# Build output (root)
+.next/.claude/
