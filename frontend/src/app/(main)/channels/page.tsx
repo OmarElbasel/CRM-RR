@@ -354,9 +354,9 @@ export default function ChannelsPage() {
               <p className="text-indigo-100/80 text-sm mb-6 leading-relaxed">
                 Your data is encrypted using enterprise-grade security protocols during all channel transmissions.
               </p>
-              <a className="text-white font-bold text-sm underline underline-offset-8 hover:text-indigo-200 transition-colors" href="#">
+              <Link className="text-white font-bold text-sm underline underline-offset-8 hover:text-indigo-200 transition-colors" href="/security">
                 Learn about our security
-              </a>
+              </Link>
             </div>
           </div>
         </div>

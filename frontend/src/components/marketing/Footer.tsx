@@ -27,8 +27,8 @@ export function Footer() {
         <div>
           <span className="uppercase tracking-widest text-[10px] font-black text-slate-400 mb-6 block">Legal</span>
           <ul className="space-y-3">
-            <li><a href="#" className="text-slate-500 hover:text-indigo-600 transition-all text-sm">Privacy Policy</a></li>
-            <li><a href="#" className="text-slate-500 hover:text-indigo-600 transition-all text-sm">Terms of Service</a></li>
+            <li><a href="/privacy" className="text-slate-500 hover:text-indigo-600 transition-all text-sm">Privacy Policy</a></li>
+            <li><a href="/terms" className="text-slate-500 hover:text-indigo-600 transition-all text-sm">Terms of Service</a></li>
           </ul>
         </div>
       </div>

@@ -28,15 +28,15 @@ export function Footer() {
           <div className="foot-grp">
             <div className="fh">Resources</div>
             <ul>
-              <li><a href="#">Docs</a></li>
-              <li><a href="#">API</a></li>
+              <li><a href="/docs">Docs</a></li>
+              <li><a href="/docs">API</a></li>
             </ul>
           </div>
           <div className="foot-grp">
             <div className="fh">Legal</div>
             <ul>
-              <li><a href="#">Privacy</a></li>
-              <li><a href="#">Terms</a></li>
+              <li><a href="/privacy">Privacy</a></li>
+              <li><a href="/terms">Terms</a></li>
             </ul>
           </div>
         </div>
