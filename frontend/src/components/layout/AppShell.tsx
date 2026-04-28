@@ -4,6 +4,8 @@ import { Sidebar } from './Sidebar'
 import { MobileNav } from './MobileNav'
 import { TopNavbar } from './TopNavbar'
 import { DemoModeBanner } from '@/components/ui/DemoModeBanner'
+import { CommandPaletteGlobal } from '@/components/ui/CommandPaletteGlobal'
+import { Toaster } from '@/components/ui/Toaster'
 
 interface AppShellProps {
   children: React.ReactNode
@@ -28,6 +30,8 @@ export function AppShell({ children }: AppShellProps) {
         </div>
         {children}
       </main>
+      <CommandPaletteGlobal />
+      <Toaster />
     </div>
   )
 }
