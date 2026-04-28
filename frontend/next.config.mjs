@@ -4,6 +4,15 @@ import { withSentryConfig } from '@sentry/nextjs'
 const nextConfig = {
   // Required for Railway — produces a minimal standalone Node.js server
   output: 'standalone',
+  async redirects() {
+    return [
+      { source: '/dashboard/settings', destination: '/settings', permanent: true },
+      { source: '/dashboard/api-keys', destination: '/settings?tab=api-keys', permanent: true },
+      { source: '/dashboard/embed', destination: '/settings?tab=embed', permanent: true },
+      { source: '/dashboard/upgrade', destination: '/settings?tab=billing', permanent: true },
+      { source: '/settings/channels', destination: '/settings?tab=channels', permanent: true },
+    ]
+  },
   async headers() {
     return [
       {

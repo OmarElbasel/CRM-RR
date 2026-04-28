@@ -2,23 +2,52 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { OrganizationSwitcher } from '@clerk/nextjs'
-import { LogOut, User } from 'lucide-react'
+import { useClerk, OrganizationSwitcher } from '@clerk/nextjs'
+import {
+  LayoutDashboard,
+  Sparkles,
+  Inbox,
+  GitBranch,
+  ShoppingCart,
+  BookOpen,
+  Calendar,
+  Share2,
+  Settings,
+  User,
+  LogOut,
+} from 'lucide-react'
 
-export const NAV_ITEMS = [
-  { label: 'Dashboard', href: '/dashboard', icon: 'dashboard' },
-  { label: 'AI Generator', href: '/dashboard/generate', icon: 'auto_awesome' },
-  { label: 'Inbox', href: '/inbox', icon: 'inbox' },
-  { label: 'Pipeline', href: '/pipeline', icon: 'account_tree' },
-  { label: 'Orders', href: '/orders', icon: 'shopping_cart' },
-  { label: 'Content', href: '/content', icon: 'auto_stories' },
-  { label: 'Scheduler', href: '/scheduler', icon: 'calendar_month' },
-  { label: 'Channels', href: '/channels', icon: 'share' },
-  { label: 'Settings', href: '/dashboard/settings', icon: 'settings' },
+const NAV_GROUPS = [
+  {
+    label: 'Workspace',
+    items: [
+      { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+      { label: 'AI Generator', href: '/dashboard/generate', icon: Sparkles },
+      { label: 'Inbox', href: '/inbox', icon: Inbox },
+      { label: 'Pipeline', href: '/pipeline', icon: GitBranch },
+      { label: 'Orders', href: '/orders', icon: ShoppingCart },
+    ],
+  },
+  {
+    label: 'Marketing',
+    items: [
+      { label: 'Content', href: '/content', icon: BookOpen },
+      { label: 'Scheduler', href: '/scheduler', icon: Calendar },
+      { label: 'Ads', href: '/ads', icon: Sparkles },
+    ],
+  },
+  {
+    label: 'Setup',
+    items: [
+      { label: 'Channels', href: '/channels', icon: Share2 },
+      { label: 'Settings', href: '/settings', icon: Settings },
+    ],
+  },
 ]
 
 export function Sidebar() {
   const pathname = usePathname()
+  const { signOut } = useClerk()
 
   return (
     <aside className="fixed left-0 top-0 h-full flex flex-col z-50 bg-ink border-r border-ds-line-dark w-64 font-headline tracking-tight">
@@ -34,26 +63,36 @@ export function Sidebar() {
           </div>
         </Link>
       </div>
-      
+
       {/* Navigation */}
-      <nav className="flex-1 px-3 mt-2 space-y-0.5">
-        {NAV_ITEMS.map((item) => {
-          const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`py-2.5 px-3 flex items-center gap-3 transition-all duration-150 rounded-[10px] text-[13.5px] font-medium ${
-                isActive 
-                  ? 'bg-ds-primary/15 text-[#fff]' 
-                  : 'text-[#B8B8C8] hover:bg-white/[0.04] hover:text-[#fff]'
-              }`}
-            >
-              <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
-              <span>{item.label}</span>
-            </Link>
-          )
-        })}
+      <nav className="flex-1 px-3 mt-2 space-y-4 overflow-y-auto">
+        {NAV_GROUPS.map((group) => (
+          <div key={group.label}>
+            <p className="text-[10px] uppercase tracking-wider text-[#6A6A80] px-3 mb-1 font-semibold">
+              {group.label}
+            </p>
+            <div className="space-y-0.5">
+              {group.items.map((item) => {
+                const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
+                const Icon = item.icon
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`py-2.5 px-3 flex items-center gap-3 transition-all duration-150 rounded-[10px] text-[13.5px] font-medium ${
+                      isActive
+                        ? 'bg-ds-primary/15 text-[#fff]'
+                        : 'text-[#B8B8C8] hover:bg-white/[0.04] hover:text-[#fff]'
+                    }`}
+                  >
+                    <Icon className="w-[18px] h-[18px]" />
+                    <span>{item.label}</span>
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       {/* Bottom Section */}
@@ -63,8 +102,8 @@ export function Sidebar() {
           <div className="absolute -right-8 -bottom-8 w-24 h-24 bg-ds-primary/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
           <p className="text-[10px] text-ds-accent font-bold mb-1 uppercase tracking-[0.12em] relative z-10">PRO PLAN</p>
           <p className="text-xs text-[#8A8AA0] mb-3 relative z-10 leading-relaxed">Unlock more generations and priority support.</p>
-          <Link 
-            href="/dashboard/upgrade"
+          <Link
+            href="/settings?tab=billing"
             className="w-full bg-ds-accent text-ds-accent-ink text-xs font-bold py-2 rounded-[10px] hover:brightness-105 transition-all text-center block relative z-10"
           >
             Upgrade to Pro
@@ -84,17 +123,20 @@ export function Sidebar() {
             }}
           />
         </div>
-        
+
         {/* Account & Logout */}
         <Link
-          href="/dashboard/settings?tab=account"
+          href="/settings?tab=account"
           className="py-2 px-3 flex items-center gap-3 transition-colors text-sm rounded-[10px] text-[#B8B8C8] hover:text-[#fff] hover:bg-white/[0.04]"
         >
-          <User className="text-[20px]" />
+          <User className="w-[18px] h-[18px]" />
           <span className="font-medium">Account</span>
         </Link>
-        <button className="w-full text-[#B8B8C8] py-2 px-3 flex items-center gap-3 hover:text-[#fff] hover:bg-white/[0.04] transition-all text-sm rounded-[10px] mt-0.5">
-          <LogOut className="text-[20px]" />
+        <button
+          onClick={() => signOut({ redirectUrl: '/' })}
+          className="w-full text-[#B8B8C8] py-2 px-3 flex items-center gap-3 hover:text-[#fff] hover:bg-white/[0.04] transition-all text-sm rounded-[10px] mt-0.5"
+        >
+          <LogOut className="w-[18px] h-[18px]" />
           <span className="font-medium">Logout</span>
         </button>
       </div>

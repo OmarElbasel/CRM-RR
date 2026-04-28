@@ -3,91 +3,93 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Bell, Menu, User, X } from 'lucide-react'
-import { NAV_ITEMS } from './Sidebar'
-import { isEnabled } from '@/lib/flags'
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetTitle,
-} from '@/components/ui/sheet'
+import { Menu, X, LayoutDashboard, Sparkles, Inbox, GitBranch, ShoppingCart, BookOpen, Calendar, Share2, Settings } from 'lucide-react'
+
+const NAV_GROUPS = [
+  {
+    label: 'Workspace',
+    items: [
+      { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+      { label: 'AI Generator', href: '/dashboard/generate', icon: Sparkles },
+      { label: 'Inbox', href: '/inbox', icon: Inbox },
+      { label: 'Pipeline', href: '/pipeline', icon: GitBranch },
+      { label: 'Orders', href: '/orders', icon: ShoppingCart },
+    ],
+  },
+  {
+    label: 'Marketing',
+    items: [
+      { label: 'Content', href: '/content', icon: BookOpen },
+      { label: 'Scheduler', href: '/scheduler', icon: Calendar },
+      { label: 'Ads', href: '/ads', icon: Sparkles },
+    ],
+  },
+  {
+    label: 'Setup',
+    items: [
+      { label: 'Channels', href: '/channels', icon: Share2 },
+      { label: 'Settings', href: '/settings', icon: Settings },
+    ],
+  },
+]
 
 export function MobileNav() {
-  const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()
 
   return (
-    <div className="lg:hidden">
-      {/* Top bar */}
-      <div className="fixed top-0 left-0 right-0 z-40 bg-white border-b border-slate-200 h-16 flex items-center justify-between px-4">
-        <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger render={<button className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors" />}>
-              <Menu className="w-5 h-5" />
-          </SheetTrigger>
-          <SheetContent side="left" className="w-72 p-0 bg-slate-900 border-none">
-            <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-            {/* Logo */}
-            <div className="h-16 flex items-center gap-3 px-6 border-b border-slate-800">
-              <Link href="/dashboard" className="flex items-center gap-3" onClick={() => setOpen(false)}>
-                <div className="w-8 h-8 bg-brand-primary rounded flex items-center justify-center">
-                  <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>bolt</span>
-                </div>
-                <div>
-                  <div className="text-xl font-bold text-white tracking-tight">Rawaj</div>
-                  <div className="text-slate-400 text-[10px] uppercase tracking-widest leading-none">AI Engine</div>
-                </div>
-              </Link>
-            </div>
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-ink text-white rounded-lg"
+        aria-label="Open menu"
+      >
+        <Menu className="w-5 h-5" />
+      </button>
 
-            {/* Navigation */}
-            <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-              {NAV_ITEMS.map((item) => {
-                const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setOpen(false)}
-                    className={`rounded-md px-3 py-2 flex items-center gap-3 transition-colors active:scale-95 transition-transform ${
-                      isActive 
-                        ? 'bg-brand-primary text-white' 
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                    }`}
-                  >
-                    <span className="material-symbols-outlined">{item.icon}</span>
-                    <span className="font-medium text-sm">{item.label}</span>
-                  </Link>
-                )
-              })}
+      {open && (
+        <div className="lg:hidden fixed inset-0 z-50">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
+          <div className="absolute left-0 top-0 h-full w-72 bg-ink border-r border-ds-line-dark p-5 overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="text-[16px] font-bold text-[#EDEDF2] tracking-[-0.02em]">Rawaj</h1>
+              <button onClick={() => setOpen(false)} className="text-[#B8B8C8]">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <nav className="space-y-6">
+              {NAV_GROUPS.map((group) => (
+                <div key={group.label}>
+                  <p className="text-[10px] uppercase tracking-wider text-[#6A6A80] px-3 mb-1 font-semibold">
+                    {group.label}
+                  </p>
+                  <div className="space-y-0.5">
+                    {group.items.map((item) => {
+                      const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
+                      const Icon = item.icon
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setOpen(false)}
+                          className={`py-2.5 px-3 flex items-center gap-3 transition-all duration-150 rounded-[10px] text-[13.5px] font-medium ${
+                            isActive
+                              ? 'bg-ds-primary/15 text-[#fff]'
+                              : 'text-[#B8B8C8] hover:bg-white/[0.04] hover:text-[#fff]'
+                          }`}
+                        >
+                          <Icon className="w-[18px] h-[18px]" />
+                          <span>{item.label}</span>
+                        </Link>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
             </nav>
-            
-            <div className="mt-auto p-4 border-t border-slate-800 bg-slate-900/50">
-               <Link 
-                 href="/dashboard/settings" 
-                 onClick={() => setOpen(false)}
-                 className="text-slate-400 hover:text-white hover:bg-slate-800 rounded-md px-3 py-2 flex items-center gap-3 transition-colors"
-               >
-                 <User className="w-5 h-5" />
-                 <span className="font-medium text-sm">Account Settings</span>
-               </Link>
-            </div>
-          </SheetContent>
-        </Sheet>
-
-        {/* Center logo */}
-        <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-brand-primary rounded flex items-center justify-center">
-            <span className="material-symbols-outlined text-white text-[12px]" style={{ fontVariationSettings: "'FILL' 1" }}>bolt</span>
           </div>
-          <span className="text-base font-black text-brand-primary font-headline uppercase tracking-tight">Rawaj AI</span>
-        </Link>
-
-        {/* Placeholder for notification bell if needed or just empty space to keep balance */}
-        <div className="w-9 h-9 flex items-center justify-center text-slate-400">
-           <Bell className="w-5 h-5" />
         </div>
-      </div>
-    </div>
+      )}
+    </>
   )
 }

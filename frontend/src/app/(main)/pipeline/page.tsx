@@ -106,8 +106,8 @@ export default function PipelinePage() {
       {/* Page Header & Currency Switcher */}
       <div className="px-8 py-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <h2 className="text-2xl font-extrabold text-ds-text tracking-tight headline">Order Hub</h2>
-          <p className="text-ds-text-2 text-sm">Manage your omnichannel sales and logistics in one place.</p>
+          <h2 className="text-2xl font-extrabold text-ds-text tracking-tight headline">Pipeline</h2>
+          <p className="text-ds-text-2 text-sm">Visual CRM — track every lead from first contact to close.</p>
         </div>
         <div className="flex bg-paper p-1 rounded-lg shadow-inner">
           {(['SAR', 'QAR', 'USD'] as const).map((curr) => (
