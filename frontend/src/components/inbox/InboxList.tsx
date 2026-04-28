@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useAuth } from '@clerk/nextjs'
 import { useInboxStream } from '@/hooks/useInboxStream'
 import { formatDistanceToNow } from 'date-fns'
+import Avatar from './Avatar'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -21,6 +22,7 @@ interface LatestMessage {
 interface ContactSummary {
   id: number
   name: string
+  avatar_url?: string
   platform: string
   ai_score: number
   unread_count: number
@@ -35,11 +37,11 @@ interface InboxListProps {
   }
 }
 
-const PLATFORM_CONFIG: Record<string, { icon: string; className: string; bg: string }> = {
-  INSTAGRAM: { icon: 'alternate_email', className: 'text-pink-600', bg: 'bg-pink-50' },
-  WHATSAPP: { icon: 'forum', className: 'text-green-600', bg: 'bg-green-50' },
-  FACEBOOK: { icon: 'send', className: 'text-blue-600', bg: 'bg-blue-50' },
-  TELEGRAM: { icon: 'chat', className: 'text-sky-500', bg: 'bg-sky-50' },
+const PLATFORM_CONFIG: Record<string, { logo: string; bg: string }> = {
+  INSTAGRAM: { logo: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg', bg: 'bg-white' },
+  WHATSAPP: { logo: 'https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg', bg: 'bg-white' },
+  FACEBOOK: { logo: 'https://upload.wikimedia.org/wikipedia/en/0/04/Facebook_f_logo_%282021%29.svg', bg: 'bg-white' },
+  TIKTOK: { logo: 'https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg', bg: 'bg-white' },
 }
 
 const INTENT_CONFIG: Record<string, { label: string, className: string }> = {
@@ -158,7 +160,7 @@ export function InboxList({ filters }: InboxListProps) {
           </div>
         ) : (
           contacts.map((contact) => {
-            const config = PLATFORM_CONFIG[contact.platform] || { icon: 'forum', className: 'text-slate-500', bg: 'bg-slate-50' }
+            const config = PLATFORM_CONFIG[contact.platform] || null
             const intent = contact.latest_message?.intent ? (INTENT_CONFIG[contact.latest_message.intent] || { label: contact.latest_message.intent, className: 'bg-surface-container text-on-surface-variant border-outline-variant' }) : null
             
             return (
@@ -167,13 +169,16 @@ export function InboxList({ filters }: InboxListProps) {
                 href={`/inbox/${contact.id}`}
                 className={`grid grid-cols-[48px_1fr_120px_100px_80px_100px] gap-4 px-6 py-4 items-center hover:bg-surface-container-low transition-colors cursor-pointer group ${contact.unread_count > 0 ? 'bg-surface-container-lowest' : 'bg-surface/50'}`}
               >
-                <div className="flex justify-center">
-                  <span 
-                    className={`material-symbols-outlined ${config.className} ${config.bg} p-1.5 rounded-lg text-xl`}
-                    style={{ fontVariationSettings: "'FILL' 1" }}
-                  >
-                    {config.icon}
-                  </span>
+                <div className="relative flex justify-center">
+                  <Avatar name={contact.name || contact.platform} src={contact.avatar_url} size={40} />
+                  {config && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={config.logo}
+                      alt={contact.platform}
+                      className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full ${config.bg} p-0.5 border-2 border-white shadow-sm object-contain`}
+                    />
+                  )}
                 </div>
                 
                 <div className="min-w-0">

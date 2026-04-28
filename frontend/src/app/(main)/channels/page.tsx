@@ -5,6 +5,7 @@ import { useAuth } from '@clerk/nextjs'
 import { useSearchParams } from 'next/navigation'
 import { ChannelCard, type ChannelProps } from '@/components/channels/ChannelCard'
 import { ShopifyConnectModal } from '@/components/channels/ShopifyConnectModal'
+import { MetaConnectModal } from '@/components/channels/MetaConnectModal'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -73,6 +74,10 @@ export default function ChannelsPage() {
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [shopifyModalOpen, setShopifyModalOpen] = useState(false)
+  const [metaModal, setMetaModal] = useState<{ open: boolean; platform: 'instagram' | 'facebook' }>({
+    open: false,
+    platform: 'instagram',
+  })
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type })
@@ -125,21 +130,7 @@ export default function ChannelsPage() {
     }
   }, [searchParams])
 
-  const handleConnect = async (id: string) => {
-    if (id === 'shopify') {
-      setShopifyModalOpen(true)
-      return
-    }
-
-    const slugMap: Record<string, string> = {
-      instagram: 'instagram',
-      facebook: 'facebook',
-      whatsapp: 'whatsapp',
-      tiktok: 'tiktok',
-    }
-    const slug = slugMap[id]
-    if (!slug) return
-
+  const startOAuth = async (slug: string) => {
     try {
       const token = await getToken()
       const res = await fetch(`${API_URL}/api/channels/connect/${slug}/`, {
@@ -155,6 +146,34 @@ export default function ChannelsPage() {
     } catch {
       showToast('Failed to initiate connection. Please try again.', 'error')
     }
+  }
+
+  const handleMetaManual = async (platform: 'instagram' | 'facebook', payload: { page_id: string; page_access_token: string }) => {
+    const token = await getToken()
+    const res = await fetch(`${API_URL}/api/channels/connect-meta-manual/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ platform: platform.toUpperCase(), ...payload }),
+    })
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      throw new Error(err.error || err.detail || 'Connection failed.')
+    }
+    showToast(`${platform.charAt(0).toUpperCase() + platform.slice(1)} connected successfully!`, 'success')
+    fetchStatuses()
+  }
+
+  const handleConnect = async (id: string) => {
+    if (id === 'shopify') {
+      setShopifyModalOpen(true)
+      return
+    }
+    if (id === 'instagram' || id === 'facebook') {
+      setMetaModal({ open: true, platform: id })
+      return
+    }
+    // WhatsApp, TikTok — go directly to OAuth
+    await startOAuth(id)
   }
 
   const handleShopifySubmit = async (payload: Record<string, string>) => {
@@ -229,6 +248,13 @@ export default function ChannelsPage() {
         open={shopifyModalOpen}
         onOpenChange={setShopifyModalOpen}
         onSubmit={handleShopifySubmit}
+      />
+      <MetaConnectModal
+        open={metaModal.open}
+        platform={metaModal.platform}
+        onOpenChange={(val) => setMetaModal((m) => ({ ...m, open: val }))}
+        onOAuth={() => startOAuth(metaModal.platform)}
+        onManual={(payload) => handleMetaManual(metaModal.platform, payload)}
       />
       {/* Toast Notification */}
       {toast && (

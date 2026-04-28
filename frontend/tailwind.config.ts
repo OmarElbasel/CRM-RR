@@ -17,7 +17,7 @@ const config: Config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "hsl(var(--primary-hsl))",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
@@ -33,7 +33,7 @@ const config: Config = {
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
+          DEFAULT: "hsl(var(--accent-hsl))",
           foreground: "hsl(var(--accent-foreground))",
         },
         popover: {
@@ -44,6 +44,39 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        /* Design System Direct Tokens */
+        ink: {
+          DEFAULT: "#0B0B14",
+          2: "#14141F",
+          3: "#1E1E2C",
+        },
+        paper: {
+          DEFAULT: "#FAFAF7",
+          2: "#F2F1EA",
+        },
+        "ds-primary": {
+          DEFAULT: "#594FBF",
+          ink: "#35279B",
+          soft: "#ECEAFB",
+        },
+        "ds-accent": {
+          DEFAULT: "#C8FE5E",
+          ink: "#1F2A00",
+        },
+        "ds-text": {
+          DEFAULT: "#15151F",
+          2: "#5A5A6E",
+          3: "#9898A8",
+        },
+        "ds-line": {
+          DEFAULT: "#E7E6DF",
+          2: "#D9D7CE",
+          dark: "rgba(255,255,255,0.08)",
+        },
+        mint: "#7AE7C7",
+        danger: "#E4573C",
+        warn: "#F4B740",
+        /* Legacy aliases for backward compatibility */
         "surface-container-highest": "#d9e2ff",
         "on-secondary-fixed": "#00483d",
         "surface-variant": "#d9e2ff",
@@ -75,7 +108,6 @@ const config: Config = {
         "on-secondary-container": "#005d4f",
         "secondary-fixed": "#26fedc",
         "tertiary-dim": "#6200e1",
-        "brand-primary": "#594fbf",
         "tertiary-fixed-dim": "#b89bff",
         "surface-container-high": "#e2e7ff",
         "on-tertiary-fixed": "#290068",
@@ -92,13 +124,15 @@ const config: Config = {
         "surface-container": "#eaedff",
         "on-tertiary-fixed-variant": "#4e00b7",
         "error-container": "#f76a80",
-        "on-surface-variant": "#4f5e86"
+        "on-surface-variant": "#4f5e86",
+        "brand-primary": "#594fbf",
       },
       fontFamily: {
-        display: ['Poppins', 'sans-serif'],
-        headline: ['Manrope', 'sans-serif'],
-        body: ['Inter', 'sans-serif'],
-        label: ['Inter', 'sans-serif'],
+        display: ["Inter Tight", "Inter", "system-ui", "sans-serif"],
+        headline: ["Inter Tight", "Inter", "system-ui", "sans-serif"],
+        body: ["Inter", "system-ui", "sans-serif"],
+        label: ["Inter", "system-ui", "sans-serif"],
+        mono: ["JetBrains Mono", "monospace"],
       },
       borderRadius: {
         lg: "var(--radius)",

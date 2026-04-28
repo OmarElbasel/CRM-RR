@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { useAuth } from '@clerk/nextjs'
 import posthog from 'posthog-js'
 import { GitBranch } from 'lucide-react'
 import { PageHeader } from '@/components/ui/PageHeader'
@@ -16,6 +17,7 @@ import { DUMMY_PIPELINE_DATA } from '@/lib/dummy/pipeline'
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 export default function PipelinePage() {
+  const { getToken } = useAuth()
   const pipelineEnabled = isEnabled('PIPELINE')
   const [data, setData] = useState<PipelineBoardData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -45,7 +47,10 @@ export default function PipelinePage() {
 
       const qs = params.toString()
       const url = `${API_URL}/api/pipeline/${qs ? `?${qs}` : ''}`
-      const res = await fetch(url, { credentials: 'include' })
+      const token = await getToken()
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       if (res.ok) {
         setData(await res.json())
       }
@@ -54,7 +59,7 @@ export default function PipelinePage() {
     } finally {
       setLoading(false)
     }
-  }, [filters])
+  }, [filters, getToken])
 
   useEffect(() => {
     if (pipelineEnabled) {
@@ -63,10 +68,13 @@ export default function PipelinePage() {
   }, [pipelineEnabled, fetchPipeline])
 
   async function handleStageChange(dealId: number, newStage: string) {
+    const token = await getToken()
     const res = await fetch(`${API_URL}/api/deals/${dealId}/`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ stage: newStage }),
     })
     if (!res.ok) throw new Error('Stage change failed')

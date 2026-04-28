@@ -134,7 +134,7 @@ export function SchedulerCalendar() {
                 <div className="mt-1 space-y-1">
                   {dayPosts.map((post) => (
                     <Popover key={post.id}>
-                      <PopoverTrigger asChild>
+                      <PopoverTrigger>
                         <button
                           className="w-full text-left text-xs px-1 py-0.5 rounded bg-gray-100 hover:bg-gray-200 truncate flex items-center gap-1"
                           onClick={() => setSelectedPost(post)}

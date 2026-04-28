@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useAuth } from '@clerk/nextjs'
 import { Input } from '@/components/ui/input'
 
 interface DealTaskData {
@@ -20,6 +21,7 @@ interface DealTaskListProps {
 }
 
 export function DealTaskList({ dealId, tasks, apiUrl, onUpdate }: DealTaskListProps) {
+  const { getToken } = useAuth()
   const [newTitle, setNewTitle] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -27,10 +29,13 @@ export function DealTaskList({ dealId, tasks, apiUrl, onUpdate }: DealTaskListPr
     if (!newTitle.trim()) return
     setLoading(true)
     try {
+      const token = await getToken()
       const res = await fetch(`${apiUrl}/api/deals/${dealId}/tasks/`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ title: newTitle.trim() }),
       })
       if (res.ok) {
@@ -43,10 +48,13 @@ export function DealTaskList({ dealId, tasks, apiUrl, onUpdate }: DealTaskListPr
   }
 
   async function toggleTask(taskId: number, isComplete: boolean) {
+    const token = await getToken()
     await fetch(`${apiUrl}/api/tasks/${taskId}/`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ completed: !isComplete }),
     })
     onUpdate()

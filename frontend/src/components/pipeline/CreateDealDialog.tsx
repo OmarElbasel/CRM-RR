@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useAuth } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -20,6 +21,7 @@ interface CreateDealDialogProps {
 }
 
 export function CreateDealDialog({ apiUrl, onCreated, trigger }: CreateDealDialogProps) {
+  const { getToken } = useAuth()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [title, setTitle] = useState('')
@@ -39,10 +41,13 @@ export function CreateDealDialog({ apiUrl, onCreated, trigger }: CreateDealDialo
     setError('')
 
     try {
+      const token = await getToken()
       const res = await fetch(`${apiUrl}/api/deals/`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           title: title.trim(),
           value: value || null,
@@ -73,14 +78,16 @@ export function CreateDealDialog({ apiUrl, onCreated, trigger }: CreateDealDialo
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger
-        render={
-          trigger || (
-            <button className="bg-primary text-white rounded-lg px-4 py-2 text-sm font-bold flex items-center gap-1.5 hover:bg-primary-dim transition-colors">
-              <Plus className="w-4 h-4" />
-              Add Deal
-            </button>
-          )
-        }
+        render={() => (
+          <>
+            {trigger || (
+              <button className="bg-primary text-white rounded-lg px-4 py-2 text-sm font-bold flex items-center gap-1.5 hover:bg-primary-dim transition-colors">
+                <Plus className="w-4 h-4" />
+                Add Deal
+              </button>
+            )}
+          </>
+        )}
       />
       <SheetContent side="right" className="sm:max-w-md">
         <SheetHeader>

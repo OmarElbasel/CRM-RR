@@ -1,15 +1,11 @@
-import { getClerkToken } from "./clerk-utils"; // Need to check if this exists or implementation
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-async function adminFetch(endpoint: string, options: RequestInit = {}) {
-  // We need the Clerk token for admin auth
-  // In a real app we might use a custom hook, 
-  // but for simplicity in this helper we'll expect the token to be passed 
-  // or we'll assume this is used in a Client Component where we can't easily get it without hooks.
-  // Actually, let's make these functions accept the token as the first argument.
+interface AdminFetchOptions extends RequestInit {
+  token?: string;
+}
 
-  const { token, ...fetchOptions } = options as any;
+async function adminFetch(endpoint: string, options: AdminFetchOptions = {}) {
+  const { token, ...fetchOptions } = options;
 
   const response = await fetch(`${API_URL}/api/admin${endpoint}`, {
     ...fetchOptions,

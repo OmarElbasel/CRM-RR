@@ -45,11 +45,16 @@ PLATFORM_SCOPES = {
     "instagram": [
         "instagram_basic",
         "instagram_manage_messages",
+        "instagram_manage_comments",
         "pages_messaging",
+        "pages_read_engagement",
+        "pages_manage_metadata",
     ],
     "facebook": [
         "pages_messaging",
         "pages_read_engagement",
+        "pages_manage_comments",
+        "pages_manage_metadata",
     ],
     "whatsapp": [
         "whatsapp_business_management",
@@ -144,7 +149,15 @@ class ConnectView(APIView):
 
 
 class CallbackView(APIView):
-    """GET /api/channels/callback/meta/ — OAuth callback from Meta."""
+    """GET /api/channels/callback/meta/ — OAuth callback from Meta.
+
+    This view is intentionally public (no auth classes) because Meta redirects
+    the user's browser here — there is no Clerk Bearer token in the request.
+    The org is identified via the signed state JWT created in ConnectView.
+    """
+
+    authentication_classes = []
+    permission_classes = []
 
     @extend_schema(
         operation_id="channel_callback", tags=["Channels"], responses={302: None}
@@ -154,40 +167,31 @@ class CallbackView(APIView):
         state = request.query_params.get("state")
 
         if not code or not state:
-            return Response(
-                {
-                    "error": "Missing code or state parameter.",
-                    "error_ar": "معلمات الطلب ناقصة.",
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return redirect(f"{settings.FRONTEND_URL}/channels?error=missing_params")
 
         # Validate state JWT
         try:
             state_data = _verify_state(state)
         except pyjwt.ExpiredSignatureError:
-            return Response(
-                {
-                    "error": "OAuth state expired. Please try again.",
-                    "error_ar": "انتهت صلاحية طلب الربط. يرجى المحاولة مرة أخرى.",
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return redirect(f"{settings.FRONTEND_URL}/channels?error=state_expired")
         except pyjwt.InvalidTokenError:
-            return Response(
-                {
-                    "error": "Invalid OAuth state.",
-                    "error_ar": "حالة المصادقة غير صالحة.",
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return redirect(f"{settings.FRONTEND_URL}/channels?error=invalid_state")
 
         platform_lower = state_data["platform"]
-        platform_upper = PLATFORM_MAP[platform_lower]
+        platform_upper = PLATFORM_MAP.get(platform_lower)
+        if not platform_upper:
+            return redirect(f"{settings.FRONTEND_URL}/channels?error=unknown_platform")
+
+        # Resolve org from the signed state — no Clerk JWT in OAuth callback requests
+        from apps.orgs.models import Organization
+        try:
+            org = Organization.objects.get(pk=state_data["org_id"])
+        except Organization.DoesNotExist:
+            logger.error("CallbackView: org_id=%s not found in state", state_data.get("org_id"))
+            return redirect(f"{settings.FRONTEND_URL}/channels?error=org_not_found&platform={platform_lower}")
+
         redirect_uri = f"{settings.BACKEND_BASE_URL}/api/channels/callback/meta/"
-
         meta_client = MetaClient()
-
         meta_app_id = get_credential("META", "app_id")
         meta_app_secret = get_credential("META", "app_secret")
 
@@ -202,7 +206,7 @@ class CallbackView(APIView):
         except MetaClientError as exc:
             logger.error(
                 "Code exchange failed for org=%s platform=%s: %s",
-                state_data.get("org_id"),
+                org.pk,
                 platform_lower,
                 exc,
             )
@@ -220,7 +224,7 @@ class CallbackView(APIView):
         except MetaClientError as exc:
             logger.error(
                 "Long-lived token exchange failed for org=%s platform=%s: %s",
-                state_data.get("org_id"),
+                org.pk,
                 platform_lower,
                 exc,
             )
@@ -231,6 +235,7 @@ class CallbackView(APIView):
         # Step 3: Fetch pages/accounts to get page_id and page-scoped access token
         page_id = None
         stored_token = long_token  # default to user token; overridden by page token below
+        fb_page_id_for_sub = None  # Facebook Page ID used to subscribe webhook events
         try:
             pages = meta_client.get_user_pages(long_token)
             if pages:
@@ -243,22 +248,52 @@ class CallbackView(APIView):
                         if ig_id:
                             page_id = ig_id
                             stored_token = page["access_token"]
+                            fb_page_id_for_sub = page["id"]
                             break
                     if not page_id:
                         # No IG business account found — fall back to page ID
                         page_id = pages[0]["id"]
                         stored_token = pages[0]["access_token"]
+                        fb_page_id_for_sub = pages[0]["id"]
                 elif platform_upper == "FACEBOOK":
                     page_id = pages[0]["id"]
                     stored_token = pages[0]["access_token"]
+                    fb_page_id_for_sub = pages[0]["id"]
                 # WhatsApp uses phone_number_id (set separately via Business API, not pages)
         except MetaClientError as exc:
             logger.warning(
                 "Failed to fetch pages for org=%s platform=%s: %s — storing without page_id",
-                state_data.get("org_id"),
+                org.pk,
                 platform_lower,
                 exc,
             )
+
+        # Step 3b: Subscribe the Page/IG account to this app's webhooks.
+        # Best-effort: log & continue if it fails, so the connect flow still finishes.
+        if fb_page_id_for_sub and stored_token != long_token:
+            try:
+                if platform_upper == "INSTAGRAM" and page_id and page_id != fb_page_id_for_sub:
+                    # Instagram webhooks: subscribe the IG user ID
+                    meta_client.subscribe_page_to_app(
+                        subscriber_id=page_id,
+                        page_access_token=stored_token,
+                        subscribed_fields=["messages", "message_reactions", "comments", "mentions"],
+                    )
+                else:
+                    # Facebook Page webhooks (or IG fallback where we stored the Page ID)
+                    meta_client.subscribe_page_to_app(
+                        subscriber_id=fb_page_id_for_sub,
+                        page_access_token=stored_token,
+                        subscribed_fields=["messages", "messaging_postbacks", "feed"],
+                    )
+            except MetaClientError as exc:
+                logger.warning(
+                    "Webhook subscription failed for org=%s platform=%s id=%s: %s",
+                    org.pk,
+                    platform_lower,
+                    fb_page_id_for_sub,
+                    exc,
+                )
 
         encrypted_token = _encrypt_token(stored_token)
         # 3-day buffer per research.md Decision 4
@@ -267,7 +302,7 @@ class CallbackView(APIView):
         )
 
         SocialChannel.objects.update_or_create(
-            org=request.org,
+            org=org,
             platform=platform_upper,
             defaults={
                 "access_token": encrypted_token,
@@ -385,17 +420,44 @@ class WebhookView(APIView):
 
     def _process_event(self, event: dict, platform: str, page_id: str):
         """Extract message from event and save to DB."""
-        # Instagram / Facebook Messenger format
+        # Instagram / Facebook Messenger DM format
         sender = event.get("sender", {})
         sender_id = sender.get("id", "")
         message_data = event.get("message", {})
         msg_id = message_data.get("mid", "")
         text = message_data.get("text", "")
 
-        # WhatsApp format
-        if not sender_id and "value" in event:
+        # Skip echoes of our own outbound messages — Meta delivers these back to us.
+        if message_data.get("is_echo"):
+            return
+        # Skip events where the sender IS our own page/account (defensive)
+        if sender_id and sender_id == page_id:
+            return
+
+        # Instagram comment webhook format — comes in `changes` with a `value` object
+        if not sender_id and platform == "INSTAGRAM" and isinstance(event.get("value"), dict):
+            field = event.get("field", "")
             value = event["value"]
-            messages = value.get("messages", [])
+            if field == "comments":
+                from_obj = value.get("from", {}) or {}
+                sender_id = from_obj.get("id", "")
+                msg_id = value.get("id", "")
+                text = value.get("text", "")
+                # Fall through to shared persistence below
+            elif field == "messages":
+                # Some IG payloads nest the message in value
+                messaging = value.get("messages") or []
+                if messaging:
+                    m = messaging[0]
+                    sender_id = (m.get("from") or {}).get("id", "")
+                    msg_id = m.get("id", "")
+                    text = (m.get("text") or {}).get("body", "") if isinstance(m.get("text"), dict) else m.get("text", "")
+
+        # WhatsApp format — only when we're actually on WhatsApp, and guard against
+        # non-dict `value` payloads (some IG changes have value as a string).
+        if not sender_id and platform == "WHATSAPP" and isinstance(event.get("value"), dict):
+            value = event["value"]
+            messages = value.get("messages", []) or []
             if messages:
                 wa_msg = messages[0]
                 sender_id = wa_msg.get("from", "")
@@ -405,10 +467,14 @@ class WebhookView(APIView):
                     if wa_msg.get("type") == "text"
                     else ""
                 )
-            metadata = value.get("metadata", {})
+            metadata = value.get("metadata", {}) or {}
             page_id = metadata.get("phone_number_id", page_id)
 
         if not sender_id or not msg_id or not text:
+            logger.info(
+                "Webhook event dropped: platform=%s page_id=%s missing sender/msg_id/text (event keys=%s)",
+                platform, page_id, list(event.keys()),
+            )
             return
 
         # Resolve channel
@@ -433,12 +499,32 @@ class WebhookView(APIView):
             return
 
         # Get or create contact
-        contact, _ = Contact.objects.get_or_create(
+        contact, contact_created = Contact.objects.get_or_create(
             org=channel.org,
             platform=platform,
             platform_id=sender_id,
             defaults={"name": sender.get("name", "")},
         )
+
+        # Enrich new contacts with profile (name + avatar) from Meta.
+        # Best-effort — never block the webhook on a profile lookup failure.
+        if (not contact.name or not contact.avatar_url) and platform in ("INSTAGRAM", "FACEBOOK"):
+            try:
+                token = _decrypt_token(channel.access_token)
+                profile = MetaClient().get_user_profile(sender_id, token)
+                update_fields = []
+                resolved_name = profile.get("username") or profile.get("name")
+                if resolved_name and not contact.name:
+                    contact.name = resolved_name
+                    update_fields.append("name")
+                pic = profile.get("profile_pic")
+                if pic:
+                    contact.avatar_url = pic
+                    update_fields.append("avatar_url")
+                if update_fields:
+                    contact.save(update_fields=update_fields)
+            except Exception as exc:
+                logger.info("Profile enrichment failed for contact=%s: %s", contact.pk, exc)
 
         # Deduplicate message
         try:
@@ -507,7 +593,9 @@ class InboxListView(APIView):
         if is_enabled('RATE_LIMITING') and getattr(request, 'limited', False):
             return rate_limited_response()
         org = request.org
-        qs = Contact.objects.filter(org=org)
+        # Inbox shows conversation-capable platforms only — Shopify is e-commerce, not chat.
+        CHAT_PLATFORMS = ["INSTAGRAM", "WHATSAPP", "FACEBOOK", "TIKTOK"]
+        qs = Contact.objects.filter(org=org, platform__in=CHAT_PLATFORMS)
 
         # Filters
         platform = request.query_params.get("platform")
@@ -551,6 +639,7 @@ class InboxListView(APIView):
             contact_data = {
                 "id": contact.pk,
                 "name": contact.name,
+                "avatar_url": contact.avatar_url,
                 "platform": contact.platform,
                 "ai_score": contact.ai_score,
                 "unread_count": contact.unread_count,
@@ -601,6 +690,7 @@ class ThreadView(APIView):
                 "contact": {
                     "id": contact.pk,
                     "name": contact.name,
+                    "avatar_url": contact.avatar_url,
                     "platform": contact.platform,
                     "ai_score": contact.ai_score,
                 },
@@ -686,12 +776,19 @@ class ReplyView(APIView):
                 platform_msg_id_override = f"{video_id}:{reply_id}"
             else:
                 meta = MetaClient()
-                meta.send_dm(
-                    page_id=channel.page_id,
-                    recipient_id=original.contact.platform_id,
-                    text=reply_text,
-                    access_token=access_token,
-                )
+                if original.platform == "INSTAGRAM":
+                    meta.send_instagram_dm(
+                        recipient_id=original.contact.platform_id,
+                        text=reply_text,
+                        access_token=access_token,
+                    )
+                else:
+                    meta.send_dm(
+                        page_id=channel.page_id,
+                        recipient_id=original.contact.platform_id,
+                        text=reply_text,
+                        access_token=access_token,
+                    )
         except (MetaClientError, WhatsAppClientError) as exc:
             logger.error("Reply send failed: %s", exc)
             return Response(
@@ -766,9 +863,22 @@ class UnreadView(APIView):
         return Response({"read": False})
 
 
+class _EventStreamRenderer:
+    """Dummy renderer so DRF content negotiation accepts text/event-stream."""
+    media_type = "text/event-stream"
+    format = "event-stream"
+    charset = "utf-8"
+    render_style = "text"
+
+    def render(self, data, accepted_media_type=None, renderer_context=None):
+        return data
+
+
 @method_decorator(require_flag("INBOX_ENABLED"), name="dispatch")
 class SSEStreamView(APIView):
     """GET /api/inbox/stream/ — Server-Sent Events for real-time updates."""
+
+    renderer_classes = [_EventStreamRenderer]
 
     @extend_schema(operation_id="inbox_stream", tags=["Inbox"], responses={200: None})
     def get(self, request):
@@ -811,6 +921,117 @@ class SSEStreamView(APIView):
         response["Cache-Control"] = "no-cache"
         response["X-Accel-Buffering"] = "no"
         return response
+
+
+# --- Meta Manual Connect View -----------------------------------------------
+
+
+@method_decorator(require_flag("INBOX_ENABLED"), name="dispatch")
+class MetaManualConnectView(APIView):
+    """POST /api/channels/connect-meta-manual/ — Connect Instagram or Facebook via a manually provided Page Access Token."""
+
+    @extend_schema(operation_id="channel_connect_meta_manual", tags=["Channels"])
+    def post(self, request):
+        platform = request.data.get("platform", "").upper()
+        page_id = request.data.get("page_id", "").strip()
+        page_access_token = request.data.get("page_access_token", "").strip()
+
+        if platform not in ("INSTAGRAM", "FACEBOOK"):
+            return Response(
+                {"error": "platform must be INSTAGRAM or FACEBOOK.", "error_ar": "المنصة يجب أن تكون INSTAGRAM أو FACEBOOK."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if not page_id:
+            return Response(
+                {"error": "page_id is required.", "error_ar": "معرّف الصفحة مطلوب."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if not page_access_token:
+            return Response(
+                {"error": "page_access_token is required.", "error_ar": "رمز الوصول مطلوب."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Validate the ID + token with a lightweight Graph API call.
+        # Two token flavours are supported:
+        #   1) Instagram Login token (starts with "IGAA") → graph.instagram.com, Bearer header
+        #   2) Facebook Page Access Token → graph.facebook.com, access_token query param
+        import requests as req_lib
+        is_instagram_token = page_access_token.startswith("IGAA")
+        try:
+            if platform == "INSTAGRAM" and is_instagram_token:
+                # Verify the IG token and fetch the IG user id from /me
+                resp = req_lib.get(
+                    "https://graph.instagram.com/v25.0/me",
+                    params={"fields": "id,username"},
+                    headers={"Authorization": f"Bearer {page_access_token}"},
+                    timeout=10,
+                )
+                if not resp.ok:
+                    return Response(
+                        {"error": "Invalid Instagram token. Generate a new one from Meta's API Integration Helper.", "error_ar": "رمز الوصول غير صحيح."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                me = resp.json()
+                # Always trust the ID returned by /me over whatever the user typed
+                page_id = me.get("id") or page_id
+            else:
+                resp = req_lib.get(
+                    f"https://graph.facebook.com/v21.0/{page_id}",
+                    params={"fields": "id,name,instagram_business_account", "access_token": page_access_token},
+                    timeout=10,
+                )
+                if not resp.ok:
+                    return Response(
+                        {"error": "Invalid token or ID. Please check and try again.", "error_ar": "رمز الوصول أو المعرّف غير صحيح."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                data = resp.json()
+                if platform == "INSTAGRAM":
+                    iba = data.get("instagram_business_account")
+                    if iba and iba.get("id"):
+                        # User pasted a Page ID — resolve the linked IG Business Account
+                        page_id = iba["id"]
+                    # Otherwise assume the ID they pasted is already the IG Business Account ID
+        except Exception:
+            return Response(
+                {"error": "Could not reach Meta API. Please try again.", "error_ar": "تعذّر الوصول إلى Meta API."},
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
+
+        # Subscribe the IG account to webhook events so DMs/comments flow in.
+        # Best-effort: if this fails the channel is still saved, but inbound events won't arrive.
+        subscription_warning = None
+        if platform == "INSTAGRAM" and is_instagram_token:
+            try:
+                MetaClient().subscribe_instagram_app(
+                    access_token=page_access_token,
+                    subscribed_fields=["messages", "comments", "message_reactions", "mentions"],
+                )
+            except MetaClientError as exc:
+                logger.warning("IG webhook subscription failed for org=%s id=%s: %s", request.org.pk, page_id, exc)
+                subscription_warning = str(exc)
+
+        encrypted_token = _encrypt_token(page_access_token)
+        SocialChannel.objects.update_or_create(
+            org=request.org,
+            platform=platform,
+            defaults={
+                "access_token": encrypted_token,
+                "page_id": page_id,
+                "is_active": True,
+                "token_expires_at": None,  # Manual tokens — no expiry tracking
+            },
+        )
+
+        response_body = {"status": "connected", "platform": platform, "page_id": page_id}
+        if subscription_warning:
+            response_body["warning"] = (
+                "Connected, but webhook subscription failed. Verify the webhook is configured in your "
+                "Meta app (Products → Webhooks → Instagram) and that the token has messaging permissions. "
+                f"Details: {subscription_warning}"
+            )
+        return Response(response_body)
 
 
 # --- Channel Disconnect View (US4: T040) ------------------------------------

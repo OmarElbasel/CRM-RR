@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { useAuth } from '@clerk/nextjs'
 import Link from 'next/link'
 import {
   Sheet,
@@ -67,6 +68,7 @@ interface DealDetailSheetProps {
 }
 
 export function DealDetailSheet({ dealId, open, onOpenChange, apiUrl, onUpdate }: DealDetailSheetProps) {
+  const { getToken } = useAuth()
   const [deal, setDeal] = useState<DealDetail | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -78,8 +80,9 @@ export function DealDetailSheet({ dealId, open, onOpenChange, apiUrl, onUpdate }
         setDeal((DUMMY_DEAL_DETAILS[dealId] as DealDetail) ?? null)
         return
       }
+      const token = await getToken()
       const res = await fetch(`${apiUrl}/api/deals/${dealId}/`, {
-        credentials: 'include',
+        headers: { Authorization: `Bearer ${token}` },
       })
       if (res.ok) {
         setDeal(await res.json())
@@ -87,7 +90,7 @@ export function DealDetailSheet({ dealId, open, onOpenChange, apiUrl, onUpdate }
     } finally {
       setLoading(false)
     }
-  }, [dealId, apiUrl])
+  }, [dealId, apiUrl, getToken])
 
   useEffect(() => {
     if (open && dealId) {

@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { IntentBadge } from '@/components/ui/IntentBadge'
 
 type Intent = 'READY_TO_BUY' | 'PRICE_INQUIRY' | 'INFO_REQUEST' | 'COMPLAINT' | 'BROWSING'

@@ -111,7 +111,7 @@ export function OrgSettings({ initialName, onUpdate }: OrgSettingsProps) {
         </p>
         
         <Dialog>
-          <DialogTrigger asChild>
+          <DialogTrigger>
             <button className="bg-white text-rose-600 border border-rose-200 px-6 py-2.5 rounded-xl font-bold hover:bg-rose-600 hover:text-white transition-all">
               Delete Organization
             </button>

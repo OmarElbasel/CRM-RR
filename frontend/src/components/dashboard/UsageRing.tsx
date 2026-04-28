@@ -12,10 +12,10 @@ export function UsageRing({ used, limit, size = 120 }: UsageRingProps) {
     return (
       <div className="flex flex-col items-center gap-2">
         <svg width={size} height={size} viewBox="0 0 120 120">
-          <circle cx="60" cy="60" r="50" fill="none" stroke="#e5e7eb" strokeWidth="10" />
-          <circle cx="60" cy="60" r="50" fill="none" stroke="#6366f1" strokeWidth="10" />
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#E7E6DF" strokeWidth="10" />
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#594FBF" strokeWidth="10" />
         </svg>
-        <span className="text-sm font-medium text-gray-700">{used.toLocaleString()} / ∞</span>
+        <span className="text-sm font-medium text-ds-text">{used.toLocaleString()} / ∞</span>
       </div>
     )
   }
@@ -37,13 +37,13 @@ export function UsageRing({ used, limit, size = 120 }: UsageRingProps) {
         <circle
           cx="60" cy="60" r={r}
           fill="none"
-          stroke="#e5e7eb"
+          stroke="#E7E6DF"
           strokeWidth="10"
         />
         <circle
           cx="60" cy="60" r={r}
           fill="none"
-          stroke={isNearLimit ? '#ef4444' : '#6366f1'}
+          stroke={isNearLimit ? '#E4573C' : '#594FBF'}
           strokeWidth="10"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
@@ -51,10 +51,10 @@ export function UsageRing({ used, limit, size = 120 }: UsageRingProps) {
           style={{ transition: 'stroke-dashoffset 0.4s ease' }}
         />
       </svg>
-      <span className="text-sm font-medium text-gray-700">
+      <span className="text-sm font-medium text-ds-text">
         {used.toLocaleString()} / {limit.toLocaleString()}
       </span>
-      <span className="text-xs text-gray-400">generations this month</span>
+      <span className="text-xs text-ds-text-3">generations this month</span>
     </div>
   )
 }

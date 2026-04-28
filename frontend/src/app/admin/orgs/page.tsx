@@ -92,7 +92,7 @@ export default function OrgsPage() {
         </div>
         <div className="flex items-center gap-2">
           <Filter className="w-4 h-4 text-gray-400" />
-          <Select value={planFilter} onValueChange={setPlanFilter}>
+          <Select value={planFilter} onValueChange={(v) => setPlanFilter(v ?? 'all')}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="All Plans" />
             </SelectTrigger>

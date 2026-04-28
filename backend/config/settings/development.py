@@ -1,7 +1,7 @@
 from .base import *  # noqa: F401, F403
 
 DEBUG = True
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '1e5fd1fb657caa.lhr.life']
+ALLOWED_HOSTS = ['*']  # dev-only — any tunnel provider OK
 
 # Allow all CORS origins in development
 CORS_ALLOW_ALL_ORIGINS = True

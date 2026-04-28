@@ -98,4 +98,9 @@ def get_credential(provider: str, field: str) -> str:
 
     # Fallback to env var
     env_key = _ENV_MAP.get((provider, field), "")
-    return getattr(settings, env_key, "") or ""
+    val = getattr(settings, env_key, "") or ""
+    # Treat .env.example placeholders as unset so we surface a clear
+    # "not configured" error instead of sending bogus creds to the provider.
+    if val.startswith(("your_", "replace_", "choose_")):
+        return ""
+    return val

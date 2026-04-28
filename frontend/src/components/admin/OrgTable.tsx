@@ -115,10 +115,10 @@ export function OrgTable({ data, onViewDetail, onRefresh }: OrgTableProps) {
         const org = row.original;
         return (
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+            <DropdownMenuTrigger>
+              <button className="h-8 w-8 p-0 flex items-center justify-center rounded hover:bg-slate-100">
                 <MoreHorizontal className="h-4 w-4" />
-              </Button>
+              </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>

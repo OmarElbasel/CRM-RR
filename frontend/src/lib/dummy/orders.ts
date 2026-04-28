@@ -4,6 +4,7 @@ export const DUMMY_ORDERS: Order[] = [
   // PENDING
   {
     id: 1,
+    order_number: "#0001",
     source: 'SHOPIFY',
     status: 'PENDING',
     shopify_order_id: 'SH-10021',
@@ -23,6 +24,7 @@ export const DUMMY_ORDERS: Order[] = [
   },
   {
     id: 2,
+    order_number: "#0002",
     source: 'WHATSAPP',
     status: 'PENDING',
     shopify_order_id: null,
@@ -39,6 +41,7 @@ export const DUMMY_ORDERS: Order[] = [
   },
   {
     id: 3,
+    order_number: "#0003",
     source: 'MANUAL',
     status: 'PENDING',
     shopify_order_id: null,
@@ -59,6 +62,7 @@ export const DUMMY_ORDERS: Order[] = [
   // CONFIRMED
   {
     id: 4,
+    order_number: "#0004",
     source: 'SHOPIFY',
     status: 'CONFIRMED',
     shopify_order_id: 'SH-10018',
@@ -78,6 +82,7 @@ export const DUMMY_ORDERS: Order[] = [
   },
   {
     id: 5,
+    order_number: "#0005",
     source: 'WHATSAPP',
     status: 'CONFIRMED',
     shopify_order_id: null,
@@ -95,6 +100,7 @@ export const DUMMY_ORDERS: Order[] = [
   // PROCESSING
   {
     id: 6,
+    order_number: "#0006",
     source: 'SHOPIFY',
     status: 'PROCESSING',
     shopify_order_id: 'SH-10015',
@@ -111,6 +117,7 @@ export const DUMMY_ORDERS: Order[] = [
   },
   {
     id: 7,
+    order_number: "#0007",
     source: 'MANUAL',
     status: 'PROCESSING',
     shopify_order_id: null,
@@ -131,6 +138,7 @@ export const DUMMY_ORDERS: Order[] = [
   // SHIPPED
   {
     id: 8,
+    order_number: "#0008",
     source: 'SHOPIFY',
     status: 'SHIPPED',
     shopify_order_id: 'SH-10009',
@@ -147,6 +155,7 @@ export const DUMMY_ORDERS: Order[] = [
   },
   {
     id: 9,
+    order_number: "#0009",
     source: 'WHATSAPP',
     status: 'SHIPPED',
     shopify_order_id: null,
@@ -167,6 +176,7 @@ export const DUMMY_ORDERS: Order[] = [
   // DELIVERED
   {
     id: 10,
+    order_number: "#0010",
     source: 'SHOPIFY',
     status: 'DELIVERED',
     shopify_order_id: 'SH-10003',
@@ -183,6 +193,7 @@ export const DUMMY_ORDERS: Order[] = [
   },
   {
     id: 11,
+    order_number: "#0011",
     source: 'WHATSAPP',
     status: 'DELIVERED',
     shopify_order_id: null,
@@ -202,6 +213,7 @@ export const DUMMY_ORDERS: Order[] = [
   },
   {
     id: 12,
+    order_number: "#0012",
     source: 'MANUAL',
     status: 'DELIVERED',
     shopify_order_id: null,
@@ -219,6 +231,7 @@ export const DUMMY_ORDERS: Order[] = [
   // RETURNED
   {
     id: 13,
+    order_number: "#0013",
     source: 'SHOPIFY',
     status: 'RETURNED',
     shopify_order_id: 'SH-9998',

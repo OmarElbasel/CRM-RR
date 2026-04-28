@@ -4,48 +4,72 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    /* Rawaj Design System Tokens */
+    --ink: #0B0B14;
+    --ink-2: #14141F;
+    --ink-3: #1E1E2C;
+    --paper: #FAFAF7;
+    --paper-2: #F2F1EA;
+    --text: #15151F;
+    --text-2: #5A5A6E;
+    --text-3: #9898A8;
+    --line: #E7E6DF;
+    --line-2: #D9D7CE;
+    --line-dark: rgba(255, 255, 255, 0.08);
+    --line-dark-2: rgba(255, 255, 255, 0.12);
+    --primary: #594FBF;
+    --primary-ink: #35279B;
+    --primary-soft: #ECEAFB;
+    --accent: #C8FE5E;
+    --accent-ink: #1F2A00;
+    --mint: #7AE7C7;
+    --danger: #E4573C;
+    --warn: #F4B740;
+    --radius-rl: 14px;
+
+    /* shadcn/ui theme mapping */
+    --background: 48 20% 98%;
+    --foreground: 240 6% 8%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card-foreground: 240 6% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 243 75% 59%;
+    --popover-foreground: 240 6% 8%;
+    --primary-hsl: 246 43% 52%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
+    --secondary: 45 8% 93%;
+    --secondary-foreground: 240 6% 8%;
+    --muted: 45 8% 93%;
+    --muted-foreground: 240 4% 45%;
+    --accent-hsl: 45 8% 93%;
+    --accent-foreground: 240 6% 8%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 243 75% 59%;
+    --border: 43 10% 90%;
+    --input: 43 10% 90%;
+    --ring: 246 43% 52%;
     --radius: 0.625rem;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
+    --background: 240 24% 5%;
     --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
+    --card: 240 20% 8%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
+    --popover: 240 20% 8%;
     --popover-foreground: 0 0% 98%;
-    --primary: 243 75% 59%;
+    --primary-hsl: 246 43% 52%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 240 3.7% 15.9%;
+    --secondary: 240 10% 12%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
+    --muted: 240 10% 12%;
+    --muted-foreground: 240 5% 65%;
+    --accent-hsl: 240 10% 12%;
     --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 243 75% 59%;
+    --border: 240 10% 15%;
+    --input: 240 10% 15%;
+    --ring: 246 43% 52%;
   }
 }
 
@@ -55,6 +79,9 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "ss01", "cv11";
   }
 }
 
@@ -80,6 +107,15 @@
   }
   .animate-slide-up {
     animation: slideUp 0.6s ease-out both;
+  }
+  .font-display {
+    font-family: 'Inter Tight', 'Inter', system-ui, sans-serif;
+  }
+  .font-headline {
+    font-family: 'Inter Tight', 'Inter', system-ui, sans-serif;
+  }
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
   }
 }
 

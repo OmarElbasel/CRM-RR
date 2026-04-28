@@ -3,9 +3,9 @@ import '../globals.css';
 import { SmoothScrollProvider } from '@/components/providers/SmoothScrollProvider';
 
 export const metadata: Metadata = {
-  title: 'Rawaj AI — Supercharge Your Gulf E-Commerce',
+  title: 'Rawaj — The AI CRM that works the pipeline for you',
   description:
-    'Generate authentic Gulf Arabic product descriptions, unify your customer messages, and recover abandoned carts on autopilot. Built for Shopify, Salla, and Zid.',
+    'Rawaj unifies every customer conversation, scores every lead, and lets AI agents draft, qualify, and advance deals — so your team closes more, with less.',
 };
 
 export default function MarketingLayout({
@@ -19,11 +19,11 @@ export default function MarketingLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&family=Cairo:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased font-body bg-[#faf8ff] text-[#213156]">
+      <body className="antialiased">
         <SmoothScrollProvider>
           {children}
         </SmoothScrollProvider>

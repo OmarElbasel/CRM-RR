@@ -6,6 +6,7 @@ import requests
 logger = logging.getLogger(__name__)
 
 GRAPH_API_BASE = 'https://graph.facebook.com/v21.0'
+INSTAGRAM_GRAPH_API_BASE = 'https://graph.instagram.com/v25.0'
 
 
 class MetaClientError(Exception):
@@ -19,8 +20,44 @@ class MetaClient:
     Constitution Principle II: This is a service-layer wrapper, not called directly from views.
     """
 
+    def get_user_profile(self, user_id: str, access_token: str) -> dict:
+        """Fetch a user's public profile (name, username) by their IGSID / PSID.
+
+        Works for both IGAA tokens (Instagram Login) and EAA tokens (FB Page Token).
+        Returns {} on failure — never raises, since profile enrichment is best-effort.
+        """
+        if access_token.startswith('IGAA'):
+            url = f'{INSTAGRAM_GRAPH_API_BASE}/{user_id}'
+            try:
+                resp = requests.get(
+                    url,
+                    headers={'Authorization': f'Bearer {access_token}'},
+                    params={'fields': 'name,username'},
+                    timeout=10,
+                )
+            except requests.RequestException:
+                return {}
+        else:
+            url = f'{GRAPH_API_BASE}/{user_id}'
+            try:
+                resp = requests.get(
+                    url,
+                    params={'access_token': access_token, 'fields': 'name,username,profile_pic'},
+                    timeout=10,
+                )
+            except requests.RequestException:
+                return {}
+        if not resp.ok:
+            logger.info('get_user_profile failed: %s %s', resp.status_code, resp.text[:200])
+            return {}
+        return resp.json()
+
     def send_dm(self, page_id: str, recipient_id: str, text: str, access_token: str) -> dict:
-        """Send a DM via Instagram or Facebook Messenger."""
+        """Send a DM via Facebook Messenger.
+
+        Endpoint: POST https://graph.facebook.com/v21.0/{page_id}/messages
+        For Instagram, use `send_instagram_dm` instead (different host + auth pattern).
+        """
         url = f'{GRAPH_API_BASE}/{page_id}/messages'
         payload = {
             'recipient': {'id': recipient_id},
@@ -28,28 +65,62 @@ class MetaClient:
         }
         resp = requests.post(
             url,
+            params={'access_token': access_token},
             json=payload,
-            headers={'Authorization': f'Bearer {access_token}'},
             timeout=15,
         )
         if not resp.ok:
             logger.error('MetaClient.send_dm failed: %s %s', resp.status_code, resp.text)
-            raise MetaClientError(f'send_dm failed: {resp.status_code}')
+            raise MetaClientError(f'send_dm failed: {resp.status_code} {resp.text}')
+        return resp.json()
+
+    def send_instagram_dm(self, recipient_id: str, text: str, access_token: str) -> dict:
+        """Send a DM to an Instagram user.
+
+        Routes by token type:
+          - IGAA*  → Instagram Login flow → graph.instagram.com/me/messages, Bearer auth
+          - EAA*   → Facebook Login flow (Page Access Token) → graph.facebook.com/me/messages, query-param auth
+        """
+        payload = {
+            'recipient': {'id': recipient_id},
+            'message': {'text': text},
+        }
+        if access_token.startswith('IGAA'):
+            url = f'{INSTAGRAM_GRAPH_API_BASE}/me/messages'
+            resp = requests.post(
+                url,
+                headers={
+                    'Authorization': f'Bearer {access_token}',
+                    'Content-Type': 'application/json',
+                },
+                json=payload,
+                timeout=15,
+            )
+        else:
+            url = f'{GRAPH_API_BASE}/me/messages'
+            resp = requests.post(
+                url,
+                params={'access_token': access_token},
+                json=payload,
+                timeout=15,
+            )
+        if not resp.ok:
+            logger.error('MetaClient.send_instagram_dm failed: %s %s', resp.status_code, resp.text)
+            raise MetaClientError(f'send_instagram_dm failed: {resp.status_code} {resp.text}')
         return resp.json()
 
     def send_comment_reply(self, comment_id: str, text: str, access_token: str) -> dict:
         """Reply to an Instagram/Facebook comment."""
         url = f'{GRAPH_API_BASE}/{comment_id}/replies'
-        payload = {'message': text}
         resp = requests.post(
             url,
-            json=payload,
-            headers={'Authorization': f'Bearer {access_token}'},
+            params={'access_token': access_token},
+            json={'message': text},
             timeout=15,
         )
         if not resp.ok:
             logger.error('MetaClient.send_comment_reply failed: %s %s', resp.status_code, resp.text)
-            raise MetaClientError(f'send_comment_reply failed: {resp.status_code}')
+            raise MetaClientError(f'send_comment_reply failed: {resp.status_code} {resp.text}')
         return resp.json()
 
     def exchange_code_for_token(self, code: str, app_id: str, app_secret: str, redirect_uri: str) -> str:
@@ -121,12 +192,71 @@ class MetaClient:
         iba = resp.json().get('instagram_business_account', {})
         return iba.get('id')
 
+    def subscribe_instagram_app(
+        self,
+        access_token: str,
+        subscribed_fields: list[str],
+    ) -> None:
+        """
+        Subscribe an Instagram Login account to this app's webhooks.
+        Endpoint: POST https://graph.instagram.com/v25.0/me/subscribed_apps
+        Auth: Bearer <IG user access token>  (token typically starts with `IGAA`)
+        """
+        url = f'{INSTAGRAM_GRAPH_API_BASE}/me/subscribed_apps'
+        resp = requests.post(
+            url,
+            params={'subscribed_fields': ','.join(subscribed_fields)},
+            headers={'Authorization': f'Bearer {access_token}'},
+            timeout=15,
+        )
+        if not resp.ok:
+            logger.error(
+                'MetaClient.subscribe_instagram_app failed: %s %s',
+                resp.status_code,
+                resp.text,
+            )
+            raise MetaClientError(
+                f'subscribe_instagram_app failed: {resp.status_code} {resp.text}'
+            )
+
+    def subscribe_page_to_app(
+        self,
+        subscriber_id: str,
+        page_access_token: str,
+        subscribed_fields: list[str],
+    ) -> None:
+        """
+        Subscribe a Facebook Page (or Instagram Business Account) to receive webhook
+        events for this app. Graph endpoint: POST /{id}/subscribed_apps
+
+        Raises MetaClientError on failure so callers can decide whether to surface or log.
+        """
+        url = f'{GRAPH_API_BASE}/{subscriber_id}/subscribed_apps'
+        resp = requests.post(
+            url,
+            params={
+                'subscribed_fields': ','.join(subscribed_fields),
+                'access_token': page_access_token,
+            },
+            timeout=15,
+        )
+        if not resp.ok:
+            logger.error(
+                'MetaClient.subscribe_page_to_app failed for %s: %s %s',
+                subscriber_id,
+                resp.status_code,
+                resp.text,
+            )
+            raise MetaClientError(
+                f'subscribe_page_to_app failed: {resp.status_code} {resp.text}'
+            )
+
     def revoke_token(self, access_token: str) -> None:
         """Revoke a Meta access token."""
         url = f'{GRAPH_API_BASE}/me/permissions'
         resp = requests.delete(
             url,
-            headers={'Authorization': f'Bearer {access_token}'},
+            params={'access_token': access_token},
             timeout=15,
         )
         if not resp.ok:

@@ -10,7 +10,7 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   return (
-    <div className="min-h-screen bg-background text-on-surface flex">
+    <div className="min-h-screen bg-paper text-ds-text flex">
       {/* Desktop sidebar */}
       <div className="hidden lg:block">
         <Sidebar />
@@ -24,7 +24,6 @@ export function AppShell({ children }: AppShellProps) {
         <div className="hidden lg:block sticky top-0 z-40">
           <TopNavbar />
         </div>
-        {/* Children components control their own inner padding & max-width containers in the new design */}
         {children}
       </main>
     </div>

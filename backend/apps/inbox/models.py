@@ -77,6 +77,7 @@ class Contact(models.Model):
     )
 
     name = models.CharField(max_length=255, blank=True)
+    avatar_url = models.URLField(max_length=1024, blank=True)
     ai_score = models.IntegerField(
         default=0,
         help_text="Lead score 0-100. Incremented/decremented by AI pipeline on each message.",

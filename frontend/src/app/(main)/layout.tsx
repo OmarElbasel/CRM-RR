@@ -8,17 +8,10 @@ import { PostHogProvider } from '@/components/providers/PostHogProvider'
 import { OrgGuard } from '@/components/layout/OrgGuard'
 
 export const metadata: Metadata = {
-  title: 'Rawaj — AI Product Description Generator',
-  description: 'AI-powered product titles and descriptions for Gulf e-commerce',
+  title: 'Rawaj — AI CRM that works the pipeline for you',
+  description: 'Rawaj unifies every customer conversation, scores every lead, and lets AI agents draft, qualify, and advance deals.',
 }
 
-/**
- * Root layout. Arabic-first by default (Constitution Principle III).
- * dir="rtl" and lang="ar" are the defaults.
- * The RTL toggle in src/lib/dir.ts can switch direction client-side without reload.
- *
- * NOTE: RTL layout pass is pending for Phase 4.5 components (Constitution Principle III tracked exception).
- */
 export default function RootLayout({
   children,
 }: {
@@ -27,13 +20,13 @@ export default function RootLayout({
   const showRedesign = isEnabled('UI_REDESIGN')
 
   return (
-    <ClerkProvider appearance={{ variables: { colorPrimary: '#4F46E5' } }}>
+    <ClerkProvider appearance={{ variables: { colorPrimary: '#594FBF' } }}>
       <html lang="en" dir="ltr">
         <head>
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
           <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
             rel="stylesheet"
           />
           <link 

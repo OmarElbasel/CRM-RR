@@ -70,7 +70,7 @@ export default function SchedulerPage() {
 
   return (
     <>
-      <PageHeader title="Post Scheduler" description="Schedule posts and send WhatsApp broadcasts." />
+      <PageHeader title="Post Scheduler" subtitle="Schedule posts and send WhatsApp broadcasts." />
       <Tabs defaultValue="posts">
         <TabsList>
           <TabsTrigger value="posts">Posts</TabsTrigger>

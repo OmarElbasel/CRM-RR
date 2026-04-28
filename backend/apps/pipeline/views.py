@@ -1,7 +1,7 @@
 import logging
 from decimal import Decimal
 
-from django.db.models import Sum, Count, Q, OuterRef, Subquery
+from django.db.models import Sum, Count, Q, OuterRef, Subquery, Exists
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from drf_spectacular.utils import extend_schema, OpenApiParameter
@@ -126,7 +126,7 @@ class PipelineBoardView(APIView):
 
         deals_qs = qs.annotate(
             latest_message_preview=Subquery(latest_msg),
-            has_unread_alert=unread_alerts.exists(),
+            has_unread_alert=Exists(unread_alerts),
         ).order_by("-ai_score", "-updated_at")
 
         # Build stage groups from DB results
