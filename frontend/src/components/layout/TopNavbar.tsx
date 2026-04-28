@@ -3,6 +3,8 @@
 import { UserButton } from '@clerk/nextjs'
 import Link from 'next/link'
 import { Search, HelpCircle } from 'lucide-react'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import { LocaleToggle } from '@/components/ui/LocaleToggle'
 
 export function TopNavbar() {
   return (
@@ -21,6 +23,8 @@ export function TopNavbar() {
       </div>
       <div className="flex items-center gap-6">
         <div className="flex items-center gap-4 border-r border-ds-line pr-6">
+          <ThemeToggle />
+          <LocaleToggle />
           <Link
             href="/docs"
             target="_blank"

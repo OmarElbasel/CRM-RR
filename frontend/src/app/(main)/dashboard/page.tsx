@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import { UsageRing } from '@/components/dashboard/UsageRing'
+
+export const metadata: Metadata = {
+  title: 'Dashboard — Rawaj',
+  description: 'Overview of your workspace, usage, and quick actions.',
+}
 import { getPlan, getNextPlan, type PlanId } from '@/lib/plans'
 import { formatPrice } from '@/lib/currency'
 import { isEnabled } from '@/lib/flags'

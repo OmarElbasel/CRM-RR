@@ -5,6 +5,7 @@ import { AppShell } from '@/components/layout/AppShell'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { PostHogProvider } from '@/components/providers/PostHogProvider'
 import { OrgGuard } from '@/components/layout/OrgGuard'
+import { ThemeProvider } from '@/components/providers/ThemeProvider'
 
 export const metadata: Metadata = {
   title: 'Rawaj — AI CRM that works the pipeline for you',
@@ -28,13 +29,15 @@ export default function RootLayout({
           />
         </head>
         <body className="antialiased">
-          <TooltipProvider>
-            <PostHogProvider>
-              <OrgGuard>
-                <AppShell>{children}</AppShell>
-              </OrgGuard>
-            </PostHogProvider>
-          </TooltipProvider>
+          <ThemeProvider>
+            <TooltipProvider>
+              <PostHogProvider>
+                <OrgGuard>
+                  <AppShell>{children}</AppShell>
+                </OrgGuard>
+              </PostHogProvider>
+            </TooltipProvider>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

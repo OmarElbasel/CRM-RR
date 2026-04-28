@@ -1,0 +1,30 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "inbox": "Inbox",
+    "pipeline": "Pipeline",
+    "orders": "Orders",
+    "content": "Content",
+    "scheduler": "Scheduler",
+    "ads": "Ads",
+    "channels": "Channels",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Overview of your workspace",
+    "quick_actions": "Quick Actions",
+    "new_generation": "New Generation",
+    "ai_generator": "AI Generator",
+    "pipeline": "Pipeline",
+    "orders": "Orders"
+  },
+  "inbox": {
+    "title": "Inbox",
+    "subtitle": "All customer conversations across connected channels."
+  },
+  "pipeline": {
+    "title": "Pipeline",
+    "subtitle": "Visual CRM — track every lead from first contact to close."
+  }
+}

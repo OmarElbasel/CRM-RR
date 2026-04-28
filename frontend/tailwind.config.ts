@@ -51,8 +51,8 @@ const config: Config = {
           3: "#1E1E2C",
         },
         paper: {
-          DEFAULT: "#FAFAF7",
-          2: "#F2F1EA",
+          DEFAULT: "var(--paper)",
+          2: "var(--paper-2)",
         },
         "ds-primary": {
           DEFAULT: "#594FBF",
@@ -64,13 +64,13 @@ const config: Config = {
           ink: "#1F2A00",
         },
         "ds-text": {
-          DEFAULT: "#15151F",
-          2: "#5A5A6E",
-          3: "#9898A8",
+          DEFAULT: "var(--ds-text)",
+          2: "var(--ds-text-2)",
+          3: "var(--ds-text-3)",
         },
         "ds-line": {
-          DEFAULT: "#E7E6DF",
-          2: "#D9D7CE",
+          DEFAULT: "var(--ds-line)",
+          2: "var(--ds-line-2)",
           dark: "rgba(255,255,255,0.08)",
         },
         mint: "#7AE7C7",
