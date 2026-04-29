@@ -45,7 +45,6 @@ Before requesting a review, please confirm:
 - [ ] `npm run typecheck` passes in `frontend/`
 - [ ] `python manage.py test` passes in `backend/`
 - [ ] UI changes include screenshots in the PR description
-- [ ] The PR references the relevant spec (e.g. `specs/013-portfolio-polish-pass/spec.md`)
 - [ ] No new `href="#"` or empty `onClick={() => {}}` handlers introduced
 
 ## Getting Help

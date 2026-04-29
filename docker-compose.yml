@@ -1,0 +1,72 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: rawaj
+      POSTGRES_PASSWORD: rawaj
+      POSTGRES_DB: rawaj_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rawaj"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  backend:
+    build: ./backend
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.development
+      SECRET_KEY: django-insecure-docker-dev-key
+      DATABASE_URL: postgres://rawaj:rawaj@postgres:5432/rawaj_dev
+      REDIS_URL: redis://redis:6379/0
+      ALLOWED_HOSTS: localhost,127.0.0.1,backend
+      CORS_ALLOWED_ORIGINS: http://localhost:3000
+      FERNET_KEY: ZmFrZS1mZXJuZXQta2V5LWZvci1sb2NhbC1kZXYtb25seS0xMjM0NTY=
+      FLAG_BILLING: "false"
+      FLAG_AI_GENERATION: "false"
+      CLERK_JWKS_URL: https://example.clerk.accounts.dev/.well-known/jwks.json
+      CLERK_ISSUER: https://example.clerk.accounts.dev
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build: ./frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      BACKEND_URL: http://backend:8000
+      NEXT_PUBLIC_DEMO_MODE: "true"
+      NEXT_PUBLIC_USE_DUMMY_DATA: "true"
+      NEXT_PUBLIC_FLAG_BILLING: "true"
+      NEXT_PUBLIC_FLAG_INBOX: "true"
+      NEXT_PUBLIC_FLAG_PIPELINE: "true"
+      NEXT_PUBLIC_FLAG_CONTENT_ASSISTANT: "true"
+      # Clerk keys are unused when DEMO_MODE=true but the SDK still requires
+      # the publishable key to be syntactically valid.
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_ZXhhbXBsZS5jbGVyay5hY2NvdW50cy5kZXYk
+      CLERK_SECRET_KEY: sk_test_demo_unused_in_demo_mode
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+
+volumes:
+  postgres_data:

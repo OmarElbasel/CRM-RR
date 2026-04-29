@@ -14,10 +14,10 @@ interface UsageData {
 }
 
 interface BillingSettingsProps {
-  usage: UsageData | null
+  usage?: UsageData | null
 }
 
-export function BillingSettings({ usage }: BillingSettingsProps) {
+export function BillingSettings({ usage = null }: BillingSettingsProps) {
   if (!usage) return null
 
   const isUnlimited = usage.generations_limit === null

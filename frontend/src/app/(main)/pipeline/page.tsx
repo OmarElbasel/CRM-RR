@@ -24,8 +24,6 @@ export default function PipelinePage() {
   const [filters, setFilters] = useState<FilterValues>(EMPTY_FILTERS)
   const [selectedDealId, setSelectedDealId] = useState<number | null>(null)
   const [detailOpen, setDetailOpen] = useState(false)
-  const [currency, setCurrency] = useState<'SAR' | 'QAR' | 'USD'>('QAR')
-
   useEffect(() => {
     posthog.capture('pipeline_viewed')
   }, [])
@@ -109,21 +107,7 @@ export default function PipelinePage() {
           <h2 className="text-2xl font-extrabold text-ds-text tracking-tight headline">Pipeline</h2>
           <p className="text-ds-text-2 text-sm">Visual CRM — track every lead from first contact to close.</p>
         </div>
-        <div className="flex bg-paper p-1 rounded-lg shadow-inner">
-          {(['SAR', 'QAR', 'USD'] as const).map((curr) => (
-            <button
-              key={curr}
-              onClick={() => setCurrency(curr)}
-              className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${
-                currency === curr 
-                  ? 'bg-white text-primary shadow-sm scale-100' 
-                  : 'text-ds-text-2 hover:text-ds-text scale-95 opacity-70'
-              }`}
-            >
-              {curr}
-            </button>
-          ))}
-        </div>
+        <div className="flex bg-paper px-3 py-1.5 rounded-lg text-xs font-bold text-ds-text-2">USD</div>
       </div>
 
       {/* Revenue Summary Cards (Bento Style) */}

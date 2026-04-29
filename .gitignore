@@ -53,6 +53,14 @@ Thumbs.db
 .agent/
 .specify/
 claude-skills/
+.claude/
+
+# Internal planning (not for public repo)
+CLAUDE.md
+AGENTS.md
+specs/
+design-system/
+scripts/
 
 # Build output (root)
 .next/.claude/

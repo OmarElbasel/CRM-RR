@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { CheckCircle2, Circle, Sparkles, Code2, ShoppingBag } from 'lucide-react'
 
 interface OnboardingState {
@@ -10,28 +11,8 @@ interface OnboardingState {
   install: boolean
 }
 
-const STEPS = [
-  {
-    key: 'generate' as const,
-    label: 'Generate your first product',
-    href: '/dashboard/generate',
-    icon: Sparkles,
-  },
-  {
-    key: 'embed' as const,
-    label: 'Copy your embed code',
-    href: '/dashboard/embed',
-    icon: Code2,
-  },
-  {
-    key: 'install' as const,
-    label: 'Install on your store',
-    href: '/dashboard/embed',
-    icon: ShoppingBag,
-  },
-]
-
 export function OnboardingChecklist() {
+  const t = useTranslations('onboarding')
   const [state, setState] = useState<OnboardingState | null>(null)
 
   useEffect(() => {
@@ -44,6 +25,27 @@ export function OnboardingChecklist() {
     }
   }, [])
 
+  const STEPS = [
+    {
+      key: 'generate' as const,
+      label: t('generate_first_product'),
+      href: '/dashboard/generate',
+      icon: Sparkles,
+    },
+    {
+      key: 'embed' as const,
+      label: t('copy_embed_code'),
+      href: '/dashboard/embed',
+      icon: Code2,
+    },
+    {
+      key: 'install' as const,
+      label: t('install_on_store'),
+      href: '/dashboard/embed',
+      icon: ShoppingBag,
+    },
+  ]
+
   // Don't render during SSR or if state hasn't loaded yet
   if (!state) return null
 
@@ -55,19 +57,19 @@ export function OnboardingChecklist() {
 
   return (
     <div className="bg-white rounded-[14px] border border-ds-line shadow-[0_1px_0_rgba(0,0,0,0.02),0_30px_60px_-30px_rgba(10,10,20,0.15)] p-6">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-ds-primary-soft flex items-center justify-center text-ds-primary">
             <CheckCircle2 />
           </div>
           <div>
-            <h3 className="font-bold text-lg font-headline text-ds-text">Get Started</h3>
-            <p className="text-sm text-ds-text-2">{completedCount} of 3 complete</p>
+            <h3 className="font-bold text-lg font-headline text-ds-text">{t('get_started')}</h3>
+            <p className="text-sm text-ds-text-2">{t('of_complete', { count: completedCount, total: 3 })}</p>
           </div>
         </div>
-        <div className="w-1/3">
+        <div className="w-full sm:w-1/3">
           <div className="flex justify-between items-end mb-1 text-[10px] font-bold text-ds-text-2 uppercase tracking-tighter">
-            <span>Progress</span>
+            <span>{t('progress')}</span>
             <span>{Math.round((completedCount / 3) * 100)}%</span>
           </div>
           <div className="h-2 w-full bg-paper-2 rounded-full overflow-hidden">

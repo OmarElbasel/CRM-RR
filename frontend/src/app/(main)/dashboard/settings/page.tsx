@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '@clerk/nextjs'
 import { useSearchParams, useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { OrgSettings } from '@/components/settings/OrgSettings'
 import { BillingSettings } from '@/components/settings/BillingSettings'
 import { AccountSettings } from '@/components/settings/AccountSettings'
@@ -21,6 +22,7 @@ export default function SettingsPage() {
   const { getToken } = useAuth()
   const searchParams = useSearchParams()
   const router = useRouter()
+  const t = useTranslations('settings_page')
   const activeTab = searchParams.get('tab') || 'general'
 
   const [loading, setLoading] = useState(true)
@@ -78,7 +80,7 @@ export default function SettingsPage() {
       {/* Premium Header */}
       <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200 px-8 h-16 flex items-center justify-between font-headline">
         <div className="flex items-center gap-4">
-          <h2 className="text-lg font-black text-indigo-700 uppercase tracking-tight">Settings Hub</h2>
+          <h2 className="text-lg font-black text-indigo-700 uppercase tracking-tight">{t('title')}</h2>
         </div>
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-4 text-slate-500">
@@ -101,7 +103,7 @@ export default function SettingsPage() {
               activeTab === 'general' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-900'
             }`}
           >
-            General
+            {t('general')}
           </button>
           <button 
             onClick={() => handleTabChange('billing')}
@@ -109,7 +111,7 @@ export default function SettingsPage() {
               activeTab === 'billing' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-900'
             }`}
           >
-            Plan & Billing
+            {t('plan_billing')}
           </button>
           <button 
             onClick={() => handleTabChange('account')}
@@ -117,7 +119,7 @@ export default function SettingsPage() {
               activeTab === 'account' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-900'
             }`}
           >
-            Account
+            {t('account')}
           </button>
         </div>
 

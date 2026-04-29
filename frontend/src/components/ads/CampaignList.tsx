@@ -1,10 +1,10 @@
 'use client'
 
 import React from 'react'
-import { BarChart3, MoreHorizontal, Facebook, Music } from 'lucide-react'
+import { BarChart3, MoreHorizontal, Globe, Music } from 'lucide-react'
 
 const ICON_MAP: Record<string, React.ReactNode> = {
-  facebook: <Facebook className="text-xl" />,
+  facebook: <Globe className="text-xl" />,
   music_note: <Music className="text-xl" />,
 }
 
@@ -13,8 +13,8 @@ const CAMPAIGNS = [
     name: 'Summer Sports Collection',
     platform: 'Meta',
     status: 'Active',
-    spend: 'SAR 4,500',
-    budget: 'SAR 10,000',
+    spend: '$1,200',
+    budget: '$2,700',
     percentage: 45,
     roas: '5.2x',
     clicks: '1,240',
@@ -25,8 +25,8 @@ const CAMPAIGNS = [
     name: 'TikTok Flash Sale — Q2',
     platform: 'TikTok',
     status: 'Active',
-    spend: 'SAR 2,100',
-    budget: 'SAR 5,000',
+    spend: '$560',
+    budget: '$1,335',
     percentage: 42,
     roas: '3.8x',
     clicks: '2,850',
@@ -37,8 +37,8 @@ const CAMPAIGNS = [
     name: 'Artisan Coffee Launch',
     platform: 'Meta',
     status: 'Paused',
-    spend: 'SAR 0',
-    budget: 'SAR 2,500',
+    spend: '$0',
+    budget: '$670',
     percentage: 0,
     roas: '-',
     clicks: '-',

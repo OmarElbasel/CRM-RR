@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ArrowIcon } from './landing-icons';
+import { DEMO_MODE } from '@/lib/demo';
 
 export function FinalCta() {
   return (
@@ -17,10 +18,10 @@ export function FinalCta() {
         </p>
         <div className="mt-10 flex gap-2.5 justify-center flex-wrap">
           <Link
-            href="/sign-up"
+            href={DEMO_MODE ? '/dashboard' : '/sign-up'}
             className="group inline-flex items-center gap-2 h-11 px-[18px] rounded-[11px] text-sm font-semibold transition-all duration-150 cursor-pointer border border-transparent whitespace-nowrap bg-ds-accent text-ds-accent-ink hover:brightness-105"
           >
-            Start free — no card <ArrowIcon className="transition-transform duration-200 group-hover:translate-x-0.5" />
+            {DEMO_MODE ? 'Try the live demo' : 'Start free — no card'} <ArrowIcon className="transition-transform duration-200 group-hover:translate-x-0.5" />
           </Link>
           <a
             href="mailto:hello@rawaj.ai"

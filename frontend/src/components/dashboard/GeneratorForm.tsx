@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useAuth } from '@clerk/nextjs'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -30,6 +31,28 @@ interface GenerateResult {
   cost_usd?: number
 }
 
+// These map to API values; display labels are translated via i18n
+const CATEGORIES = [
+  { value: 'Fashion', apiValue: 'fashion', labelKey: 'categories_fashion' },
+  { value: 'Food', apiValue: 'food', labelKey: 'categories_food' },
+  { value: 'Electronics', apiValue: 'electronics', labelKey: 'categories_electronics' },
+  { value: 'Beauty', apiValue: 'beauty', labelKey: 'categories_beauty' },
+  { value: 'Home', apiValue: 'home', labelKey: 'categories_home' },
+] as const
+
+const TONES = [
+  { value: 'Professional', apiValue: 'professional', labelKey: 'tones_professional' },
+  { value: 'Casual', apiValue: 'casual', labelKey: 'tones_casual' },
+  { value: 'Luxury', apiValue: 'luxury', labelKey: 'tones_luxury' },
+  { value: 'Witty', apiValue: 'witty', labelKey: 'tones_witty' },
+] as const
+
+const LANGUAGES = [
+  { value: 'Arabic', apiValue: 'ar', labelKey: 'languages_arabic' },
+  { value: 'English', apiValue: 'en', labelKey: 'languages_english' },
+  { value: 'Bilingual', apiValue: 'bilingual', labelKey: 'languages_bilingual' },
+] as const
+
 // Data from the provided design
 const RECENT_GENERATIONS = [
   { 
@@ -57,6 +80,7 @@ const RECENT_GENERATIONS = [
 
 export function GeneratorForm() {
   const { getToken } = useAuth()
+  const t = useTranslations('generator')
   const [step, setStep] = useState<FormStep>('input')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -148,7 +172,7 @@ export function GeneratorForm() {
         setLoading(false)
       }
     } catch (err) {
-      setError('An unexpected error occurred. Please try again.')
+      setError(t('error_unexpected'))
       setStep('input')
       setLoading(false)
     }
@@ -180,16 +204,16 @@ export function GeneratorForm() {
                 <div className="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center text-primary shadow-inner">
                    <Wand2 className="text-2xl" />
                 </div>
-                <h2 className="text-2xl font-bold tracking-tight text-ds-text">Product Details</h2>
+                <h2 className="text-2xl font-bold tracking-tight text-ds-text">{t('product_details')}</h2>
               </div>
 
               <form onSubmit={handleGenerate} className="space-y-6">
                 <div className="space-y-2">
-                  <Label className="block text-sm font-bold text-ds-text-2 mb-2">Product Name</Label>
+                  <Label className="block text-sm font-bold text-ds-text-2 mb-2">{t('product_name')}</Label>
                   <Input
                     value={productName}
                     onChange={(e) => setProductName(e.target.value)}
-                    placeholder="e.g., Silk Abaya"
+                    placeholder={t('placeholder_product_name')}
                     className="w-full h-12 px-4 py-3 rounded-lg border border-ds-line-2 bg-paper-bright focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-slate-400"
                     required
                   />
@@ -197,22 +221,20 @@ export function GeneratorForm() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="block text-sm font-bold text-ds-text-2 mb-2">Category</Label>
+                    <Label className="block text-sm font-bold text-ds-text-2 mb-2">{t('category')}</Label>
                     <Select value={category} onValueChange={(val) => val && setCategory(val)}>
                       <SelectTrigger className="h-12 border-ds-line-2 bg-paper-bright rounded-lg">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Fashion">Fashion</SelectItem>
-                        <SelectItem value="Food">Food</SelectItem>
-                        <SelectItem value="Electronics">Electronics</SelectItem>
-                        <SelectItem value="Beauty">Beauty</SelectItem>
-                        <SelectItem value="Home">Home Decor</SelectItem>
+                        {CATEGORIES.map((cat) => (
+                          <SelectItem key={cat.value} value={cat.value}>{t(cat.labelKey)}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label className="block text-sm font-bold text-ds-text-2 mb-2">Price (QAR)</Label>
+                    <Label className="block text-sm font-bold text-ds-text-2 mb-2">{t('price')}</Label>
                     <Input
                       type="number"
                       step="0.01"
@@ -225,40 +247,39 @@ export function GeneratorForm() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="block text-sm font-bold text-ds-text-2 mb-2">Target Audience</Label>
+                  <Label className="block text-sm font-bold text-ds-text-2 mb-2">{t('target_audience')}</Label>
                   <Input
                     value={targetAudience}
                     onChange={(e) => setTargetAudience(e.target.value)}
-                    placeholder="e.g., Young professional women in Qatar"
+                    placeholder={t('placeholder_target_audience')}
                     className="h-12 border-ds-line-2 bg-paper-bright rounded-lg"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="block text-sm font-bold text-ds-text-2 mb-2">Tone</Label>
+                    <Label className="block text-sm font-bold text-ds-text-2 mb-2">{t('tone')}</Label>
                     <Select value={tone} onValueChange={(val) => val && setTone(val)}>
                       <SelectTrigger className="h-12 border-ds-line-2 bg-paper-bright rounded-lg">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Professional">Professional</SelectItem>
-                        <SelectItem value="Casual">Casual</SelectItem>
-                        <SelectItem value="Luxury">Luxury</SelectItem>
-                        <SelectItem value="Witty">Witty</SelectItem>
+                        {TONES.map((toneOpt) => (
+                          <SelectItem key={toneOpt.value} value={toneOpt.value}>{t(toneOpt.labelKey)}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label className="block text-sm font-bold text-ds-text-2 mb-2">Language</Label>
+                    <Label className="block text-sm font-bold text-ds-text-2 mb-2">{t('language')}</Label>
                     <Select value={language} onValueChange={(val) => val && setLanguage(val)}>
                       <SelectTrigger className="h-12 border-ds-line-2 bg-paper-bright rounded-lg">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Arabic">Arabic</SelectItem>
-                        <SelectItem value="English">English</SelectItem>
-                        <SelectItem value="Bilingual">Bilingual</SelectItem>
+                        {LANGUAGES.map((lang) => (
+                          <SelectItem key={lang.value} value={lang.value}>{t(lang.labelKey)}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -275,7 +296,7 @@ export function GeneratorForm() {
                     ) : (
                       <Sparkles className="w-5 h-5" />
                     )}
-                    Generate Product Description
+                    {t('generate')}
                   </button>
                 </div>
               </form>
@@ -293,9 +314,9 @@ export function GeneratorForm() {
                 <div className="w-16 h-16 rounded-full bg-paper-2est flex items-center justify-center text-ds-line-2 mb-6 mx-auto">
                   <FileText className="text-4xl" />
                 </div>
-                <h3 className="text-xl font-bold text-ds-text mb-3 headline">No Description Generated</h3>
+                <h3 className="text-xl font-bold text-ds-text mb-3 headline">{t('no_description')}</h3>
                 <p className="text-ds-text-2 max-w-[260px] mx-auto text-sm leading-relaxed">
-                  Fill in the details on the left and click "Generate" to see the magic happen.
+                  {t('no_desc_hint')}
                 </p>
               </div>
             )}
@@ -305,18 +326,18 @@ export function GeneratorForm() {
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-2">
                     <Sparkles className="text-indigo-500" />
-                    <span className="text-xs font-bold uppercase tracking-widest text-ds-text-2">AI Output</span>
+                    <span className="text-xs font-bold uppercase tracking-widest text-ds-text-2">{t('ai_output')}</span>
                   </div>
                   {step === 'generating' && (
                     <div className="flex items-center gap-2 text-primary font-bold text-xs animate-pulse">
                       <div className="w-1.5 h-1.5 rounded-full bg-primary mb-0.5"></div>
-                      Generating...
+                      {t('generating')}
                     </div>
                   )}
                 </div>
 
                 <div className="flex-1 bg-paper-bright rounded-xl border border-ds-line-2 p-6 mb-6 whitespace-pre-wrap text-sm text-ds-text leading-relaxed overflow-y-auto max-h-[280px] font-body shadow-inner">
-                  {streamedText || result?.long_description || 'Pre-generating...'}
+                  {streamedText || result?.long_description || t('pre_generating')}
                 </div>
 
                 {result && (
@@ -327,7 +348,7 @@ export function GeneratorForm() {
                         className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold h-11 rounded-lg"
                       >
                         {copied === 'all' ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
-                        Copy All
+                        {t('copy_all')}
                       </Button>
                       <Button
                         variant="ds-line"
@@ -339,7 +360,7 @@ export function GeneratorForm() {
                     </div>
                     {/* Simplified token info */}
                     <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">
-                      Cost: ${result.cost_usd?.toFixed(4)} • {result.tokens_out} tokens
+                      {t('cost')}: ${result.cost_usd?.toFixed(4)} • {result.tokens_out} {t('tokens')}
                     </div>
                   </div>
                 )}
@@ -351,13 +372,13 @@ export function GeneratorForm() {
           <div className="bg-gradient-to-br from-tertiary/10 to-primary/10 rounded-xl p-6 border border-tertiary-container/30 transition-all hover:shadow-md">
             <h4 className="text-sm font-extrabold text-tertiary mb-4 flex items-center gap-2 uppercase tracking-tight">
                <Lightbulb className="text-base" />
-              AI Generation Tips
+              {t('ai_tips')}
             </h4>
             <ul className="text-sm space-y-4 text-ds-text-2">
               {[
-                "Be specific with your audience to get highly personalized hooks.",
-                "Using 'Luxury' tone for premium products increases 'perceived value' vocabulary.",
-                "Bilingual mode is perfect for local markets in the GCC."
+                t('tip_1'),
+                t('tip_2'),
+                t('tip_3'),
               ].map((tip, idx) => (
                 <li key={idx} className="flex gap-2 leading-relaxed">
                   <span className="text-tertiary font-bold text-lg leading-none">•</span>
@@ -371,7 +392,7 @@ export function GeneratorForm() {
           <div className="relative rounded-xl overflow-hidden h-36 group cursor-pointer shadow-lg">
             <img className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAr3EDEK3kynzKQ4Y2pjREd0OXccqHdKnCCeLtr-FC0iHWrIQGM0tVRruglSsPXT5JzTkd3X68aB5iEnuQqBgthSkPEWQ5GuCXU6mbXvw0q0K08eGMDYOiCUH1whBTCjwxeCiApwsoNOrQIMkpZMTBbOIV-3cIv24p-0Tlm6hVeLTq7JuBMJWGPBPwgmPDBXdfb_N1lvPf0HZEwdkdNzarjbZBVEHfHdD52lI9Xw6Whc6ouHfI6Qm5FUc59xJrnP-svfv2TasmdDs-A" alt="Template Preview" />
             <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px] flex items-center justify-center opacity-90 group-hover:bg-black/40 transition-all">
-              <span className="text-white font-extrabold text-sm tracking-widest uppercase">View Template Gallery</span>
+              <span className="text-white font-extrabold text-sm tracking-widest uppercase">{t('view_templates')}</span>
             </div>
           </div>
         </div>
@@ -380,9 +401,9 @@ export function GeneratorForm() {
       {/* Bottom Section: Recent Generations */}
       <div className="pt-8 border-t border-ds-line-2">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-black tracking-tight text-ds-text">Recent Generations</h2>
+          <h2 className="text-2xl font-black tracking-tight text-ds-text">{t('recent_generations')}</h2>
           <Button variant="ghost" className="text-sm font-bold text-primary hover:bg-primary/5 px-4 h-10">
-            View History <ChevronRight className="w-4 h-4 ml-1" />
+            {t('view_history')} <ChevronRight className="w-4 h-4 ms-1 rtl:me-1 rtl:ms-0 rtl:rotate-180" />
           </Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

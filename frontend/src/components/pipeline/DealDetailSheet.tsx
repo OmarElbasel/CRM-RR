@@ -138,7 +138,7 @@ export function DealDetailSheet({ dealId, open, onOpenChange, apiUrl, onUpdate }
                 {deal.value && (
                   <div className="text-right">
                     <p className="text-[10px] font-bold text-ds-text-2 uppercase tracking-widest mb-1">Deal Value</p>
-                    <p className="text-2xl font-black text-primary font-headline">{deal.value} QAR</p>
+                    <p className="text-2xl font-black text-primary font-headline">${deal.value}</p>
                   </div>
                 )}
               </div>
@@ -166,7 +166,7 @@ export function DealDetailSheet({ dealId, open, onOpenChange, apiUrl, onUpdate }
                       <div className="mt-4 grid grid-cols-2 gap-4">
                         <div className="bg-white/50 border border-ds-line-2/30 rounded-xl p-3">
                           <p className="text-[9px] font-bold text-ds-text-2 uppercase tracking-widest mb-1">Lifetime Value</p>
-                          <p className="text-sm font-black text-ds-text">{deal.contact.total_spend} QAR</p>
+                          <p className="text-sm font-black text-ds-text">${deal.contact.total_spend}</p>
                         </div>
                         <div className="bg-white/50 border border-ds-line-2/30 rounded-xl p-3">
                           <p className="text-[9px] font-bold text-ds-text-2 uppercase tracking-widest mb-1">Customer Tier</p>

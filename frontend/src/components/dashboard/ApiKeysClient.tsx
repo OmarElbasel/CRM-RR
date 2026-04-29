@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useAuth } from '@clerk/nextjs'
+import { useTranslations } from 'next-intl'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
@@ -27,6 +28,7 @@ interface ApiKeysClientProps {
 
 export function ApiKeysClient({ initialPublicKey }: ApiKeysClientProps) {
   const { getToken } = useAuth()
+  const t = useTranslations('api_keys_page')
   const [keyState, setKeyState] = useState<KeyState>({
     publicKey: initialPublicKey,
     secretKey: null,
@@ -46,7 +48,7 @@ export function ApiKeysClient({ initialPublicKey }: ApiKeysClientProps) {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (!res.ok) {
-        alert('Rotation failed. Please try again.')
+        alert(t('rotation_failed'))
         return
       }
       const data = await res.json()
@@ -71,11 +73,11 @@ export function ApiKeysClient({ initialPublicKey }: ApiKeysClientProps) {
       {/* Public key card */}
       <Card className="rounded-xl shadow-sm">
         <CardContent className="p-6 space-y-3">
-          <div className="text-sm font-medium text-gray-900">Public Key (pk_live_xxx)</div>
-          <div className="text-xs text-gray-500">Safe to use in frontend embed code</div>
+          <div className="text-sm font-medium text-gray-900">{t('public_key')}</div>
+          <div className="text-xs text-gray-500">{t('public_key_desc')}</div>
           <div className="flex items-center gap-2 mt-2">
             <code className="flex-1 text-xs bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 font-mono truncate">
-              {keyState.publicKey || 'No key — rotate to generate'}
+               {keyState.publicKey || t('no_key')}
             </code>
             {keyState.publicKey && (
               <Button
@@ -95,10 +97,9 @@ export function ApiKeysClient({ initialPublicKey }: ApiKeysClientProps) {
       {keyState.secretKey && (
         <Card className="rounded-xl shadow-sm border-amber-200 bg-amber-50">
           <CardContent className="p-6 space-y-3">
-            <div className="text-sm font-medium text-amber-800">Secret Key — Save this now!</div>
+            <div className="text-sm font-medium text-amber-800">{t('secret_key_title')}</div>
             <div className="text-xs text-amber-600">
-              This key will NOT be shown again. Store it securely.
-              · لن يُعرض هذا المفتاح مرة أخرى. احفظه الآن.
+              {t('secret_key_desc')}
             </div>
             <div className="flex items-center gap-2 mt-2">
               <code className="flex-1 text-xs bg-white border border-amber-300 rounded-lg px-3 py-2.5 font-mono break-all">
@@ -115,7 +116,7 @@ export function ApiKeysClient({ initialPublicKey }: ApiKeysClientProps) {
             </div>
             {keyState.rotatedAt && (
               <div className="text-xs text-amber-500">
-                Rotated at: {new Date(keyState.rotatedAt).toLocaleString()}
+                {t('rotated_at')} {new Date(keyState.rotatedAt).toLocaleString()}
               </div>
             )}
           </CardContent>
@@ -125,9 +126,9 @@ export function ApiKeysClient({ initialPublicKey }: ApiKeysClientProps) {
       {/* Danger Zone: Rotate Key */}
       <Card className="rounded-xl shadow-sm border-red-200">
         <CardContent className="p-6 space-y-3">
-          <h3 className="text-sm font-semibold text-red-700">Danger Zone</h3>
+          <h3 className="text-sm font-semibold text-red-700">{t('danger_zone')}</h3>
           <p className="text-xs text-gray-500">
-            Rotating invalidates your current key pair immediately. Update any active embeds after rotating.
+            {t('danger_desc')}
           </p>
           <Dialog open={showRotateDialog} onOpenChange={setShowRotateDialog}>
             <DialogTrigger
@@ -142,32 +143,29 @@ export function ApiKeysClient({ initialPublicKey }: ApiKeysClientProps) {
                 {loading ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-1 animate-spin" />
-                    Rotating...
+                    {t('rotating')}
                   </>
                 ) : (
                   <>
                     <RefreshCw className="w-4 h-4 mr-1" />
-                    Rotate Keys
+                    {t('rotate_keys')}
                   </>
                 )}
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Rotate API Keys?</DialogTitle>
+                <DialogTitle>{t('rotate_dialog_title')}</DialogTitle>
                 <DialogDescription>
-                  Rotating keys will immediately invalidate your current API key pair.
-                  Any active widget embeds using the old key will stop working.
-                  <br /><br />
-                  تحذير: سيؤدي هذا إلى إبطال المفاتيح الحالية فوراً.
+                  {t('rotate_dialog_desc')}
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
                 <Button variant="ds-line" onClick={() => setShowRotateDialog(false)} className="rounded-lg">
-                  Cancel
+                  {t('cancel')}
                 </Button>
                 <Button variant="destructive" onClick={handleRotate} className="rounded-lg">
                   <AlertTriangle className="w-4 h-4 mr-1" />
-                  Rotate
+                  {t('rotate')}
                 </Button>
               </DialogFooter>
             </DialogContent>

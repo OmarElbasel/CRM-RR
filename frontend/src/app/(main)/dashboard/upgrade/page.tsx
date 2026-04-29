@@ -2,77 +2,80 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import { ArrowLeft, Building2, CheckCircle2, Rocket, Zap } from 'lucide-react'
 import Link from 'next/link'
 
-const PLANS = [
-  {
-    name: 'Starter',
-    price: 'SAR 49',
-    icon: <Zap className="w-6 h-6" />,
-    description: 'Perfect for local boutiques and small retailers.',
-    features: [
-      '200 AI Generations',
-      'Unified Inbox Access',
-      'Basic Performance Stats',
-      'WhatsApp Integration',
-    ],
-    buttonText: 'Get Started',
-    highlight: false,
-    color: 'text-indigo-600',
-    bg: 'bg-indigo-50',
-  },
-  {
-    name: 'Pro',
-    price: 'SAR 149',
-    icon: <Rocket className="w-6 h-6" />,
-    description: 'Our most popular plan for scaling your AI growth.',
-    features: [
-      '2,000 AI Generations',
-      'Priority Unified Inbox',
-      'Advanced Ads Dashboard',
-      'TikTok & Meta Integration',
-      'Custom Seasonal Templates',
-      'Direct WhatsApp Composer',
-    ],
-    buttonText: 'Upgrade to Pro',
-    highlight: true,
-    color: 'text-white',
-    bg: 'bg-indigo-600',
-  },
-  {
-    name: 'Enterprise',
-    price: 'Custom',
-    icon: <Building2 className="w-6 h-6" />,
-    description: 'Enterprise-grade automation and custom model training.',
-    features: [
-      'Unlimited Generations',
-      'Custom Arabic Dialect Fine-tuning',
-      'Dedicated Channel Manager',
-      'Full API & SDK Access',
-      'White-label Reports',
-    ],
-    buttonText: 'Contact Sales',
-    highlight: false,
-    color: 'text-purple-600',
-    bg: 'bg-purple-50',
-  },
-]
-
 export default function UpgradePage() {
+  const t = useTranslations('upgrade')
+
+  const PLANS = [
+    {
+      name: t('starter'),
+      price: '$14',
+      icon: <Zap className="w-6 h-6" />,
+      description: t('starter_desc'),
+      features: [
+        '200 AI Generations',
+        'Unified Inbox Access',
+        'Basic Performance Stats',
+        'WhatsApp Integration',
+      ],
+      buttonText: t('get_started'),
+      highlight: false,
+      color: 'text-indigo-600',
+      bg: 'bg-indigo-50',
+    },
+    {
+      name: 'Pro',
+      price: '$41',
+      icon: <Rocket className="w-6 h-6" />,
+      description: t('pro_desc'),
+      features: [
+        '2,000 AI Generations',
+        'Priority Unified Inbox',
+        'Advanced Ads Dashboard',
+        'TikTok & Meta Integration',
+        'Custom Seasonal Templates',
+        'Direct WhatsApp Composer',
+      ],
+      buttonText: t('upgrade_to_pro'),
+      highlight: true,
+      color: 'text-white',
+      bg: 'bg-indigo-600',
+    },
+    {
+      name: t('enterprise'),
+      price: 'Custom',
+      icon: <Building2 className="w-6 h-6" />,
+      description: t('enterprise_desc'),
+      features: [
+        'Unlimited Generations',
+        'Custom Arabic Dialect Fine-tuning',
+        'Dedicated Channel Manager',
+        'Full API & SDK Access',
+        'White-label Reports',
+      ],
+      buttonText: t('contact_sales'),
+      highlight: false,
+      color: 'text-purple-600',
+      bg: 'bg-purple-50',
+    },
+  ]
+
   return (
     <div className="w-full min-h-[calc(100vh-64px)] flex flex-col bg-background">
       {/* Premium Header */}
       <header className="sticky top-0 z-40 bg-white border-b border-slate-200 px-8 h-16 flex items-center justify-between font-headline">
         <div className="flex items-center gap-4">
           <Link href="/dashboard/settings" className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition-all">
-             <ArrowLeft className="w-5 h-5" />
+             <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
           </Link>
           <div className="h-4 w-px bg-slate-200"></div>
-          <h2 className="text-lg font-black text-indigo-700 uppercase tracking-tight">Upgrade Hub</h2>
+          <h2 className="text-lg font-black text-indigo-700 uppercase tracking-tight">{t('title')}</h2>
         </div>
         <div className="flex items-center gap-4">
-           <span className="text-xs font-bold text-slate-400">Current Plan: <span className="text-indigo-600">Free</span></span>
+           <span className="text-xs font-bold text-slate-400">{t('current_plan_label')}: <span className="text-indigo-600">Free</span></span>
         </div>
       </header>
 
@@ -80,10 +83,10 @@ export default function UpgradePage() {
         {/* Hero Section */}
         <div className="text-center space-y-4 max-w-3xl mx-auto">
           <h1 className="text-5xl font-headline font-black text-slate-900 tracking-tight leading-tight">
-             Accelerate your business with <span className="text-indigo-600">Rawaj Pro</span>
+             {t('hero_title')}
           </h1>
           <p className="text-slate-500 text-xl font-medium">
-             Unlock advanced AI capabilities, premium integrations, and unlimited growth tools designed for the Gulf market.
+             {t('hero_subtitle')}
           </p>
         </div>
 
@@ -102,9 +105,9 @@ export default function UpgradePage() {
               }`}
             >
               {plan.highlight && (
-                <div className="absolute top-0 right-0 p-6">
+                <div className="absolute top-0 right-0 rtl:left-0 rtl:right-auto p-6">
                   <span className="bg-indigo-600 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg animate-pulse">
-                     Recommendation
+                     {t('recommendation')}
                   </span>
                 </div>
               )}
@@ -118,7 +121,7 @@ export default function UpgradePage() {
                 <h3 className="text-2xl font-headline font-black mb-1">{plan.name}</h3>
                 <div className="flex items-baseline gap-1 mb-4">
                   <span className="text-4xl font-black tabular-nums">{plan.price}</span>
-                  {plan.price !== 'Custom' && <span className="text-sm font-bold opacity-60">/ month</span>}
+                  {plan.price !== 'Custom' && <span className="text-sm font-bold opacity-60">{t('per_month')}</span>}
                 </div>
                 <p className={`text-sm font-medium leading-relaxed ${plan.highlight ? 'text-slate-400' : 'text-slate-500'}`}>
                   {plan.description}
@@ -144,7 +147,7 @@ export default function UpgradePage() {
 
               {/* Background Decorative Gradient for Pro Card */}
               {plan.highlight && (
-                <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none"></div>
+                <div className="absolute -bottom-20 -right-20 rtl:-left-20 rtl:right-auto w-64 h-64 bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none"></div>
               )}
             </motion.div>
           ))}
@@ -153,49 +156,38 @@ export default function UpgradePage() {
         {/* Feature Comparison Section */}
         <div className="bg-white rounded-[40px] border border-slate-200 overflow-hidden shadow-sm">
            <div className="p-8 text-center bg-slate-50 border-b border-slate-100">
-              <h3 className="font-headline font-black text-2xl text-slate-900">Why choose Rawaj Pro?</h3>
-              <p className="text-slate-500 font-medium">Compare features and find the perfect fit for your business.</p>
+              <h3 className="font-headline font-black text-2xl text-slate-900">{t('why_pro')}</h3>
+              <p className="text-slate-500 font-medium">{t('why_pro_subtitle')}</p>
            </div>
            
            <div className="p-8 overflow-x-auto">
               <table className="w-full text-left min-w-[600px]">
                  <thead>
                     <tr className="border-b border-slate-100">
-                       <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Feature</th>
-                       <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-400 text-center">Free</th>
-                       <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-900 text-center bg-indigo-50/50">Pro</th>
-                       <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-400 text-center">Enterprise</th>
+                       <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-400">{t('feature')}</th>
+                       <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-400 text-center">{t('free')}</th>
+                       <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-900 text-center bg-indigo-50/50">{t('pro')}</th>
+                       <th className="py-4 font-black uppercase text-[10px] tracking-widest text-slate-400 text-center">{t('enterprise')}</th>
                     </tr>
                  </thead>
                  <tbody className="divide-y divide-slate-50">
-                    <tr>
-                       <td className="py-6 font-bold text-slate-900">AI Generations</td>
-                       <td className="py-6 text-center text-slate-500 font-medium">20 / mo</td>
-                       <td className="py-6 text-center text-indigo-700 font-bold bg-indigo-50/50">2,000 / mo</td>
-                       <td className="py-6 text-center text-slate-500 font-medium">Unlimited</td>
+                    {([
+                      { label: t('ai_generations'), free: '20 / mo', pro: '2,000 / mo', enterprise: 'Unlimited' },
+                      { label: t('gulf_dialect'), free: 'Basic', pro: 'Advanced', enterprise: 'Custom Trained' },
+                      { label: t('platform_integrations'), free: '1', pro: 'All Available', enterprise: 'Priority/Alpha' },
+                      { label: t('support'), free: 'Email', pro: 'Priority 24/7', enterprise: 'Dedicated Manager' },
+                    ]).map((row, idx) => (
+                    <tr key={idx}>
+                        <td className="py-6 font-bold text-slate-900">{row.label}</td>
+                        <td className="py-6 text-center text-slate-500 font-medium">{row.free}</td>
+                        <td className="py-6 text-center text-indigo-700 font-bold bg-indigo-50/50">{row.pro}</td>
+                        <td className="py-6 text-center text-slate-500 font-medium">{row.enterprise}</td>
                     </tr>
-                    <tr>
-                       <td className="py-6 font-bold text-slate-900">Gulf Dialect Support</td>
-                       <td className="py-6 text-center text-slate-500 font-medium">Basic</td>
-                       <td className="py-6 text-center text-indigo-700 font-bold bg-indigo-50/50">Advanced</td>
-                       <td className="py-6 text-center text-indigo-700 font-bold">Custom Trained</td>
-                    </tr>
-                    <tr>
-                       <td className="py-6 font-bold text-slate-900">Platform Integrations</td>
-                       <td className="py-6 text-center text-slate-500 font-medium">1</td>
-                       <td className="py-6 text-center text-indigo-700 font-bold bg-indigo-50/50">All Available</td>
-                       <td className="py-6 text-center text-indigo-700 font-bold">Priority/Alpha</td>
-                    </tr>
-                    <tr>
-                       <td className="py-6 font-bold text-slate-900">Support</td>
-                       <td className="py-6 text-center text-slate-500 font-medium">Email</td>
-                       <td className="py-6 text-center text-indigo-700 font-bold bg-indigo-50/50">Priority 24/7</td>
-                       <td className="py-6 text-center text-indigo-700 font-bold">Dedicated Manager</td>
-                    </tr>
+                    ))}
                  </tbody>
               </table>
-           </div>
-        </div>
+            </div>
+         </div>
       </main>
     </div>
   )

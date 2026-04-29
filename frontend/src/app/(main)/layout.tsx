@@ -1,11 +1,11 @@
-import { ClerkProvider } from '@clerk/nextjs'
 import type { Metadata } from 'next'
-import '../globals.css'
 import { AppShell } from '@/components/layout/AppShell'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { PostHogProvider } from '@/components/providers/PostHogProvider'
 import { OrgGuard } from '@/components/layout/OrgGuard'
-import { ThemeProvider } from '@/components/providers/ThemeProvider'
+import { PortfolioBanner } from '@/components/ui/PortfolioBanner'
+import { LocaleProvider } from '@/components/providers/LocaleProvider'
+import { I18nProvider } from '@/components/providers/I18nProvider'
 
 export const metadata: Metadata = {
   title: 'Rawaj — AI CRM that works the pipeline for you',
@@ -18,16 +18,17 @@ export default function MainLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider appearance={{ variables: { colorPrimary: '#594FBF' } }}>
-      <ThemeProvider>
+    <LocaleProvider>
+      <I18nProvider>
         <TooltipProvider>
           <PostHogProvider>
             <OrgGuard>
+              <PortfolioBanner />
               <AppShell>{children}</AppShell>
             </OrgGuard>
           </PostHogProvider>
         </TooltipProvider>
-      </ThemeProvider>
-    </ClerkProvider>
+      </I18nProvider>
+    </LocaleProvider>
   )
 }

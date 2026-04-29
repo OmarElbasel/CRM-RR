@@ -6,7 +6,6 @@ import { PageHeader } from '@/components/ui/PageHeader'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { CurrencyToggle } from '@/components/ui/CurrencyToggle'
 import { Check, Loader2 } from 'lucide-react'
 import { PLANS } from '@/lib/plans'
 import { formatPrice } from '@/lib/currency'
@@ -17,7 +16,6 @@ interface UpgradePageClientProps {
 
 export function UpgradePageClient({ currentPlan }: UpgradePageClientProps) {
   const { getToken } = useAuth()
-  const [currency, setCurrency] = useState<'QAR' | 'SAR' | 'USD'>('QAR')
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
 
   async function handleUpgrade(planId: string) {
@@ -53,7 +51,6 @@ export function UpgradePageClient({ currentPlan }: UpgradePageClientProps) {
       <PageHeader
         title="Upgrade Plan"
         subtitle="Choose the best plan for your business"
-        action={<CurrencyToggle value={currency} onChange={setCurrency} />}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -87,7 +84,7 @@ export function UpgradePageClient({ currentPlan }: UpgradePageClientProps) {
                     )}
                   </div>
                   <div className="text-3xl font-bold text-gray-900">
-                    {formatPrice(plan.priceUSD, currency)}
+                    {formatPrice(plan.priceUSD)}
                   </div>
                 </div>
 

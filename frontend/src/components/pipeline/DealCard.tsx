@@ -98,7 +98,7 @@ export function DealCard({ deal, onClick, isDragOverlay, stage }: DealCardProps)
             {deal.title.length > 20 ? deal.title.substring(0, 17) + '...' : deal.title}
           </span>
           <span className={`font-bold ${isLost ? 'text-slate-400' : 'text-slate-900'}`}>
-            SAR {deal.value || '0.00'}
+            ${deal.value || '0.00'}
           </span>
         </div>
       </div>

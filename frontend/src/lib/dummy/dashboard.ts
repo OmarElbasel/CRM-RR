@@ -31,7 +31,7 @@ export const DUMMY_USAGE: UsageData = {
 
 export const DUMMY_PIPELINE_STATS: PipelineStats = {
   total_value: '84200.00',
-  currency: 'QAR',
+  currency: 'USD',
   by_source: [
     { source: 'shopify', amount: '56200.00', percent: 67 },
     { source: 'whatsapp', amount: '21000.00', percent: 25 },

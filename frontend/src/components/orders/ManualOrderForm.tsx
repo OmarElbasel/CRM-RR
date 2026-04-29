@@ -23,7 +23,7 @@ export function ManualOrderForm({ onCreated }: { onCreated: () => void }) {
   const { getToken } = useAuth()
   const [open, setOpen] = useState(false)
   const [totalAmount, setTotalAmount] = useState('')
-  const [currency, setCurrency] = useState('EGP')
+  const [currency, setCurrency] = useState('USD')
   const [notes, setNotes] = useState('')
   const [items, setItems] = useState<LineItem[]>([{ title: '', quantity: 1, price: '' }])
   const [error, setError] = useState('')
@@ -120,9 +120,6 @@ export function ManualOrderForm({ onCreated }: { onCreated: () => void }) {
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
               >
-                <option>EGP</option>
-                <option>QAR</option>
-                <option>SAR</option>
                 <option>USD</option>
               </select>
             </div>

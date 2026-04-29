@@ -3,45 +3,48 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Menu, X, LayoutDashboard, Sparkles, Inbox, GitBranch, ShoppingCart, BookOpen, Calendar, Share2, Settings } from 'lucide-react'
-
-const NAV_GROUPS = [
-  {
-    label: 'Workspace',
-    items: [
-      { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-      { label: 'AI Generator', href: '/dashboard/generate', icon: Sparkles },
-      { label: 'Inbox', href: '/inbox', icon: Inbox },
-      { label: 'Pipeline', href: '/pipeline', icon: GitBranch },
-      { label: 'Orders', href: '/orders', icon: ShoppingCart },
-    ],
-  },
-  {
-    label: 'Marketing',
-    items: [
-      { label: 'Content', href: '/content', icon: BookOpen },
-      { label: 'Scheduler', href: '/scheduler', icon: Calendar },
-      { label: 'Ads', href: '/ads', icon: Sparkles },
-    ],
-  },
-  {
-    label: 'Setup',
-    items: [
-      { label: 'Channels', href: '/channels', icon: Share2 },
-      { label: 'Settings', href: '/settings', icon: Settings },
-    ],
-  },
-]
 
 export function MobileNav() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
+  const tn = useTranslations('nav')
+  const tg = useTranslations('nav_groups')
+
+  const NAV_GROUPS = [
+    {
+      label: tg('workspace'),
+      items: [
+        { label: tn('dashboard'), href: '/dashboard', icon: LayoutDashboard },
+        { label: tn('ai_generator'), href: '/dashboard/generate', icon: Sparkles },
+        { label: tn('inbox'), href: '/inbox', icon: Inbox },
+        { label: tn('pipeline'), href: '/pipeline', icon: GitBranch },
+        { label: tn('orders'), href: '/orders', icon: ShoppingCart },
+      ],
+    },
+    {
+      label: tg('marketing'),
+      items: [
+        { label: tn('content'), href: '/content', icon: BookOpen },
+        { label: tn('scheduler'), href: '/scheduler', icon: Calendar },
+        { label: tn('ads'), href: '/ads', icon: Sparkles },
+      ],
+    },
+    {
+      label: tg('setup'),
+      items: [
+        { label: tn('channels'), href: '/channels', icon: Share2 },
+        { label: tn('settings'), href: '/settings', icon: Settings },
+      ],
+    },
+  ]
 
   return (
     <>
       <button
         onClick={() => setOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-ink text-white rounded-lg"
+        className="lg:hidden fixed top-4 left-4 rtl:right-4 rtl:left-auto z-50 p-2 bg-ink text-white rounded-lg"
         aria-label="Open menu"
       >
         <Menu className="w-5 h-5" />
@@ -50,7 +53,7 @@ export function MobileNav() {
       {open && (
         <div className="lg:hidden fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
-          <div className="absolute left-0 top-0 h-full w-72 bg-ink border-r border-ds-line-dark p-5 overflow-y-auto">
+          <div className="absolute left-0 rtl:right-0 rtl:left-auto top-0 h-full w-72 bg-ink border-r rtl:border-l rtl:border-r-0 border-ds-line-dark p-5 overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
               <h1 className="text-[16px] font-bold text-[#EDEDF2] tracking-[-0.02em]">Rawaj</h1>
               <button onClick={() => setOpen(false)} className="text-[#B8B8C8]">

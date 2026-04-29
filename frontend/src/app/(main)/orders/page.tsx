@@ -14,7 +14,7 @@ import { OrderPipelineBoard } from '@/components/orders/OrderPipelineBoard'
 import { RevenueSummary } from '@/components/orders/RevenueSummary'
 import { ManualOrderForm } from '@/components/orders/ManualOrderForm'
 
-type Currency = 'EGP' | 'QAR' | 'SAR' | 'USD'
+type Currency = 'USD'
 
 export default function OrdersPage() {
   if (!isEnabled('SHOPIFY_ORDER_HUB')) {
@@ -39,7 +39,7 @@ function OrderHubContent() {
   const { getToken } = useAuth()
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
-  const [currency, setCurrency] = useState<Currency>('EGP')
+  const [currency] = useState<Currency>('USD')
 
   const loadOrders = useCallback(async () => {
     const filters: OrderFilters = {
@@ -98,21 +98,7 @@ function OrderHubContent() {
           <p className="text-ds-text-2 text-sm">Real-time sync and order management across all channels.</p>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex bg-paper p-1 rounded-lg shadow-inner">
-            {(['EGP', 'SAR', 'QAR', 'USD'] as Currency[]).map((c) => (
-              <button
-                key={c}
-                onClick={() => setCurrency(c)}
-                className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${
-                  currency === c
-                    ? 'bg-white text-primary shadow-sm scale-100'
-                    : 'text-ds-text-2 hover:text-ds-text scale-95 opacity-70'
-                }`}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
+          <div className="flex bg-paper px-3 py-1.5 rounded-lg text-xs font-bold text-ds-text-2">USD</div>
           <button
             onClick={handleSync}
             disabled={syncing}

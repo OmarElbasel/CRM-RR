@@ -105,7 +105,7 @@ export function CreateDealDialog({ apiUrl, onCreated, trigger }: CreateDealDialo
           </div>
 
           <div>
-            <Label htmlFor="deal-value">Value (QAR)</Label>
+            <Label htmlFor="deal-value">Value (USD)</Label>
             <Input
               id="deal-value"
               type="number"

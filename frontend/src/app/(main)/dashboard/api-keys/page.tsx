@@ -1,7 +1,6 @@
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
-import { ApiKeysClient } from '@/components/dashboard/ApiKeysClient'
-import { PageHeader } from '@/components/ui/PageHeader'
+import { ApiKeysPageClient } from './ApiKeysPageClient'
 
 export default async function ApiKeysPage() {
   const { getToken } = auth()
@@ -20,13 +19,5 @@ export default async function ApiKeysPage() {
     }
   } catch {}
 
-  return (
-    <>
-      <PageHeader
-        title="API Keys"
-        subtitle="Manage your API keys for widget embeds"
-      />
-      <ApiKeysClient initialPublicKey={publicKey} />
-    </>
-  )
+  return <ApiKeysPageClient publicKey={publicKey} />
 }

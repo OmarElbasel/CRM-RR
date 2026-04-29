@@ -23,7 +23,7 @@ export function AppShell({ children }: AppShellProps) {
       <MobileNav />
 
       {/* Main content area */}
-      <main className="flex-1 flex flex-col lg:ms-64 pt-16 lg:pt-0 min-h-screen w-full relative min-w-0">
+      <main className="flex-1 flex flex-col lg:ms-64 lg:me-0 min-h-screen w-full relative min-w-0 pt-16 lg:pt-0">
         <DemoModeBanner />
         <div className="hidden lg:block sticky top-0 z-40">
           <TopNavbar />

@@ -1,46 +1,29 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-const PLATFORMS = [
-  {
-    id: 'shopify',
-    name: 'Shopify',
-    steps: [
-      'Go to your Shopify Admin → Online Store → Themes',
-      'Click "Actions" → "Edit code"',
-      'Open the theme.liquid file',
-      'Paste the embed code just before the </body> tag',
-      'Click "Save"',
-      'Visit your store to verify the widget appears',
-    ],
-  },
-  {
-    id: 'salla',
-    name: 'Salla',
-    steps: [
-      'Go to your Salla Dashboard → Store Settings',
-      'Navigate to "Custom Code" or "Additional Scripts"',
-      'Paste the embed code in the "Footer" section',
-      'Click "Save Changes"',
-      'Visit your store to verify the widget appears',
-    ],
-  },
-  {
-    id: 'zid',
-    name: 'Zid',
-    steps: [
-      'Go to your Zid Dashboard → Store Design',
-      'Navigate to "Custom Code"',
-      'Paste the embed code in the "Body End" field',
-      'Click "Save"',
-      'Visit your store to verify the widget appears',
-    ],
-  },
-]
-
 export function PlatformGuide() {
+  const t = useTranslations('embed_page')
+
+  const PLATFORMS = [
+    {
+      id: 'shopify',
+      name: t('shopify'),
+      steps: t.raw('shopify_steps') as string[],
+    },
+    {
+      id: 'salla',
+      name: t('salla'),
+      steps: t.raw('salla_steps') as string[],
+    },
+    {
+      id: 'zid',
+      name: t('zid'),
+      steps: t.raw('zid_steps') as string[],
+    },
+  ]
   function handleTabClick() {
     // Mark onboarding step as complete
     try {
@@ -53,7 +36,7 @@ export function PlatformGuide() {
   return (
     <Card className="rounded-xl shadow-sm">
       <CardContent className="p-6">
-        <h3 className="text-sm font-medium text-gray-900 mb-4">Platform Install Guide</h3>
+        <h3 className="text-sm font-medium text-gray-900 mb-4">{t('platform_guide')}</h3>
         <Tabs defaultValue="shopify" onValueChange={handleTabClick}>
           <TabsList className="mb-4">
             {PLATFORMS.map((p) => (

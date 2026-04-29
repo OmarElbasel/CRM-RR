@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowIcon } from './landing-icons';
+import { DEMO_MODE } from '@/lib/demo';
 
 export function Nav() {
   return (
@@ -34,18 +35,39 @@ export function Nav() {
           </div>
         </div>
         <div className="flex items-center gap-2 text-[13.5px]">
-          <Link
-            href="/sign-in"
-            className="inline-flex items-center gap-2 h-9 px-3.5 rounded-[10px] font-medium text-[13.5px] transition-all duration-150 cursor-pointer border border-transparent whitespace-nowrap text-[#B8B8C8] bg-transparent hover:text-white"
-          >
-            Sign in
-          </Link>
-          <Link
-            href="/sign-up"
-            className="group inline-flex items-center gap-2 h-9 px-3.5 rounded-[10px] font-semibold text-[13.5px] transition-all duration-150 cursor-pointer border border-transparent whitespace-nowrap bg-ds-accent text-ds-accent-ink hover:brightness-105"
-          >
-            Start free <ArrowIcon className="transition-transform duration-200 group-hover:translate-x-0.5" />
-          </Link>
+          {DEMO_MODE ? (
+            <>
+              <a
+                href="https://github.com/OmarEbasel"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 h-9 px-3.5 rounded-[10px] font-medium text-[13.5px] transition-all duration-150 cursor-pointer border border-transparent whitespace-nowrap text-[#B8B8C8] bg-transparent hover:text-white"
+              >
+                GitHub
+              </a>
+              <Link
+                href="/dashboard"
+                className="group inline-flex items-center gap-2 h-9 px-3.5 rounded-[10px] font-semibold text-[13.5px] transition-all duration-150 cursor-pointer border border-transparent whitespace-nowrap bg-ds-accent text-ds-accent-ink hover:brightness-105"
+              >
+                Try the demo <ArrowIcon className="transition-transform duration-200 group-hover:translate-x-0.5" />
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/sign-in"
+                className="inline-flex items-center gap-2 h-9 px-3.5 rounded-[10px] font-medium text-[13.5px] transition-all duration-150 cursor-pointer border border-transparent whitespace-nowrap text-[#B8B8C8] bg-transparent hover:text-white"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/sign-up"
+                className="group inline-flex items-center gap-2 h-9 px-3.5 rounded-[10px] font-semibold text-[13.5px] transition-all duration-150 cursor-pointer border border-transparent whitespace-nowrap bg-ds-accent text-ds-accent-ink hover:brightness-105"
+              >
+                Start free <ArrowIcon className="transition-transform duration-200 group-hover:translate-x-0.5" />
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </motion.nav>

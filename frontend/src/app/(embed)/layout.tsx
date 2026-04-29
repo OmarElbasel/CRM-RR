@@ -7,11 +7,8 @@ export default function WidgetLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ar" dir="rtl">
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      </head>
-      <body className="bg-transparent">{children}</body>
-    </html>
+    <div dir="rtl" lang="ar" className="bg-transparent">
+      {children}
+    </div>
   )
 }

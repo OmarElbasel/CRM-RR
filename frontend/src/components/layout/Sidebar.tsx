@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useClerk, OrganizationSwitcher } from '@clerk/nextjs'
+import { useTranslations } from 'next-intl'
 import {
   LayoutDashboard,
   Sparkles,
@@ -19,28 +20,28 @@ import {
 
 const NAV_GROUPS = [
   {
-    label: 'Workspace',
+    labelKey: 'workspace',
     items: [
-      { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-      { label: 'AI Generator', href: '/dashboard/generate', icon: Sparkles },
-      { label: 'Inbox', href: '/inbox', icon: Inbox },
-      { label: 'Pipeline', href: '/pipeline', icon: GitBranch },
-      { label: 'Orders', href: '/orders', icon: ShoppingCart },
+      { labelKey: 'dashboard', href: '/dashboard', icon: LayoutDashboard },
+      { labelKey: 'ai_generator', href: '/dashboard/generate', icon: Sparkles },
+      { labelKey: 'inbox', href: '/inbox', icon: Inbox },
+      { labelKey: 'pipeline', href: '/pipeline', icon: GitBranch },
+      { labelKey: 'orders', href: '/orders', icon: ShoppingCart },
     ],
   },
   {
-    label: 'Marketing',
+    labelKey: 'marketing',
     items: [
-      { label: 'Content', href: '/content', icon: BookOpen },
-      { label: 'Scheduler', href: '/scheduler', icon: Calendar },
-      { label: 'Ads', href: '/ads', icon: Sparkles },
+      { labelKey: 'content', href: '/content', icon: BookOpen },
+      { labelKey: 'scheduler', href: '/scheduler', icon: Calendar },
+      { labelKey: 'ads', href: '/ads', icon: Sparkles },
     ],
   },
   {
-    label: 'Setup',
+    labelKey: 'setup',
     items: [
-      { label: 'Channels', href: '/channels', icon: Share2 },
-      { label: 'Settings', href: '/settings', icon: Settings },
+      { labelKey: 'channels', href: '/channels', icon: Share2 },
+      { labelKey: 'settings', href: '/settings', icon: Settings },
     ],
   },
 ]
@@ -48,9 +49,11 @@ const NAV_GROUPS = [
 export function Sidebar() {
   const pathname = usePathname()
   const { signOut } = useClerk()
+  const t = useTranslations('nav')
+  const tGroups = useTranslations('nav_groups')
 
   return (
-    <aside className="fixed left-0 top-0 h-full flex flex-col z-50 bg-ink border-r border-ds-line-dark w-64 font-headline tracking-tight">
+    <aside className="fixed left-0 rtl:right-0 rtl:left-auto top-0 h-full flex flex-col z-50 bg-ink border-r rtl:border-l rtl:border-r-0 border-ds-line-dark w-64 font-headline tracking-tight">
       {/* Logo */}
       <div className="p-5">
         <Link href="/dashboard" className="flex items-center gap-3 group">
@@ -67,9 +70,9 @@ export function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 px-3 mt-2 space-y-4 overflow-y-auto">
         {NAV_GROUPS.map((group) => (
-          <div key={group.label}>
+          <div key={group.labelKey}>
             <p className="text-[10px] uppercase tracking-wider text-[#6A6A80] px-3 mb-1 font-semibold">
-              {group.label}
+              {tGroups(group.labelKey)}
             </p>
             <div className="space-y-0.5">
               {group.items.map((item) => {
@@ -86,7 +89,7 @@ export function Sidebar() {
                     }`}
                   >
                     <Icon className="w-[18px] h-[18px]" />
-                    <span>{item.label}</span>
+                    <span>{t(item.labelKey)}</span>
                   </Link>
                 )
               })}
@@ -101,12 +104,12 @@ export function Sidebar() {
         <div className="p-4 rounded-[14px] mb-4 border border-ds-line-dark relative overflow-hidden group" style={{ background: 'rgba(89,79,191,0.12)' }}>
           <div className="absolute -right-8 -bottom-8 w-24 h-24 bg-ds-primary/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
           <p className="text-[10px] text-ds-accent font-bold mb-1 uppercase tracking-[0.12em] relative z-10">PRO PLAN</p>
-          <p className="text-xs text-[#8A8AA0] mb-3 relative z-10 leading-relaxed">Unlock more generations and priority support.</p>
+          <p className="text-xs text-[#8A8AA0] mb-3 relative z-10 leading-relaxed">{t('upgrade_desc')}</p>
           <Link
             href="/settings?tab=billing"
             className="w-full bg-ds-accent text-ds-accent-ink text-xs font-bold py-2 rounded-[10px] hover:brightness-105 transition-all text-center block relative z-10"
           >
-            Upgrade to Pro
+            {t('upgrade_cta')}
           </Link>
         </div>
 
@@ -130,14 +133,14 @@ export function Sidebar() {
           className="py-2 px-3 flex items-center gap-3 transition-colors text-sm rounded-[10px] text-[#B8B8C8] hover:text-[#fff] hover:bg-white/[0.04]"
         >
           <User className="w-[18px] h-[18px]" />
-          <span className="font-medium">Account</span>
+          <span className="font-medium">{t('account')}</span>
         </Link>
         <button
           onClick={() => signOut({ redirectUrl: '/' })}
           className="w-full text-[#B8B8C8] py-2 px-3 flex items-center gap-3 hover:text-[#fff] hover:bg-white/[0.04] transition-all text-sm rounded-[10px] mt-0.5"
         >
           <LogOut className="w-[18px] h-[18px]" />
-          <span className="font-medium">Logout</span>
+          <span className="font-medium">{t('logout')}</span>
         </button>
       </div>
     </aside>

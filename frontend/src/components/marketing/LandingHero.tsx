@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowIcon, InboxIcon, SparkIcon } from './landing-icons';
+import { DEMO_MODE } from '@/lib/demo';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -74,10 +75,10 @@ export function Hero() {
             variants={fadeUp}
           >
             <Link
-              href="/sign-up"
+              href={DEMO_MODE ? '/dashboard' : '/sign-up'}
               className="group inline-flex items-center gap-2 h-11 px-[18px] rounded-[11px] text-sm font-semibold transition-all duration-150 cursor-pointer border border-transparent whitespace-nowrap bg-ds-accent text-ds-accent-ink hover:brightness-105"
             >
-              Start for free <ArrowIcon className="transition-transform duration-200 group-hover:translate-x-0.5" />
+              {DEMO_MODE ? 'Try the live demo' : 'Start for free'} <ArrowIcon className="transition-transform duration-200 group-hover:translate-x-0.5" />
             </Link>
             <a
               href="#product"
@@ -182,7 +183,7 @@ function HeroStage() {
           <div className="text-[10.5px] text-ds-text-3 ml-auto">Rawaj AI</div>
         </div>
         <div className="text-[13px] leading-[1.5] text-ds-text border-l-2 border-ds-accent pl-2.5 my-2 mb-3">
-          Hi Maya — yes, we can deliver to Doha by Thursday if you place the order before 2pm today. Shipping is 25 QAR. Shall I send you the payment link?
+          Hi Maya — yes, we can deliver to Doha by Thursday if you place the order before 2pm today. Shipping is $7. Shall I send you the payment link?
         </div>
         <div className="flex gap-1.5">
           <button className="flex-1 h-[30px] rounded-lg border border-ds-line bg-white text-xs font-medium cursor-pointer">Regenerate</button>
@@ -195,7 +196,7 @@ function HeroStage() {
         <div className="flex items-center justify-between mb-3 px-0.5">
           <div>
             <div className="font-display font-semibold text-[13px] text-white tracking-[-0.01em]">Deal Pipeline</div>
-            <div className="text-[11px] text-[#8A8AA0]">48 deals · 12,400 QAR open</div>
+            <div className="text-[11px] text-[#8A8AA0]">48 deals · $3,400 open</div>
           </div>
           <div className="text-[10px] font-bold py-[3px] px-[7px] rounded-[5px] font-display" style={{ background: 'rgba(200,254,94,0.12)', color: '#C8FE5E' }}>+18% this week</div>
         </div>
@@ -209,12 +210,12 @@ function HeroStage() {
           <div className="p-2.5 border border-ds-accent/35 rounded-lg bg-ds-accent/[0.06] mb-1.5">
             <div className="flex justify-between text-[10.5px] text-[#8A8AA0] mb-1"><span>RAW-2241</span><span style={{ color: '#C8FE5E' }}>● AI active</span></div>
             <div className="text-[12.5px] font-semibold text-[#EDEDF2] tracking-[-0.01em]">Maya Rodriguez · WhatsApp</div>
-            <div className="flex justify-between mt-1.5 text-[11px] text-[#B8B8C8]"><span>Abaya set</span><span className="text-ds-accent font-semibold">450 QAR</span></div>
+            <div className="flex justify-between mt-1.5 text-[11px] text-[#B8B8C8]"><span>Abaya set</span><span className="text-ds-accent font-semibold">$124</span></div>
           </div>
           <div className="p-2.5 border border-white/10 rounded-lg bg-ink-3 mb-1.5">
             <div className="flex justify-between text-[10.5px] text-[#8A8AA0] mb-1"><span>RAW-2240</span><span>●</span></div>
             <div className="text-[12.5px] font-semibold text-[#EDEDF2] tracking-[-0.01em]">Theo Adewale · Instagram</div>
-            <div className="flex justify-between mt-1.5 text-[11px] text-[#B8B8C8]"><span>Shoes bundle</span><span className="text-ds-accent font-semibold">320 QAR</span></div>
+            <div className="flex justify-between mt-1.5 text-[11px] text-[#B8B8C8]"><span>Shoes bundle</span><span className="text-ds-accent font-semibold">$88</span></div>
           </div>
         </div>
         <div className="mb-2.5">

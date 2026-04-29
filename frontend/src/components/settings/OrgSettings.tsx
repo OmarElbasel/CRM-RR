@@ -14,11 +14,11 @@ import {
 } from '@/components/ui/dialog'
 
 interface OrgSettingsProps {
-  initialName: string
-  onUpdate: (newName: string) => void
+  initialName?: string
+  onUpdate?: (newName: string) => void
 }
 
-export function OrgSettings({ initialName, onUpdate }: OrgSettingsProps) {
+export function OrgSettings({ initialName = '', onUpdate }: OrgSettingsProps) {
   const { getToken } = useAuth()
   const [name, setName] = useState(initialName)
   const [saving, setSaving] = useState(false)
@@ -45,7 +45,7 @@ export function OrgSettings({ initialName, onUpdate }: OrgSettingsProps) {
         return
       }
       const data = await res.json()
-      onUpdate(data.name)
+      onUpdate?.(data.name)
       setSaved(true)
       setTimeout(() => setSaved(false), 2000)
     } catch {

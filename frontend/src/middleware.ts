@@ -1,4 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { NextResponse } from 'next/server'
 
 /**
  * Public routes that do NOT require authentication.
@@ -19,11 +20,15 @@ const isPublicRoute = createRouteMatcher([
   '/access-denied',
 ])
 
-export default clerkMiddleware(async (auth, req) => {
-  if (!isPublicRoute(req)) {
-    auth().protect()
-  }
-})
+const DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === 'true'
+
+export default DEMO_MODE
+  ? () => NextResponse.next()
+  : clerkMiddleware(async (auth, req) => {
+      if (!isPublicRoute(req)) {
+        auth().protect()
+      }
+    })
 
 export const config = {
   matcher: [

@@ -3,8 +3,14 @@
 import { useOrganization, useAuth } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import { DEMO_MODE } from '@/lib/demo'
 
 export function OrgGuard({ children }: { children: React.ReactNode }) {
+  if (DEMO_MODE) return <>{children}</>
+  return <RealOrgGuard>{children}</RealOrgGuard>
+}
+
+function RealOrgGuard({ children }: { children: React.ReactNode }) {
   const { isLoaded, organization } = useOrganization()
   const { isSignedIn } = useAuth()
   const router = useRouter()
@@ -15,10 +21,7 @@ export function OrgGuard({ children }: { children: React.ReactNode }) {
     }
   }, [isLoaded, isSignedIn, organization, router])
 
-  // Still loading — render nothing to avoid flash
   if (!isLoaded) return null
-
-  // Signed in with no org — redirect is in flight
   if (isSignedIn && !organization) return null
 
   return <>{children}</>

@@ -1,21 +1,25 @@
 import Link from 'next/link';
 import { ArrowIcon, CheckIcon } from './landing-icons';
+import { DEMO_MODE } from '@/lib/demo';
 
 export function PricingCards() {
+  const ctaHref = DEMO_MODE ? '/dashboard' : '/sign-up';
+  const ctaLabel = (fallback: string) => (DEMO_MODE ? 'Try the demo' : fallback);
+
   const plans = [
     {
       n: 'Free', d: 'For merchants testing the waters.',
-      p: '0', per: 'QAR / month', cta: 'Start free', hi: false,
+      p: '0', per: 'USD / month', cta: ctaLabel('Start free'), hi: false,
       f: ['20 AI generations/month', '1 channel', 'Basic embed widget', 'Community support'],
     },
     {
       n: 'Starter', d: 'For new stores ready to grow.',
-      p: '49', per: 'QAR / month (~$14)', cta: 'Start free', hi: false,
+      p: '14', per: 'USD / month', cta: ctaLabel('Start free'), hi: false,
       f: ['200 AI generations/month', '3 channels', 'Shopify integration', 'Embed widget', 'Chat support'],
     },
     {
       n: 'Pro', d: 'For scaling brands that need the full stack.',
-      p: '149', per: 'QAR / month (~$41)', cta: 'Start free', hi: true, tag: 'Most popular',
+      p: '41', per: 'USD / month', cta: ctaLabel('Start free'), hi: true, tag: 'Most popular',
       f: ['2,000 AI generations/month', 'Unlimited channels', 'Full inbox + pipeline', 'Content scheduler', 'Priority support'],
     },
     {
@@ -35,7 +39,7 @@ export function PricingCards() {
             Straightforward plans. <em className="italic text-ds-primary font-normal">No</em> gotchas.
           </h2>
           <p className="mt-5 text-[17.5px] leading-[1.55] text-ds-text-2 max-w-[600px] mx-auto">
-            Pay in QAR. Cancel any time. AI generations included — no metered surprises.
+            Pay in USD. Cancel any time. AI generations included — no metered surprises.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -45,12 +49,13 @@ export function PricingCards() {
               <div className={`font-display font-semibold text-sm tracking-[0.02em] uppercase ${p.hi ? 'text-ds-accent' : 'text-ds-text-2'}`}>{p.n}</div>
               <div className={`text-[13.5px] mt-2 leading-[1.45] ${p.hi ? 'text-[#A8A8BC]' : 'text-ds-text-2'}`}>{p.d}</div>
               <div className="my-8 flex items-baseline gap-1">
+                {p.p !== 'Custom' && <span className={`font-display text-[28px] font-normal ${p.hi ? 'text-[#A8A8BC]' : 'text-ds-text-2'}`}>$</span>}
                 <span className="font-display text-[56px] font-normal tracking-[-0.035em] leading-none">{p.p}</span>
                 <span className={`text-[13px] ${p.hi ? 'text-[#A8A8BC]' : 'text-ds-text-2'}`}>{p.per}</span>
               </div>
               <div className="mt-2 mb-6">
                 <Link
-                  href="/sign-up"
+                  href={p.n === 'Enterprise' ? 'mailto:hello@rawaj.ai' : ctaHref}
                   className={`inline-flex items-center gap-2 h-[42px] px-[18px] rounded-[11px] text-sm font-semibold transition-all duration-150 cursor-pointer border border-transparent whitespace-nowrap w-full justify-center ${p.hi ? 'bg-ds-accent text-ds-accent-ink hover:brightness-105' : 'bg-ink text-white hover:bg-ink-2'}`}
                 >
                   {p.cta} <ArrowIcon />
